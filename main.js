@@ -4,6 +4,7 @@ const mouseButtons = { LEFT_MOUSE: 0, MIDDLE_MOUSE: 1, RIGHT_MOUSE: 2 }
 const stateRadius = 22;
 const stateEdgePadding = { top:45, bottom:60, left:20, right:20, between:10 };
 
+const tabsRightOffset = 0; //= 100;
 var tabs, tab;
 
 var canvas, context;
@@ -32,17 +33,14 @@ document.addEventListener("DOMContentLoaded", function() {
     messages = document.getElementById("messages");
     
     tabs = document.getElementById("tabs");
-
     tab = tabs.children[0].cloneNode(true);
 
     canvas = document.getElementById("canvas");
     context = canvas.getContext("2d");
-    
     canvas.width = window.innerWidth*canvasSizeMultiplier;
     canvas.height = window.innerHeight*canvasSizeMultiplier;
     canvas.style.left = ((window.innerWidth - canvas.width) / 2) + "px";
     canvas.style.top = ((window.innerHeight - canvas.height) / 2) + "px";
-    
 
     window.addEventListener("resize", windowResize);
     window.addEventListener("scroll", drawFSM);
@@ -50,7 +48,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     tabs.addEventListener("wheel", tabsScroll);
     tabs.addEventListener("touchstart", tabsTouchStart);
-
     tabs.addEventListener("dragstart", tabDragStart);
     
     
@@ -68,40 +65,76 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     drawFSM();
-});
 
-// function ondragleave() {
-//     console.log("ondragleave");
-// }
+    if (typeof history.pushState === "function") {
+        history.pushState("jibberish", null, null);
+        window.onpopstate = function () {
+            history.pushState('newjibberish', null, null);
+            
+            console
+        };
+    }
+});
 
 function tabDragStart(e) {
     let draggedElement = e.target;
 
+    let deleteBox = document.getElementById("delete");
+    deleteBox.classList.remove("hidden");
+    
     tabs.ondragover = e => { e.preventDefault(); };
     tabs.ondragenter = tabDragEnter;
     tabs.ondragleave = tabDragLeave;
     tabs.ondrop = onDrop;
-
+    
+    deleteBox.ondragover = e => { e.preventDefault(); };
+    deleteBox.ondragenter = tabDragEnter;
+    deleteBox.ondragleave = tabDragLeave;
+    deleteBox.ondrop = onDrop;
+    
+    canvas.ondragover = e => { e.preventDefault(); };
+    canvas.ondrop = onDrop;
+    
     function tabDragEnter(e) {
-        if(e.target.classList.contains("tab"))
+        if(e.target.classList.contains("tab") &&
+           !e.target.isSameNode(draggedElement) &&
+           (!e.target.nextSibling || !e.target.nextSibling.isSameNode(draggedElement)))
             e.target.classList.add("dropZone");
-        else if(e.target.localName == "h4")
+        else if(e.target.localName == "h4" &&
+                !e.target.parentElement.isSameNode(draggedElement) &&
+                (!e.target.parentElement.nextSibling || !e.target.parentElement.nextSibling.isSameNode(draggedElement)))
             e.target.parentElement.classList.add("dropZone");
+        else if(e.target.id == "delete") {
+            deleteBox.classList.add("delete");
+        }
     }
 
     function tabDragLeave(e) {
-        if(e.fromElement == null)
+        if(e.fromElement == null) {
             e.toElement.classList.remove("dropZone");
-        else if(e.fromElement.id == "canvas")
+        } else if(e.fromElement.id == "canvas") {
             e.target.classList.remove("dropZone");
-        else if(e.fromElement.classList.contains("tab") && e.toElement.classList.contains("tab"))
+            deleteBox.classList.remove("delete");
+        } else if(e.fromElement.classList.contains("tab") &&
+                  e.toElement.classList.contains("tab")) {
             e.toElement.classList.remove("dropZone");
-        
+        }
     }
 
     function onDrop(e) {
+        deleteBox.classList.add("hidden");
+
         for(let i = 0; i < tabs.children.length; i++)
             tabs.children[i].classList.remove("dropZone");
+
+        if(e.target.id == "canvas") {
+            return;
+        }
+
+        if(e.target.id == "delete") {
+            deleteTab(draggedElement);
+            return;
+        }
 
         if(e.target.classList.contains("tab")) {
             if(e.target.isSameNode(draggedElement) ||
@@ -547,7 +580,7 @@ function addTab() {
     let name = createTab();
     fsms.push(new FSM(name));
     switchTab(tabs.children[tabs.children.length-1]);
-    tabs.scrollLeft += 200;
+    tabs.scrollLeft += tabs.clientWidth;
 }
 
 function switchTab(tab) {
@@ -583,6 +616,26 @@ function tabsTouchStart(e) {
         ts = te;
     }
 }
+function deleteTab(tab) {
+    if(tabs.children.length == 1) {
+        clearData();
+        return;
+    }
+    let from = getTabIndex(tab);
+    switchTab(tabs.children[from ? from-1 : from+1]);
+    tab.remove();
+    fsms.splice(from, 1);
+}
+function moveTab(tab, afterTab) {
+    let from = getTabIndex(tab);
+    let to = getTabIndex(afterTab);
+    to = from > to ? to+1 : to;
+
+    if(from != to) {
+        fsms.splice(to, 0, fsms.splice(from, 1)[0]);
+        afterTab.after(tab);
+    }
+}
 
 function windowResize() {
     let vh = window.innerHeight * 0.01;
@@ -604,7 +657,7 @@ function windowResize() {
     canvas.style.top = canvasOffsetY + "px";
 
     tabs.parentElement.style.maxWidth = (window.innerWidth).toString() + "px";
-    tabs.style.maxWidth = (window.innerWidth - 100).toString() + "px";
+    tabs.style.maxWidth = (window.innerWidth - tabsRightOffset).toString() + "px";
 }
 
 function canvasDrag(e) {
@@ -707,15 +760,23 @@ function canvasMouseDrag(e) {
     }
 }
 
-const maxTabNameLength = 20;
+const maxTabNameLength = 50;
 var currentName;
 var renaming = false;
+function selectElementContents(element) {
+    let range = document.createRange();
+    range.selectNodeContents(element);
+    let selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    console.log(range);
+}
 function renameTab(tab) {
     let tabText = tab.children[0];
     currentName = tabText.innerText;
     tabText.contentEditable = true;
     renaming = true;
-    // document.getElementsByClassName("selected")[0].focus();
+    selectElementContents(tabText);
 }
 function renameTabEnd(tab) {
     let tabText = tab.children[0];
@@ -724,21 +785,23 @@ function renameTabEnd(tab) {
     if(tabText.innerText != currentName) {
         let newName = tabText.innerText.trim().substring(0, maxTabNameLength) || currentName;
         tabText.innerText = newName;
-        tab.title = newName;
         fsms[getTabIndex(tab)].name = newName;
     }
-
+    
+    tab.title = tab.innerText;
     renaming = false;
 }
 function renameTabKeyPress(e) {
     const ignoredKeys = ["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"];
-    if(ignoredKeys.includes(e.key)) return;
+    if(ignoredKeys.includes(e.key) || (e.ctrlKey && (e.key == "a")))
+        return;
     
     if(e.srcElement.innerText.length >= maxTabNameLength &&
        e.key != "Backspace" &&
        window.getSelection().toString().length === 0) {
         e.preventDefault();
-    } if(e.key === "Enter") {
+    }
+    if(e.key === "Enter") {
         e.preventDefault();
         renameTabEnd(e.srcElement.parentElement);
     }
@@ -746,15 +809,5 @@ function renameTabKeyPress(e) {
         e.preventDefault();
         e.srcElement.innerText = currentName;
         renameTabEnd(e.srcElement.parentElement);
-    }
-}
-function moveTab(tab, afterTab) {
-    let from = getTabIndex(tab);
-    let to = getTabIndex(afterTab);
-    to = from > to ? to+1 : to;
-
-    if(from != to) {
-        fsms.splice(to, 0, fsms.splice(from, 1)[0]);
-        afterTab.after(tab);
     }
 }
