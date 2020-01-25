@@ -106,13 +106,11 @@ function tabDragStart(e) {
         if(e.target.isSameNode(draggedElement))
             return;
         if(e.target.classList.contains("tab"))
-            e.target.after(draggedElement);
+            moveTab(draggedElement, e.target);
         else if(e.target.localName = "h4")
-            e.target.parentElement.after(draggedElement);
-
+            moveTab(draggedElement, e.target.parentElement)
     }
 }
-
 
 
 function getTabIndex(tab) {
@@ -122,16 +120,6 @@ function getTabIndex(tab) {
 function getCurrentTabIndex() {
     let currentTab = tabs.getElementsByClassName("selected")[0];
     return getTabIndex(currentTab);
-}
-
-function getFSM(name) {
-    for(let i = 0; i < fsms.length; i++)
-        if(fsms[i].name == name)
-            return fsms[i];
-}
-
-function getCurrentFSM() {
-    return getFSM(tabs.children[getCurrentTabIndex()].innerText);
 }
 
 function canvasMouseDown(e) {
@@ -152,7 +140,7 @@ function canvasMouseDown(e) {
             x -= canvas.offsetLeft;
             y -= canvas.offsetTop;
             
-            const states = getCurrentFSM().states;
+            const states = fsms[getCurrentTabIndex()].states;
             let tooClose = false;
             for(var i = 0; i < states.length; i++) {
                 let a = x - states[i].x;
@@ -188,7 +176,7 @@ function canvasMouseDown(e) {
 // }
 
 function addState(state) {
-    getCurrentFSM().addState(state);
+    fsms[getCurrentTabIndex()].addState(state);
     drawFSM();
 }
 
@@ -196,7 +184,7 @@ function addState(state) {
 function dragState(state, e) {
     let startX = e.changedTouches[0].clientX - canvas.offsetLeft;
     let startY = e.changedTouches[0].clientY - canvas.offsetTop;
-    let optimized = canvasOptimizationThreshold.mobile < getCurrentFSM().states.length;
+    let optimized = canvasOptimizationThreshold.mobile < fsms[getCurrentTabIndex()].states.length;
     
     canvas.ontouchend = stopDrag;
     canvas.ontouchmove = startTouchDrag;
@@ -271,7 +259,7 @@ function dragState(state, e) {
 function dragMouseState(state, e) {
     let startX = e.clientX;
     let startY = e.clientY;
-    let optimized = canvasOptimizationThreshold.desktop < getCurrentFSM().states.length;
+    let optimized = canvasOptimizationThreshold.desktop < fsms[getCurrentTabIndex()].states.length;
     
     canvas.onmouseup = stopDrag;
     canvas.onmousemove = startDrag;
@@ -343,7 +331,7 @@ function dragMouseState(state, e) {
 
 function drawFSM() {
     context.clearRect(0, 0, canvas.width, canvas.height);
-    const states = getCurrentFSM().states;
+    const states = fsms[getCurrentTabIndex()].states;
     if(states.length === 0)
         return;
     
@@ -388,7 +376,7 @@ function clearData() {
 }
 
 function clearCurrentTab() {
-    getCurrentFSM().states = [];
+    fsms[getCurrentTabIndex()].states = [];
     canvas.style.left = ((window.innerWidth - canvas.width) / 2) + "px";
     canvas.style.top = ((window.innerHeight - canvas.height) / 2) + "px";
     context.clearRect(0, 0, canvas.width, canvas.height);
@@ -416,7 +404,7 @@ function addTab() {
 function switchTab(tab) {
     if(!tab.classList.contains("selected")) {
         let currentTab = getCurrentTabIndex();
-        // renameTabEnd(tabs.children[currentTab])
+        renameTabEnd(tabs.children[currentTab])
         tabs.children[currentTab].classList.remove("selected");
         tabs.children[currentTab].viewX = canvas.style.left;
         tabs.children[currentTab].viewY = canvas.style.top;
@@ -485,7 +473,7 @@ function canvasDrag(e) {
        csY > stateRadius + stateEdgePadding.top &&
        csY < window.innerHeight - stateRadius - stateEdgePadding.bottom) {
         
-        let states = getCurrentFSM().states;
+        let states = fsms[getCurrentTabIndex()].states;
         for(var i = 0; i < states.length; i++) {
             let a = csX - canvas.offsetLeft - states[i].x;
             let b = csY - canvas.offsetTop - states[i].y;
@@ -586,9 +574,9 @@ function renameTabEnd(tab) {
 
     if(tabText.innerText != currentName) {
         let newName = tabText.innerText.trim().substring(0, maxTabNameLength) || currentName;
-        getFSM(currentName).name = newName;
         tabText.innerText = newName;
         tab.title = newName;
+        fsms[getTabIndex(tab)].name = newName;
     }
 
     renaming = false;
@@ -611,6 +599,11 @@ function renameTabKeyPress(e) {
         renameTabEnd(e.srcElement.parentElement);
     }
 }
-function moveTab(indexFrom, indexTo) {
-    tabs.children[indexTo].after(tabs.children[indexFrom]);
+function moveTab(tab, afterTab) {
+    let from = getTabIndex(tab);
+    let to = getTabIndex(afterTab);
+
+    fsms.splice(from > to ? to+1 : to, 0, fsms.splice(from, 1)[0]);
+
+    afterTab.after(tab);
 }
