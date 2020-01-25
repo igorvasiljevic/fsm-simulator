@@ -1,0 +1,37 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FSM Simulator</title>
+    <meta name="description" content="Finite state machine simulator">
+    <meta name="author" content="17112">
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+
+    <script src="fsm.js"></script>
+    <script src="main.js"></script>
+</head>
+<body id="body" class="fixedFillHeight">
+    <!-- <header id="header">
+        <img src="res/clear.svg" onclick="clearData()">
+        <h3>FSM Simulator</h3>
+    </header> -->
+    <header class="top">
+        <div id="tabsContainer">
+            <div id="tabs"><div class="tab selected" draggable="true" title="Tab 1" onclick="switchTab(this)" ondblclick="renameTab(this)" onfocusout="renameTabEnd(this)" onkeydown="renameTabKeyPress(event)"><h4>Tab 1</h4></div></div>
+            <div class="tab addtab" onclick="addTab()"><h2>+</h2></div>
+        </div>
+    </header>
+    <img class="float top right" src="res/clear.svg" onclick="clearData()">
+    <main id="canvasContainer">
+        <canvas id="canvas"></canvas>
+    </main>
+    <div id="messages" class="console float bottom left"></div>
+    <img class="float bottom right" src="res/clear.svg" onclick="clearCurrentTab()">
+</body>
+</html>
