@@ -12,7 +12,7 @@ var fsms = [];
 const canvasSizeMultiplier = 3;
 
 // after what number of states will the drawing on state drag be optimized
-const canvasOptimizationThreshold = { desktop:200, mobile:25 };
+const canvasOptimizationThreshold = { desktop:10, mobile:30 };
 
 var messages;
 
@@ -102,13 +102,21 @@ function tabDragStart(e) {
     function onDrop(e) {
         for(let i = 0; i < tabs.children.length; i++)
             tabs.children[i].classList.remove("dropZone");
-        
-        if(e.target.isSameNode(draggedElement))
-            return;
-        if(e.target.classList.contains("tab"))
-            moveTab(draggedElement, e.target);
-        else if(e.target.localName = "h4")
-            moveTab(draggedElement, e.target.parentElement)
+
+        if(e.target.classList.contains("tab")) {
+            if(e.target.isSameNode(draggedElement) ||
+               e.target.nextSibling.isSameNode(draggedElement)) {
+                return;
+            } else {
+                moveTab(draggedElement, e.target);
+            }
+        } else if(e.target.localName = "h4") {
+            if(e.target.parentElement.isSameNode(draggedElement) ||
+               e.target.parentElement.nextSibling.isSameNode(draggedElement)) {
+                return;
+            }
+            moveTab(draggedElement, e.target.parentElement);
+        }
     }
 }
 
@@ -184,11 +192,11 @@ function addState(state) {
 function dragState(state, e) {
     let startX = e.changedTouches[0].clientX - canvas.offsetLeft;
     let startY = e.changedTouches[0].clientY - canvas.offsetTop;
-    let optimized = canvasOptimizationThreshold.mobile < fsms[getCurrentTabIndex()].states.length;
+    let states = fsms[getCurrentTabIndex()].states;
+    let optimized = canvasOptimizationThreshold.mobile < states.length;
     
     canvas.ontouchend = stopDrag;
-    canvas.ontouchmove = startTouchDrag;
-
+    canvas.ontouchmove = optimized ? startTouchDragOptimized : startTouchDrag;
 
     let canvasBuffer;
     if(optimized) {
@@ -213,43 +221,107 @@ function dragState(state, e) {
         context.fillText(state.id, state.x, state.y + 2);
     }
 
+    let newPositionX = state.x;
+    let newPositionY = state.y;
+
     function startTouchDrag(e) {
         let x = e.changedTouches[0].clientX - canvas.offsetLeft;
         let y = e.changedTouches[0].clientY - canvas.offsetTop;
-        
-        state.x += x - startX;
-        state.y += y - startY;
 
-        if(state.x < stateRadius + stateEdgePadding.left)
-            state.x = stateRadius + stateEdgePadding.left;
-        else if(state.x > canvas.width - stateRadius - stateEdgePadding.right)
-            state.x = canvas.width - stateRadius - stateEdgePadding.right;
-        if(state.y < stateRadius + stateEdgePadding.top)
-            state.y = stateRadius + stateEdgePadding.top;
-        else if(state.y > canvas.height - stateRadius - stateEdgePadding.bottom)
-            state.y = canvas.height - stateRadius - stateEdgePadding.bottom;
+        newPositionX += x - startX;
+        newPositionY += y- startY;
+        
+        if(newPositionX < stateRadius + stateEdgePadding.left) {
+            newPositionX = stateRadius + stateEdgePadding.left;
+        } else if(newPositionX > canvas.width - stateRadius - stateEdgePadding.right) {
+            newPositionX = canvas.width - stateRadius - stateEdgePadding.right;
+        } if(newPositionY < stateRadius + stateEdgePadding.top) {
+            newPositionY = stateRadius + stateEdgePadding.top;
+        } else if(newPositionY > canvas.height - stateRadius - stateEdgePadding.bottom) {
+            newPositionY = canvas.height - stateRadius - stateEdgePadding.bottom;
+        }
+
+        let newPositionValid = true;
+        for(let i = 0; i < states.length; i++) {
+            if(states[i].id == state.id) continue;
+
+            let a = states[i].x - newPositionX;
+            let b = states[i].y - newPositionY;
+            let dist = a*a + b*b;
+            
+            let minDist = stateRadius*2 + stateEdgePadding.between;
+            if(dist < minDist*minDist) {
+                newPositionValid = false;
+                break;
+            }
+        }
+        
+        if(newPositionValid) {
+            state.x = newPositionX;
+            state.y = newPositionY;
+        }
 
         startX = x;
         startY = y;
 
-        if(optimized) {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            context.drawImage(canvasBuffer, 0, 0, canvas.width, canvas.height,
-                                            0, 0, canvas.width, canvas.height);
+        drawFSM();
+    }
 
-            context.beginPath();
-            context.fillStyle = "rgb(235,235,235)";
-            context.arc(state.x, state.y, stateRadius, 0, 2 * Math.PI);
-            context.fill();
-            context.stroke();
-            context.fillStyle = "rgb(15,15,15)";
-            context.fillText(state.id, state.x, state.y + 2);
-        } else {
-            drawFSM();
+    function startTouchDragOptimized(e) {
+        let x = e.changedTouches[0].clientX - canvas.offsetLeft;
+        let y = e.changedTouches[0].clientY - canvas.offsetTop;
+
+        newPositionX += x - startX;
+        newPositionY += y- startY;
+        
+        if(newPositionX < stateRadius + stateEdgePadding.left) {
+            newPositionX = stateRadius + stateEdgePadding.left;
+        } else if(newPositionX > canvas.width - stateRadius - stateEdgePadding.right) {
+            newPositionX = canvas.width - stateRadius - stateEdgePadding.right;
+        } if(newPositionY < stateRadius + stateEdgePadding.top) {
+            newPositionY = stateRadius + stateEdgePadding.top;
+        } else if(newPositionY > canvas.height - stateRadius - stateEdgePadding.bottom) {
+            newPositionY = canvas.height - stateRadius - stateEdgePadding.bottom;
         }
+
+        startX = x;
+        startY = y;
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(canvasBuffer, 0, 0, canvas.width, canvas.height,
+                                        0, 0, canvas.width, canvas.height);
+
+        context.beginPath();
+        context.fillStyle = "rgb(235,235,235)";
+        context.arc(newPositionX, newPositionY, stateRadius, 0, 2 * Math.PI);
+        context.fill();
+        context.stroke();
+        context.fillStyle = "rgb(15,15,15)";
+        context.fillText(state.id, newPositionX, newPositionY + 2);
     }
     
     function stopDrag() {
+        if(optimized) {
+            let newPositionValid = true;
+            for(let i = 0; i < states.length; i++) {
+                if(states[i].id == state.id) continue;
+
+                let a = states[i].x - newPositionX;
+                let b = states[i].y - newPositionY;
+                let dist = a*a + b*b;
+                
+                let minDist = stateRadius*2 + stateEdgePadding.between;
+                if(dist < minDist*minDist) {
+                    newPositionValid = false;
+                    break;
+                }
+            }
+            if(newPositionValid) {
+                state.x = newPositionX;
+                state.y = newPositionY;
+            }
+        }
+
         canvas.ontouchmove = null;
         canvas.ontouchend = null;
 
@@ -259,10 +331,11 @@ function dragState(state, e) {
 function dragMouseState(state, e) {
     let startX = e.clientX;
     let startY = e.clientY;
-    let optimized = canvasOptimizationThreshold.desktop < fsms[getCurrentTabIndex()].states.length;
+    let states = fsms[getCurrentTabIndex()].states;
+    let optimized = canvasOptimizationThreshold.desktop < states.length;
     
     canvas.onmouseup = stopDrag;
-    canvas.onmousemove = startDrag;
+    canvas.onmousemove = optimized ? startDragOptimized : startDrag;
 
     let canvasBuffer;
     if(optimized) {
@@ -286,41 +359,102 @@ function dragMouseState(state, e) {
         context.fillStyle = "rgb(15,15,15)";
         context.fillText(state.id, state.x, state.y + 2);
     }
-
+    
+    let newPositionX = state.x;
+    let newPositionY = state.y;
+    
     function startDrag(e) {
-        state.x += e.clientX - startX;
-        state.y += e.clientY - startY;
+        newPositionX += e.clientX - startX;
+        newPositionY += e.clientY - startY;
+        
+        if(newPositionX < stateRadius + stateEdgePadding.left) {
+            newPositionX = stateRadius + stateEdgePadding.left;
+        } else if(newPositionX > canvas.width - stateRadius - stateEdgePadding.right) {
+            newPositionX = canvas.width - stateRadius - stateEdgePadding.right;
+        } if(newPositionY < stateRadius + stateEdgePadding.top) {
+            newPositionY = stateRadius + stateEdgePadding.top;
+        } else if(newPositionY > canvas.height - stateRadius - stateEdgePadding.bottom) {
+            newPositionY = canvas.height - stateRadius - stateEdgePadding.bottom;
+        }
+        
+        let newPositionValid = true;
+        for(let i = 0; i < states.length; i++) {
+            if(states[i].id == state.id) continue;
 
-        if(state.x < stateRadius + stateEdgePadding.left)
-            state.x = stateRadius + stateEdgePadding.left;
-        else if(state.x > canvas.width - stateRadius - stateEdgePadding.right)
-            state.x = canvas.width - stateRadius - stateEdgePadding.right;
-        if(state.y < stateRadius + stateEdgePadding.top)
-            state.y = stateRadius + stateEdgePadding.top;
-        else if(state.y > canvas.height - stateRadius - stateEdgePadding.bottom)
-            state.y = canvas.height - stateRadius - stateEdgePadding.bottom;
-
+            let a = states[i].x - newPositionX;
+            let b = states[i].y - newPositionY;
+            let dist = a*a + b*b;
+            
+            let minDist = stateRadius*2 + stateEdgePadding.between;
+            if(dist < minDist*minDist) {
+                newPositionValid = false;
+                break;
+            }
+        }
+        
+        if(newPositionValid) {
+            state.x = newPositionX;
+            state.y = newPositionY;
+        }
+        
         startX = e.clientX;
         startY = e.clientY;
+        
+        drawFSM(state);
+    }
 
-        if(optimized) {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            context.drawImage(canvasBuffer, 0, 0, canvas.width, canvas.height,
-                                            0, 0, canvas.width, canvas.height);
-
-            context.beginPath();
-            context.fillStyle = "rgb(235,235,235)";
-            context.arc(state.x, state.y, stateRadius, 0, 2 * Math.PI);
-            context.fill();
-            context.stroke();
-            context.fillStyle = "rgb(15,15,15)";
-            context.fillText(state.id, state.x, state.y + 2);
-        } else {
-            drawFSM();
+    function startDragOptimized(e) {
+        newPositionX += e.clientX - startX;
+        newPositionY += e.clientY - startY;
+        
+        if(newPositionX < stateRadius + stateEdgePadding.left) {
+            newPositionX = stateRadius + stateEdgePadding.left;
+        } else if(newPositionX > canvas.width - stateRadius - stateEdgePadding.right) {
+            newPositionX = canvas.width - stateRadius - stateEdgePadding.right;
+        } if(newPositionY < stateRadius + stateEdgePadding.top) {
+            newPositionY = stateRadius + stateEdgePadding.top;
+        } else if(newPositionY > canvas.height - stateRadius - stateEdgePadding.bottom) {
+            newPositionY = canvas.height - stateRadius - stateEdgePadding.bottom;
         }
+        
+        startX = e.clientX;
+        startY = e.clientY;
+        
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(canvasBuffer, 0, 0, canvas.width, canvas.height,
+                                        0, 0, canvas.width, canvas.height);
+
+        context.beginPath();
+        context.fillStyle = "rgb(235,235,235)";
+        context.arc(newPositionX, newPositionY, stateRadius, 0, 2 * Math.PI);
+        context.fill();
+        context.stroke();
+        context.fillStyle = "rgb(15,15,15)";
+        context.fillText(state.id, newPositionX, newPositionY + 2);
     }
     
     function stopDrag() {
+        if(optimized) {
+            let newPositionValid = true;
+            for(let i = 0; i < states.length; i++) {
+                if(states[i].id == state.id) continue;
+
+                let a = states[i].x - newPositionX;
+                let b = states[i].y - newPositionY;
+                let dist = a*a + b*b;
+                
+                let minDist = stateRadius*2 + stateEdgePadding.between;
+                if(dist < minDist*minDist) {
+                    newPositionValid = false;
+                    break;
+                }
+            }
+            if(newPositionValid) {
+                state.x = newPositionX;
+                state.y = newPositionY;
+            }
+        }
+
         canvas.onmousemove = null;
         canvas.onmouseup = null;
 
@@ -329,7 +463,7 @@ function dragMouseState(state, e) {
 }
 
 
-function drawFSM() {
+function drawFSM(currentState) {
     context.clearRect(0, 0, canvas.width, canvas.height);
     const states = fsms[getCurrentTabIndex()].states;
     if(states.length === 0)
@@ -337,19 +471,34 @@ function drawFSM() {
     
     context.strokeStyle = "rgb(15,15,15)";
     context.lineWidth = 3;
-    context.font = "bold 22px Open Sans";
+    context.font = "bold 22px Roboto";
     context.textAlign = "center";
     context.textBaseline = "middle";
     
-    states.forEach(state => {
+    for(let i = 0; i < states.length; i++) {
+        if(currentState && states[i].id == currentState) return; //skip state
+
+        let x = states[i].x;
+        let y = states[i].y;
+
         context.beginPath();
         context.fillStyle = "rgb(235,235,235)";
-        context.arc(state.x, state.y, stateRadius, 0, 2 * Math.PI);
+        context.arc(x, y, stateRadius, 0, 2 * Math.PI);
         context.fill();
         context.stroke();
         context.fillStyle = "rgb(15,15,15)";
-        context.fillText(state.id, state.x, state.y + 2);
-    });
+        context.fillText(states[i].id, x, y + 2);
+    }
+
+    if(currentState) {
+        context.beginPath();
+        context.fillStyle = "rgb(235,235,235)";
+        context.arc(currentState.x, currentState.y, stateRadius, 0, 2 * Math.PI);
+        context.fill();
+        context.stroke();
+        context.fillStyle = "rgb(15,15,15)";
+        context.fillText(currentState.id, currentState.x, currentState.y + 2);
+    }
 }
 
 function pageClosing() {
@@ -602,8 +751,10 @@ function renameTabKeyPress(e) {
 function moveTab(tab, afterTab) {
     let from = getTabIndex(tab);
     let to = getTabIndex(afterTab);
+    to = from > to ? to+1 : to;
 
-    fsms.splice(from > to ? to+1 : to, 0, fsms.splice(from, 1)[0]);
-
-    afterTab.after(tab);
+    if(from != to) {
+        fsms.splice(to, 0, fsms.splice(from, 1)[0]);
+        afterTab.after(tab);
+    }
 }
