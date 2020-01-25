@@ -17,12 +17,20 @@ class State {
 
 class FSM {
     constructor(fsm) {
-        this.name = fsm ? fsm.name : null;
-        this.states = fsm ? fsm.states : [];
+        if(typeof fsm == "object") {
+            this.name = fsm.name;
+            this.states = fsm.states || [];
+        } else if(typeof fsm == "string") {
+            this.name = fsm;
+            this.states = [];
+        } else {
+            this.name = null;
+            this.states = [];
+        }
     }
 
     addState(state) {
-        state.id = this.states.length;
+        state.id = this.states.length+1;
         this.states.push(state);
     }
 
