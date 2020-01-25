@@ -10,7 +10,6 @@ var canvas, context;
 var fsms = [];
 
 const canvasSizeMultiplier = 3;
-var canvasOffsetX, canvasOffsetY;
 
 var messages;
 
@@ -99,8 +98,8 @@ function canvasMouseDown(e) {
            y < window.innerHeight - stateRadius - stateEdgePadding.bottom) {
             // check if a previous state is held down
             
-            x -= canvasOffsetX;
-            y -= canvasOffsetY
+            x -= canvas.offsetLeft;
+            y -= canvas.offsetTop;
             
             const states = fsms[getCurrentTabIndex()].states;
             for(var i = 0; i < states.length; i++) {
@@ -287,8 +286,8 @@ function canvasResize() {
     let vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty('--vh', `${vh}px`);
 
-    canvasOffsetX = Number.parseInt(canvas.style.left.replace("px", ""));
-    canvasOffsetY = Number.parseInt(canvas.style.top.replace("px", ""));
+    let canvasOffsetX = canvas.offsetLeft;
+    let canvasOffsetY = canvas.offsetTop;
 
     if(canvasOffsetX > 0)
         canvasOffsetX = 0;
@@ -318,12 +317,12 @@ function canvasDrag(e) {
         let ceX = e.changedTouches[0].clientX;
         let ceY = e.changedTouches[0].clientY;
 
-        let tmpcanvasOffsetX = Number.parseInt(canvas.style.left.replace("px", ""));
-        let tmpcanvasOffsetY = Number.parseInt(canvas.style.top.replace("px", ""));
-        tmpcanvasOffsetX += ceX-csX;
-        tmpcanvasOffsetY += ceY-csY;
-        canvas.style.left = tmpcanvasOffsetX + "px";
-        canvas.style.top = tmpcanvasOffsetY + "px";
+        let canvasOffsetX = canvas.offsetLeft;
+        let canvasOffsetY = canvas.offsetTop;
+        canvasOffsetX += ceX-csX;
+        canvasOffsetY += ceY-csY;
+        canvas.style.left = canvasOffsetX + "px";
+        canvas.style.top = canvasOffsetY + "px";
         
         csX = ceX;
         csY = ceY;
