@@ -9,26 +9,34 @@
     <meta name="description" content="Finite state machine simulator">
     <meta name="author" content="17112">
 
-    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:600&display=swap" rel="stylesheet">
+
+    <!-- <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet"> -->
     <link rel="stylesheet" href="styles.css">
 
     <script src="fsm.js"></script>
     <script src="main.js"></script>
 </head>
 <body id="body" class="fixedFillHeight">
-    <header class="top">
-        <div id="tabsContainer">
-            <div class="tab addtab" title="New tab" onclick="addTab()"><h2>+</h2></div>
-            <div id="tabs"><div class="tab selected" draggable="true" title="Tab 1" onclick="switchTab(this)" ondblclick="renameTab(this)" onfocusout="renameTabEnd(this)" onkeydown="renameTabKeyPress(event)"><h4>Tab 1</h4></div></div>
+    <div class="tabsContainer float top left">
+        <div class="addtab tab" title="New tab" onclick="addTab()"><h2>+</h2></div>
+        <div id="tabs">
+            <div class="tab selected"
+                 draggable="true"
+                 onclick="switchTab(this)"
+                 ondblclick="renameTab(this)"
+                 onfocusout="renameTabEnd(this)"
+                 onkeydown="renameTabKeyPress(event)">
+                <input disabled type="text" value="Tab"
+                       oninput="onInput(event)">
+            </div>
         </div>
-    </header>
-    <img class="float top right" title="Clear all data" src="res/clear.svg" onclick="clearData()">
-    <main id="canvasContainer">
-        <canvas id="canvas"></canvas>
-    </main>
-    <div id="messages" class="console float bottom left"></div>
-    <img class="float bottom right" title="Clear current tab" src="res/clear.svg" onclick="clearCurrentTab()">
+    </div>
+    <img title="Clear all data" src="res/img/clear.svg" onclick="clearData()" class="float top right">
+    <canvas id="canvas" class="float"></canvas>
+    <div id="messages" class="console float bottom left">
+        <div id="asdasd"></div></div>
+    <img title="Clear tab" src="res/img/clear.svg" onclick="clearCurrentTab()" class="float bottom right">
     <div id="delete" class="deleteBox float bottom left hidden"></div>
+    <div id="mask" class="float left bottom hidden" onclick="onMaskClick()"></div>
 </body>
 </html>

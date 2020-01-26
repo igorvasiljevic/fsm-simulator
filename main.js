@@ -5,6 +5,7 @@ const stateRadius = 22;
 const stateEdgePadding = { top:45, bottom:60, left:20, right:20, between:10 };
 
 const tabsRightOffset = 0; //= 100;
+const maxTabNameLength = 50;
 var tabs, tab;
 
 var canvas, context;
@@ -13,67 +14,66 @@ var fsms = [];
 const canvasSizeMultiplier = 3;
 
 // after what number of states will the drawing on state drag be optimized
-const canvasOptimizationThreshold = { desktop:10, mobile:30 };
+const canvasOptimizationThreshold = { desktop:150, mobile:30 };
 
-var messages;
+let messages;
+let mask;
 
 document.addEventListener("DOMContentLoaded", function() {
+    messages = document.getElementById("messages");
+    mask = document.getElementById("mask");
+
+    tabs = document.getElementById("tabs");
+    tab = tabs.firstElementChild;
+    tab.firstElementChild.maxLength = maxTabNameLength;
+    tab.firstElementChild.size = tab.firstElementChild.value.length;
 
     if (typeof(Storage) !== "undefined" && "fsms" in localStorage) {
         var tmpFSMS = JSON.parse(localStorage.getItem("fsms"));
         tmpFSMS.forEach(fsm => {
             fsms.push(new FSM(fsm));
         });
-        
-        if(fsms.length === 0) {
-            fsms.push(new FSM("Tab 1"));
-        }
+    }
+    if(fsms.length == 0) {
+        fsms.push(new FSM(tab.firstElementChild.value));
     }
 
-    messages = document.getElementById("messages");
-    
-    tabs = document.getElementById("tabs");
-    tab = tabs.children[0].cloneNode(true);
+    tab = tab.cloneNode(true);
+    tabs.firstElementChild.remove();
+    for(let i = 0; i < fsms.length; i++) {
+        createTab(fsms[i].name);
+    }
+    tabs.firstElementChild.classList.add("selected");
+
+
 
     canvas = document.getElementById("canvas");
-    context = canvas.getContext("2d");
     canvas.width = window.innerWidth*canvasSizeMultiplier;
     canvas.height = window.innerHeight*canvasSizeMultiplier;
     canvas.style.left = ((window.innerWidth - canvas.width) / 2) + "px";
     canvas.style.top = ((window.innerHeight - canvas.height) / 2) + "px";
+    context = canvas.getContext("2d");
+    context.font = "bold 22px Arial";
+    context.textAlign = "center";
+    context.textBaseline = "middle";
 
     window.addEventListener("resize", windowResize);
     window.addEventListener("scroll", drawFSM);
     window.addEventListener("beforeunload", pageClosing);
 
-    tabs.addEventListener("wheel", tabsScroll);
-    tabs.addEventListener("touchstart", tabsTouchStart);
-    tabs.addEventListener("dragstart", tabDragStart);
+
+    tabs.addEventListener("wheel", tabsScroll, {passive: true});
+    tabs.addEventListener("touchstart", tabsTouchStart, {passive: true});
+    tabs.addEventListener("dragstart", tabDragStart, {passive: true});
     
     
     canvas.addEventListener("mousedown", canvasMouseDown);
     // canvas.addEventListener("contextmenu", canvasContextMenu);
     //canvas.addEventListener("wheel", canvasScroll);
-    canvas.addEventListener("touchstart", canvasDrag);
-    
+    canvas.addEventListener("touchstart", canvasDrag, {passive: true});
+
     windowResize();
-
-    if(fsms[0].name)
-        tabs.children[0].children[0].innerText = fsms[0].name;
-    for(let i = 1; i < fsms.length; i++) {
-        createTab(fsms[i].name);
-    }
-
     drawFSM();
-
-    if (typeof history.pushState === "function") {
-        history.pushState("jibberish", null, null);
-        window.onpopstate = function () {
-            history.pushState('newjibberish', null, null);
-            
-            console
-        };
-    }
 });
 
 function tabDragStart(e) {
@@ -100,7 +100,7 @@ function tabDragStart(e) {
            !e.target.isSameNode(draggedElement) &&
            (!e.target.nextSibling || !e.target.nextSibling.isSameNode(draggedElement)))
             e.target.classList.add("dropZone");
-        else if(e.target.localName == "h4" &&
+        else if(e.target.localName == "input" &&
                 !e.target.parentElement.isSameNode(draggedElement) &&
                 (!e.target.parentElement.nextSibling || !e.target.parentElement.nextSibling.isSameNode(draggedElement)))
             e.target.parentElement.classList.add("dropZone");
@@ -138,14 +138,14 @@ function tabDragStart(e) {
 
         if(e.target.classList.contains("tab")) {
             if(e.target.isSameNode(draggedElement) ||
-               e.target.nextSibling.isSameNode(draggedElement)) {
+               (e.target.nextSibling && e.target.nextSibling.isSameNode(draggedElement))) {
                 return;
             } else {
                 moveTab(draggedElement, e.target);
             }
-        } else if(e.target.localName = "h4") {
+        } else if(e.target.localName = "input") {
             if(e.target.parentElement.isSameNode(draggedElement) ||
-               e.target.parentElement.nextSibling.isSameNode(draggedElement)) {
+               (e.target.parentElement.nextSibling && e.target.parentElement.nextSibling.isSameNode(draggedElement))) {
                 return;
             }
             moveTab(draggedElement, e.target.parentElement);
@@ -163,64 +163,10 @@ function getCurrentTabIndex() {
     return getTabIndex(currentTab);
 }
 
-function canvasMouseDown(e) {
-    if(renaming){
-        renameTabEnd(tabs.children[getCurrentTabIndex()]);
-        return;
-    }
-    if(e.button == mouseButtons.LEFT_MOUSE) {
-        let x = e.clientX;
-        let y = e.clientY;
-
-        if(x > stateRadius + stateEdgePadding.left &&
-           x < window.innerWidth - stateRadius - stateEdgePadding.right &&
-           y > stateRadius + stateEdgePadding.top &&
-           y < window.innerHeight - stateRadius - stateEdgePadding.bottom) {
-            // check if a previous state is held down
-            
-            x -= canvas.offsetLeft;
-            y -= canvas.offsetTop;
-            
-            const states = fsms[getCurrentTabIndex()].states;
-            let tooClose = false;
-            for(var i = 0; i < states.length; i++) {
-                let a = x - states[i].x;
-                let b = y - states[i].y;
-                let dist = Math.sqrt(a*a + b*b);
-
-                if(dist < stateRadius + stateEdgePadding.between) break;
-                if(dist < stateRadius*2 + stateEdgePadding.between) tooClose = true;
-            }
-
-            if(i < states.length) {
-                dragMouseState(states[i], e);
-            } else if(!tooClose) {
-                addState(new State(x,y));
-            }
-
-        }
-    } else if(e.button = mouseButtons.MIDDLE_MOUSE) {
-        canvasMouseDrag(e);
-    }
-}
-
-// function canvasContextMenu(e) {
-//     e.preventDefault();
-//     console.log("canvas context menu!")
-// }
-
-// function canvasScroll(e) {
-//     if(e.deltaY > 0) // Zoom out
-//         context.scale(0.9,0.9);
-//     else if(e.deltaY < 0) // Zoom in
-//         context.scale(1.1,1.1);
-// }
-
 function addState(state) {
     fsms[getCurrentTabIndex()].addState(state);
     drawFSM();
 }
-
 
 function dragState(state, e) {
     let startX = e.changedTouches[0].clientX - canvas.offsetLeft;
@@ -504,9 +450,7 @@ function drawFSM(currentState) {
     
     context.strokeStyle = "rgb(15,15,15)";
     context.lineWidth = 3;
-    context.font = "bold 22px Roboto";
-    context.textAlign = "center";
-    context.textBaseline = "middle";
+    
     
     for(let i = 0; i < states.length; i++) {
         if(currentState && states[i].id == currentState) return; //skip state
@@ -541,12 +485,13 @@ function pageClosing() {
 }
 
 function clearData() {
-    fsms = [new FSM("Tab 1")];
+    fsms = [new FSM(tab.firstElementChild.value)];
 
-    while(tabs.firstChild)
-        tabs.firstChild.remove();
+    while(tabs.firstElementChild)
+        tabs.firstElementChild.remove();
+    tabCount = 1;
     tabs.appendChild(tab.cloneNode(true));
-    switchTab(tabs.children[0]);
+    switchTab(tabs.firstElementChild);
 
     localStorage.clear();
     // canvas.classList.add("smoothMove");
@@ -566,11 +511,12 @@ function clearCurrentTab() {
 
 function createTab(name) {
     if(!name)
-        name = "Tab " + (tabs.childElementCount + 1);
+        name = tab.firstElementChild.value;
     
     let newTab = tab.cloneNode(true);
-    newTab.children[0].innerText = name;
+    newTab.firstElementChild.value = name;
     newTab.title = name;
+    newTab.firstElementChild.size = name.length;
     newTab.classList.remove("selected");
     tabs.appendChild(newTab);
     return name;
@@ -580,7 +526,7 @@ function addTab() {
     let name = createTab();
     fsms.push(new FSM(name));
     switchTab(tabs.children[tabs.children.length-1]);
-    tabs.scrollLeft += tabs.clientWidth;
+    tabs.scrollLeft += tabs.scrollWidth;
 }
 
 function switchTab(tab) {
@@ -619,12 +565,12 @@ function tabsTouchStart(e) {
 function deleteTab(tab) {
     if(tabs.children.length == 1) {
         clearData();
-        return;
+    } else {
+        let from = getTabIndex(tab);
+        switchTab(tabs.children[from ? from-1 : from+1]);
+        tab.remove();
+        fsms.splice(from, 1);
     }
-    let from = getTabIndex(tab);
-    switchTab(tabs.children[from ? from-1 : from+1]);
-    tab.remove();
-    fsms.splice(from, 1);
 }
 function moveTab(tab, afterTab) {
     let from = getTabIndex(tab);
@@ -656,17 +602,60 @@ function windowResize() {
     canvas.style.left = canvasOffsetX + "px";
     canvas.style.top = canvasOffsetY + "px";
 
-    tabs.parentElement.style.maxWidth = (window.innerWidth).toString() + "px";
+    // tabs.parentElement.style.maxWidth = (window.innerWidth).toString() + "px";
     tabs.style.maxWidth = (window.innerWidth - tabsRightOffset).toString() + "px";
 }
 
-function canvasDrag(e) {
-    if(renaming){
-        e.preventDefault();
-        renameTabEnd(tabs.children[getCurrentTabIndex()]);
-        return;
-    }
+function canvasMouseDown(e) {
+    if(e.button == mouseButtons.LEFT_MOUSE) {
+        let x = e.clientX;
+        let y = e.clientY;
 
+        if(x > stateRadius + stateEdgePadding.left &&
+           x < window.innerWidth - stateRadius - stateEdgePadding.right &&
+           y > stateRadius + stateEdgePadding.top &&
+           y < window.innerHeight - stateRadius - stateEdgePadding.bottom) {
+            // check if a previous state is held down
+            
+            x -= canvas.offsetLeft;
+            y -= canvas.offsetTop;
+            
+            const states = fsms[getCurrentTabIndex()].states;
+            let tooClose = false;
+            for(var i = 0; i < states.length; i++) {
+                let a = x - states[i].x;
+                let b = y - states[i].y;
+                let dist = Math.sqrt(a*a + b*b);
+
+                if(dist < stateRadius + stateEdgePadding.between) break;
+                if(dist < stateRadius*2 + stateEdgePadding.between) tooClose = true;
+            }
+
+            if(i < states.length) {
+                dragMouseState(states[i], e);
+            } else if(!tooClose) {
+                addState(new State(x,y));
+            }
+
+        }
+    } else if(e.button = mouseButtons.MIDDLE_MOUSE) {
+        canvasMouseDrag(e);
+    }
+}
+
+// function canvasContextMenu(e) {
+//     e.preventDefault();
+//     console.log("canvas context menu!")
+// }
+
+// function canvasScroll(e) {
+//     if(e.deltaY > 0) // Zoom out
+//         context.scale(0.9,0.9);
+//     else if(e.deltaY < 0) // Zoom in
+//         context.scale(1.1,1.1);
+// }
+
+function canvasDrag(e) {
     let csX = e.touches[0].clientX;
     let csY = e.touches[0].clientY;
     
@@ -760,54 +749,44 @@ function canvasMouseDrag(e) {
     }
 }
 
-const maxTabNameLength = 50;
 var currentName;
-var renaming = false;
-function selectElementContents(element) {
-    let range = document.createRange();
-    range.selectNodeContents(element);
-    let selection = window.getSelection();
-    selection.removeAllRanges();
-    selection.addRange(range);
-    console.log(range);
-}
 function renameTab(tab) {
-    let tabText = tab.children[0];
-    currentName = tabText.innerText;
-    tabText.contentEditable = true;
-    renaming = true;
-    selectElementContents(tabText);
+    let tabText = tab.firstElementChild;
+    currentName = tabText.value;
+    tabText.classList.add("alignTextLeft");
+    tabText.disabled = false;
+    tabText.select();
+
+    mask.classList.remove("hidden");
 }
 function renameTabEnd(tab) {
-    let tabText = tab.children[0];
-    tabText.contentEditable = false;
-
-    if(tabText.innerText != currentName) {
-        let newName = tabText.innerText.trim().substring(0, maxTabNameLength) || currentName;
-        tabText.innerText = newName;
+    let tabText = tab.firstElementChild;
+    tabText.disabled = true;
+    tabText.classList.remove("alignTextLeft");
+    
+    if(tabText.value != currentName) {
+        let newName = tabText.value.trim().substring(0, maxTabNameLength) || currentName;
+        tabText.value = newName;
         fsms[getTabIndex(tab)].name = newName;
     }
     
-    tab.title = tab.innerText;
-    renaming = false;
+    window.getSelection().empty()
+    tab.title = tabText.value;
 }
 function renameTabKeyPress(e) {
-    const ignoredKeys = ["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"];
-    if(ignoredKeys.includes(e.key) || (e.ctrlKey && (e.key == "a")))
-        return;
-    
-    if(e.srcElement.innerText.length >= maxTabNameLength &&
-       e.key != "Backspace" &&
-       window.getSelection().toString().length === 0) {
-        e.preventDefault();
-    }
     if(e.key === "Enter") {
         e.preventDefault();
         renameTabEnd(e.srcElement.parentElement);
-    }
-    if(e.key === "Escape") {
+    } else if(e.key === "Escape") {
         e.preventDefault();
-        e.srcElement.innerText = currentName;
+        e.srcElement.value = currentName;
         renameTabEnd(e.srcElement.parentElement);
     }
+}
+function onInput(e) {
+    e.target.size = e.target.value.length || 1;
+}
+
+function onMaskClick() {
+    mask.classList.add("hidden");
 }
