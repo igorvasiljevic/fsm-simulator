@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", function() {
     tab = tabs.firstElementChild;
     tab.firstElementChild.maxLength = maxTabNameLength;
     tab.firstElementChild.size = tab.firstElementChild.value.length;
+    tab.title = tab.firstElementChild.title = tab.firstElementChild.value;
 
     if (typeof(Storage) !== "undefined" && "fsms" in localStorage) {
         var tmpFSMS = JSON.parse(localStorage.getItem("fsms"));
@@ -533,7 +534,7 @@ function createTab(name) {
     
     let newTab = tab.cloneNode(true);
     newTab.firstElementChild.value = name;
-    newTab.title = name;
+    newTab.title = newTab.firstElementChild.title = name;
     newTab.firstElementChild.size = name.length;
     newTab.classList.remove("selected");
     tabs.appendChild(newTab);
@@ -605,6 +606,14 @@ function windowResize() {
     let vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty('--vh', `${vh}px`);
 
+    let redrawFSM = false;
+    if(redraw = canvas.width < window.innerWidth * canvasSizeMultiplier)
+        canvas.width = window.innerWidth * canvasSizeMultiplier;
+    if(redraw = canvas.height < window.height * canvasSizeMultiplier)
+        canvas.height = window.height * canvasSizeMultiplier;
+    if(redrawFSM)
+        drawFSM();
+
     let canvasOffsetX = canvas.offsetLeft;
     let canvasOffsetY = canvas.offsetTop;
 
@@ -620,8 +629,7 @@ function windowResize() {
     canvas.style.left = canvasOffsetX + "px";
     canvas.style.top = canvasOffsetY + "px";
 
-    // tabs.parentElement.style.maxWidth = (window.innerWidth).toString() + "px";
-    tabs.style.maxWidth = (window.innerWidth - tabsRightOffset).toString() + "px";
+    tabs.style.maxWidth = (window.innerWidth - tabsRightOffset).toString() + "px"
 }
 
 function canvasMouseDown(e) {
@@ -786,10 +794,12 @@ function renameTabEnd(tab) {
         let newName = tabText.value.trim().substring(0, maxTabNameLength) || currentName;
         tabText.value = newName;
         fsms[getTabIndex(tab)].name = newName;
+
+        tabText.size = tabText.value.length || 1;
+        tab.title = tabText.title = tabText.value;
     }
     
     window.getSelection().empty()
-    tab.title = tabText.value;
 }
 function renameTabKeyPress(e) {
     if(e.key === "Enter") {
