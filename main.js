@@ -169,8 +169,8 @@ function addState(state) {
 }
 
 function dragState(state, e) {
-    let startX = e.changedTouches[0].clientX - canvas.offsetLeft;
-    let startY = e.changedTouches[0].clientY - canvas.offsetTop;
+    let startX = e.targetTouches[0].clientX - canvas.offsetLeft;
+    let startY = e.targetTouches[0].clientY - canvas.offsetTop;
     let states = fsms[getCurrentTabIndex()].states;
     let optimized = canvasOptimizationThreshold.mobile < states.length;
     
@@ -204,8 +204,8 @@ function dragState(state, e) {
     let newPositionY = state.y;
 
     function startTouchDrag(e) {
-        let x = e.changedTouches[0].clientX - canvas.offsetLeft;
-        let y = e.changedTouches[0].clientY - canvas.offsetTop;
+        let x = e.targetTouches[0].clientX - canvas.offsetLeft;
+        let y = e.targetTouches[0].clientY - canvas.offsetTop;
 
         newPositionX += x - startX;
         newPositionY += y- startY;
@@ -244,11 +244,20 @@ function dragState(state, e) {
         startY = y;
 
         drawFSM();
+
+        if(!newPositionValid) {
+            context.beginPath();
+            context.fillStyle = "rgba(0,0,0,0.95)";
+            context.arc(newPositionX, newPositionY, stateRadius, 0, 2 * Math.PI);
+            context.fill();
+            context.fillStyle = "rgba(100,100,100,0.4)";
+            context.fillText(state.id, newPositionX, newPositionY + 2);
+        }
     }
 
     function startTouchDragOptimized(e) {
-        let x = e.changedTouches[0].clientX - canvas.offsetLeft;
-        let y = e.changedTouches[0].clientY - canvas.offsetTop;
+        let x = e.targetTouches[0].clientX - canvas.offsetLeft;
+        let y = e.targetTouches[0].clientY - canvas.offsetTop;
 
         newPositionX += x - startX;
         newPositionY += y- startY;
@@ -380,6 +389,15 @@ function dragMouseState(state, e) {
         startY = e.clientY;
         
         drawFSM(state);
+
+        if(!newPositionValid) {
+            context.beginPath();
+            context.fillStyle = "rgba(0,0,0,0.95)";
+            context.arc(newPositionX, newPositionY, stateRadius, 0, 2 * Math.PI);
+            context.fill();
+            context.fillStyle = "rgba(100,100,100,0.4)";
+            context.fillText(state.id, newPositionX, newPositionY + 2);
+        }
     }
 
     function startDragOptimized(e) {
@@ -553,11 +571,11 @@ function tabsScroll(e) {
         tabs.scrollLeft -= 50;
 }
 function tabsTouchStart(e) {
-    let ts = e.touches[0].clientX;
+    let ts = e.targetTouches[0].clientX;
     tabs.ontouchmove = tabsTouchMove;
 
     function tabsTouchMove(e) {
-        var te = e.changedTouches[0].clientX;
+        var te = e.targetTouches[0].clientX;
         tabs.scrollLeft += ts-te
         ts = te;
     }
@@ -656,8 +674,8 @@ function canvasMouseDown(e) {
 // }
 
 function canvasDrag(e) {
-    let csX = e.touches[0].clientX;
-    let csY = e.touches[0].clientY;
+    let csX = e.targetTouches[0].clientX;
+    let csY = e.targetTouches[0].clientY;
     
     if(csX > stateRadius + stateEdgePadding.left &&
        csX < window.innerWidth - stateRadius - stateEdgePadding.right &&
@@ -684,8 +702,8 @@ function canvasDrag(e) {
     canvas.ontouchmove = touchMove;
 
     function touchMove(e) {
-        let ceX = e.changedTouches[0].clientX;
-        let ceY = e.changedTouches[0].clientY;
+        let ceX = e.targetTouches[0].clientX;
+        let ceY = e.targetTouches[0].clientY;
 
         let canvasOffsetX = canvas.offsetLeft;
         let canvasOffsetY = canvas.offsetTop;
