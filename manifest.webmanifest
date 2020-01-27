@@ -4,7 +4,7 @@
     "description": "Finite State Machine Simulator",
     "icons": [
         {
-          "src": "res/img/icon.png",
+          "src": "res/icon.png",
           "type": "image/png",
           "sizes": "512x512"
         }

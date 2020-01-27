@@ -1,15 +1,15 @@
 var CACHE_NAME = 'my-site-cache-v1';
 var urlsToCache = [
     '/',
-    '/css/styles.css',
+    '/styles.css',
     '/manifest.webmanifest',
     '/sw.js',
-    '/src/fsm.js',
-    '/src/main.js',
+    '/fsm.js',
+    '/main.js',
 
     '/favicon.ico',
-    '/res/img/grid.png',
-    '/res/img/clear.svg'
+    '/res/grid.png',
+    '/res/clear.svg'
 ];
 
 self.addEventListener('install', function(event) {
