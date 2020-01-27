@@ -1,6 +1,6 @@
 <!doctype html>
 
-<html lang="en">
+<html lang="en" ondragover="allowDragOver(event)">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,7 +21,7 @@
 </head>
 <body id="body" class="fixedFillHeight">
     <div class="tabsContainer float top left">
-        <div class="addtab tab" title="New tab" onclick="addTab()"><h2>+</h2></div>
+        <div class="addtab tab" ondragover="allowDragOver(event)" title="New tab" onclick="addTab()"><h2>+</h2></div>
         <div id="tabs">
             <div class="tab selected"
                  draggable="true"

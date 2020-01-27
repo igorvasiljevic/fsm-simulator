@@ -26,13 +26,13 @@ if ("serviceWorker" in navigator) {
     });
 }
 
+// document.body.ondragover = e => { e.preventDefault() };
 document.addEventListener("DOMContentLoaded", function() {
     messages = document.getElementById("messages");
     deleteBox = document.getElementById("delete");
     mask = document.getElementById("mask");
 
     tabs = document.getElementById("tabs");
-    tabs.parentElement.getElementsByClassName("addtab")[0].ondragover = e => { e.preventDefault() };
     tab = tabs.firstElementChild;
     tab.firstElementChild.maxLength = maxTabNameLength;
     tab.firstElementChild.size = tab.firstElementChild.value.length;
@@ -74,7 +74,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     tabs.addEventListener("wheel", tabsScroll, {passive: true});
     tabs.addEventListener("touchstart", tabsTouchStart, {passive: true});
-    tabs.addEventListener("dragstart", tabDrag, {passive: true});
+    tabs.addEventListener("dragstart", tabDragStart, {passive: true});
+
+    document.ondragenter = tabDragEnter;
+    document.ondragleave = tabDragLeave;
+    document.ondrop = onDrop;
+    document.ondragend = onDragEnd;
     
     
     canvas.addEventListener("mousedown", canvasMouseDown);
@@ -86,6 +91,10 @@ document.addEventListener("DOMContentLoaded", function() {
     drawFSM();
 });
 
+function allowDragOver(e) {
+    e.preventDefault();
+}
+
 function getTabIndex(tab) {
     return Array.prototype.indexOf.call(tabs.children, tab);
 }
@@ -95,59 +104,90 @@ function getCurrentTabIndex() {
     return getTabIndex(currentTab);
 }
 
-function tabDrag(e) {
-    let draggedElement = e.target;
+
+
+let draggedElement;
+function tabDragStart(e) {
+    draggedElement = e.target;
 
     e.stopPropagation();
     e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData("text/plain", draggedElement.id);
+
+    let fsm = fsms[getTabIndex(draggedElement)];
+    let url = URL.createObjectURL(new File([JSON.stringify(fsm)], 'fsm.json'));
+    e.dataTransfer.setData("DownloadURL", "text:" + draggedElement.firstElementChild.value + ".json:" + url);
 
     draggedElement.style.opacity = 0.4;
 
-    document.ondragover = e => { e.preventDefault() };
-    document.ondragenter = tabDragEnter;
-    document.ondragleave = tabDragLeave;
-    document.ondrop = onDrop;
-    document.ondragend = onDragEnd;
-
     deleteBox.classList.remove("hidden");
+}
 
-    function tabDragEnter(e) {
-        if(e.target.id == "delete") {
-            deleteBox.classList.add("delete");
-        } else if(e.target.parentElement && e.target.classList.contains("tab")) {
-            if(!draggedElement.isSameNode(e.target) && !draggedElement.isSameNode(e.target.nextSibling)) {
-                e.target.classList.add("dropZone");
-            }
-        }
-    }
-
-    function tabDragLeave(e) {
-        e.target.classList.remove("dropZone");
-        e.target.classList.remove("delete");
-    }
-
-    function onDrop(e) {
-        if(e.target.id == "delete") {
-            deleteTab(draggedElement);
-        } else if(e.target.parentElement && e.target.classList.contains("tab")) {
-            if(!draggedElement.isSameNode(e.target) && !draggedElement.isSameNode(e.target.nextSibling)) {
-                moveTab(draggedElement, e.target);
-            }
-        }
-    }
-
-    function onDragEnd(e) {
-        draggedElement.style.opacity = 1;
-        deleteBox.classList.add("hidden");
-        deleteBox.classList.remove("delete");
-        tabs.parentElement.getElementsByClassName("addtab")[0].classList.remove("dropZone");
-
-        for(let i = 0; i < tabs.children.length; i++) {
-            tabs.children[i].classList.remove("dropZone");
+function tabDragEnter(e) {
+    e.preventDefault()
+    e.stopPropagation();
+    if(e.target.id == "delete") {
+        deleteBox.classList.add("delete");
+    } else if(e.target.parentElement && e.target.classList.contains("tab")) {
+        if(!draggedElement.isSameNode(e.target) && !draggedElement.isSameNode(e.target.nextSibling)) {
+            e.target.classList.add("dropZone");
         }
     }
 }
+
+function tabDragLeave(e) {
+    e.preventDefault()
+    e.stopPropagation();
+    e.target.classList.remove("dropZone");
+    e.target.classList.remove("delete");
+}
+
+function onDrop(e) {
+    e.preventDefault()
+    e.stopPropagation();
+
+    onDragEnd();
+
+    if(e.target.id == "delete") {
+        deleteTab(draggedElement);
+    } else if(e.target.parentElement && e.target.classList.contains("tab")) {
+        if(!draggedElement.isSameNode(e.target) && !draggedElement.isSameNode(e.target.nextSibling)) {
+            moveTab(draggedElement, e.target);
+        }
+    } else {
+        if (e.dataTransfer.files) {
+            for(let i = 0; i < e.dataTransfer.files.length; i++) {
+                let file = e.dataTransfer.files[i];
+
+                let reader = new FileReader();
+                reader.onload = function (event) {
+                    let fsm = JSON.parse(event.target.result);
+                    if(fsm.hasOwnProperty("name") && fsm.hasOwnProperty("states")) {
+                        fsms.push(new FSM(fsm));
+                        createTab(fsm.name);
+                    }
+                };
+
+                reader.readAsText(file, 'utf-8');
+            }
+        }
+    }
+}
+
+function onDragEnd() {
+    if(draggedElement)
+        draggedElement.style.opacity = 1;
+    deleteBox.classList.add("hidden");
+    deleteBox.classList.remove("delete");
+    tabs.parentElement.getElementsByClassName("addtab")[0].classList.remove("dropZone");
+
+    for(let i = 0; i < tabs.children.length; i++) {
+        tabs.children[i].classList.remove("dropZone");
+    }
+}
+
+
+
+
 
 function addState(state) {
     fsms[getCurrentTabIndex()].addState(state);

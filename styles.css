@@ -17,6 +17,9 @@ html, body {
 }
 
 .tabsContainer {
+    /* background-color: rgb(40, 40, 40); */
+    background-color: rgb(0, 0, 0);
+    box-shadow: 0px 5px 14px 0px rgba(0,0,0,0.75);
     display: flex;
     height: 38px;
     overflow-x: hidden;
