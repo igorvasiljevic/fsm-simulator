@@ -26,13 +26,13 @@ if ("serviceWorker" in navigator) {
     });
 }
 
-document.ondragover = function(e) { e.preventDefault() };
 document.addEventListener("DOMContentLoaded", function() {
     messages = document.getElementById("messages");
     deleteBox = document.getElementById("delete");
     mask = document.getElementById("mask");
 
     tabs = document.getElementById("tabs");
+    tabs.parentElement.getElementsByClassName("addtab")[0].ondragover = e => { e.preventDefault() };
     tab = tabs.firstElementChild;
     tab.firstElementChild.maxLength = maxTabNameLength;
     tab.firstElementChild.size = tab.firstElementChild.value.length;
@@ -104,6 +104,7 @@ function tabDrag(e) {
 
     draggedElement.style.opacity = 0.4;
 
+    document.ondragover = e => { e.preventDefault() };
     document.ondragenter = tabDragEnter;
     document.ondragleave = tabDragLeave;
     document.ondrop = onDrop;
