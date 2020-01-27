@@ -20,11 +20,11 @@ let messages;
 let deleteBox;
 let mask;
 
-if ("serviceWorker" in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register("./sw.js");
-    });
-}
+// if ("serviceWorker" in navigator) {
+//     window.addEventListener('load', function() {
+//         navigator.serviceWorker.register("./sw.js");
+//     });
+// }
 
 // document.body.ondragover = e => { e.preventDefault() };
 document.addEventListener("DOMContentLoaded", function() {
@@ -655,8 +655,6 @@ function windowResize() {
 
     canvas.style.left = canvasOffsetX + "px";
     canvas.style.top = canvasOffsetY + "px";
-
-    tabs.style.maxWidth = (window.innerWidth - tabsRightOffset).toString() + "px"
 }
 
 function canvasMouseDown(e) {
