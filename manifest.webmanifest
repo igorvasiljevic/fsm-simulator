@@ -1,0 +1,16 @@
+{
+    "name": "FSM Simulator",
+    "short_name": "FSM",
+    "description": "Finite State Machine Simulator",
+    "icons": [
+        {
+          "src": "res/img/icon.png",
+          "type": "image/png",
+          "sizes": "512x512"
+        }
+      ],
+    "start_url": "/index.html",
+    "background_color": "#282828",
+    "display": "standalone",
+    "theme_color": "#282828"
+  }

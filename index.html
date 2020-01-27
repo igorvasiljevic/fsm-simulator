@@ -9,12 +9,15 @@
     <meta name="description" content="Finite state machine simulator">
     <meta name="author" content="17112">
 
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#282828">
+    <link rel="apple-touch-icon" href="res/img/appleicon.png">
 
     <!-- <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet"> -->
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/styles.css">
 
-    <script src="fsm.js"></script>
-    <script src="main.js"></script>
+    <script src="src/fsm.js"></script>
+    <script src="src/main.js"></script>
 </head>
 <body id="body" class="fixedFillHeight">
     <div class="tabsContainer float top left">
@@ -32,7 +35,7 @@
         </div>
     </div>
     <img title="Clear all data" src="res/img/clear.svg" onclick="clearData()" class="float top right">
-    <canvas id="canvas" class="float"></canvas>
+    <main class="float top left"><canvas id="canvas" class="float"></canvas></main>
     <div id="messages" class="console float bottom left">
         <div id="asdasd"></div></div>
     <img title="Clear tab" src="res/img/clear.svg" onclick="clearCurrentTab()" class="float bottom right">

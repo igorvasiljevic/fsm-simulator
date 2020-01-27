@@ -19,6 +19,13 @@ const canvasOptimizationThreshold = { desktop:150, mobile:30 };
 let messages;
 let mask;
 
+
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js');
+    });
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     messages = document.getElementById("messages");
     mask = document.getElementById("mask");
@@ -470,7 +477,6 @@ function drawFSM(currentState) {
     context.strokeStyle = "rgb(15,15,15)";
     context.lineWidth = 3;
     
-    
     for(let i = 0; i < states.length; i++) {
         if(currentState && states[i].id == currentState) return; //skip state
 
@@ -607,10 +613,10 @@ function windowResize() {
     document.documentElement.style.setProperty('--vh', `${vh}px`);
 
     let redrawFSM = false;
-    if(redraw = canvas.width < window.innerWidth * canvasSizeMultiplier)
+    if(redrawFSM = canvas.innerWidth < window.innerWidth * canvasSizeMultiplier)
         canvas.width = window.innerWidth * canvasSizeMultiplier;
-    if(redraw = canvas.height < window.height * canvasSizeMultiplier)
-        canvas.height = window.height * canvasSizeMultiplier;
+    if(redrawFSM = canvas.innerHeight < window.innerHeight * canvasSizeMultiplier)
+        canvas.height = window.innerHeight * canvasSizeMultiplier;
     if(redrawFSM)
         drawFSM();
 
