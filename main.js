@@ -22,7 +22,7 @@ let mask;
 
 if ("serviceWorker" in navigator) {
     window.addEventListener('load', function() {
-        navigator.serviceWorker.register("/fsm-simulator/sw.js");
+        navigator.serviceWorker.register("./sw.js");
     });
 }
 

@@ -1,14 +1,14 @@
 var CACHE_NAME = 'fsm-simulator-cache';
 var urlsToCache = [
-    '/fsm-simulator/',
-    '/fsm-simulator/styles.css',
-    '/fsm-simulator/manifest.webmanifest',
-    '/fsm-simulator/sw.js',
-    '/fsm-simulator/fsm.js',
-    '/fsm-simulator/main.js',
-    '/fsm-simulator/favicon.ico',
-    '/fsm-simulator/res/grid.png',
-    '/fsm-simulator/res/clear.svg'
+    './',
+    './styles.css',
+    './manifest.webmanifest',
+    './sw.js',
+    './fsm.js',
+    './main.js',
+    './res/icon.png',
+    './res/grid.png',
+    './res/clear.svg'
 ];
 
 self.addEventListener('install', function(event) {
