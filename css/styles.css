@@ -142,7 +142,7 @@ input {
 }
 
 canvas {
-    background-image: url(res/img/grid.png);
+    background-image: url(../res/img/grid.png);
 }
 
 .console {

@@ -1,11 +1,11 @@
 var CACHE_NAME = 'my-site-cache-v1';
 var urlsToCache = [
     '/',
-    '/styles.css',
+    '/css/styles.css',
     '/manifest.webmanifest',
     '/sw.js',
-    '/fsm.js',
-    '/main.js',
+    '/src/fsm.js',
+    '/src/main.js',
 
     '/favicon.ico',
     '/res/img/grid.png',
