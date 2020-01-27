@@ -1,4 +1,4 @@
-var CACHE_NAME = 'my-site-cache-v1';
+var CACHE_NAME = 'fsm-simulator-cache';
 var urlsToCache = [
     '/',
     '/styles.css',
