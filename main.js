@@ -101,7 +101,9 @@ function tabDrag(e) {
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData("text/plain", draggedElement.id);
 
-    document.ondragover = e => { e.preventDefault(); };
+    draggedElement.style.opacity = 0.4;
+
+    document.ondragover = function(e) { e.preventDefault() };
     document.ondragenter = tabDragEnter;
     document.ondragleave = tabDragLeave;
     document.ondrop = onDrop;
@@ -136,6 +138,7 @@ function tabDrag(e) {
     }
 
     function onDragEnd(e) {
+        draggedElement.style.opacity = 1;
         deleteBox.classList.add("hidden");
         deleteBox.classList.remove("delete");
         tabs.parentElement.getElementsByClassName("addtab")[0].classList.remove("dropZone");
