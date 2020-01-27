@@ -26,6 +26,7 @@ if ("serviceWorker" in navigator) {
     });
 }
 
+document.ondragover = function(e) { e.preventDefault() };
 document.addEventListener("DOMContentLoaded", function() {
     messages = document.getElementById("messages");
     deleteBox = document.getElementById("delete");
@@ -103,12 +104,10 @@ function tabDrag(e) {
 
     draggedElement.style.opacity = 0.4;
 
-    document.ondragover = function(e) { e.preventDefault() };
     document.ondragenter = tabDragEnter;
     document.ondragleave = tabDragLeave;
     document.ondrop = onDrop;
     document.ondragend = onDragEnd;
-    
 
     deleteBox.classList.remove("hidden");
 
