@@ -17,8 +17,8 @@ const canvasSizeMultiplier = 3;
 const canvasOptimizationThreshold = { desktop:150, mobile:30 };
 
 let messages;
+let deleteBox;
 let mask;
-
 
 if ("serviceWorker" in navigator) {
     window.addEventListener('load', function() {
@@ -28,6 +28,7 @@ if ("serviceWorker" in navigator) {
 
 document.addEventListener("DOMContentLoaded", function() {
     messages = document.getElementById("messages");
+    deleteBox = document.getElementById("delete");
     mask = document.getElementById("mask");
 
     tabs = document.getElementById("tabs");
@@ -72,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     tabs.addEventListener("wheel", tabsScroll, {passive: true});
     tabs.addEventListener("touchstart", tabsTouchStart, {passive: true});
-    tabs.addEventListener("dragstart", tabDragStart, {passive: true});
+    tabs.addEventListener("dragstart", tabDrag, {passive: true});
     
     
     canvas.addEventListener("mousedown", canvasMouseDown);
@@ -84,84 +85,6 @@ document.addEventListener("DOMContentLoaded", function() {
     drawFSM();
 });
 
-function tabDragStart(e) {
-    let draggedElement = e.target;
-
-    let deleteBox = document.getElementById("delete");
-    deleteBox.classList.remove("hidden");
-    
-    tabs.ondragover = e => { e.preventDefault(); };
-    tabs.ondragenter = tabDragEnter;
-    tabs.ondragleave = tabDragLeave;
-    tabs.ondrop = onDrop;
-    
-    deleteBox.ondragover = e => { e.preventDefault(); };
-    deleteBox.ondragenter = tabDragEnter;
-    deleteBox.ondragleave = tabDragLeave;
-    deleteBox.ondrop = onDrop;
-    
-    canvas.ondragover = e => { e.preventDefault(); };
-    canvas.ondrop = onDrop;
-    
-    function tabDragEnter(e) {
-        if(e.target.classList.contains("tab") &&
-           !e.target.isSameNode(draggedElement) &&
-           (!e.target.nextSibling || !e.target.nextSibling.isSameNode(draggedElement)))
-            e.target.classList.add("dropZone");
-        else if(e.target.localName == "input" &&
-                !e.target.parentElement.isSameNode(draggedElement) &&
-                (!e.target.parentElement.nextSibling || !e.target.parentElement.nextSibling.isSameNode(draggedElement)))
-            e.target.parentElement.classList.add("dropZone");
-        else if(e.target.id == "delete") {
-            deleteBox.classList.add("delete");
-        }
-    }
-
-    function tabDragLeave(e) {
-        if(e.fromElement == null) {
-            e.toElement.classList.remove("dropZone");
-        } else if(e.fromElement.id == "canvas") {
-            e.target.classList.remove("dropZone");
-            deleteBox.classList.remove("delete");
-        } else if(e.fromElement.classList.contains("tab") &&
-                  e.toElement.classList.contains("tab")) {
-            e.toElement.classList.remove("dropZone");
-        }
-    }
-
-    function onDrop(e) {
-        deleteBox.classList.add("hidden");
-
-        for(let i = 0; i < tabs.children.length; i++)
-            tabs.children[i].classList.remove("dropZone");
-
-        if(e.target.id == "canvas") {
-            return;
-        }
-
-        if(e.target.id == "delete") {
-            deleteTab(draggedElement);
-            return;
-        }
-
-        if(e.target.classList.contains("tab")) {
-            if(e.target.isSameNode(draggedElement) ||
-               (e.target.nextSibling && e.target.nextSibling.isSameNode(draggedElement))) {
-                return;
-            } else {
-                moveTab(draggedElement, e.target);
-            }
-        } else if(e.target.localName = "input") {
-            if(e.target.parentElement.isSameNode(draggedElement) ||
-               (e.target.parentElement.nextSibling && e.target.parentElement.nextSibling.isSameNode(draggedElement))) {
-                return;
-            }
-            moveTab(draggedElement, e.target.parentElement);
-        }
-    }
-}
-
-
 function getTabIndex(tab) {
     return Array.prototype.indexOf.call(tabs.children, tab);
 }
@@ -169,6 +92,58 @@ function getTabIndex(tab) {
 function getCurrentTabIndex() {
     let currentTab = tabs.getElementsByClassName("selected")[0];
     return getTabIndex(currentTab);
+}
+
+function tabDrag(e) {
+    let draggedElement = e.target;
+
+    e.stopPropagation();
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData("text/plain", draggedElement.id);
+
+    document.ondragover = e => { e.preventDefault(); };
+    document.ondragenter = tabDragEnter;
+    document.ondragleave = tabDragLeave;
+    document.ondrop = onDrop;
+    document.ondragend = onDragEnd;
+    
+
+    deleteBox.classList.remove("hidden");
+
+    function tabDragEnter(e) {
+        if(e.target.id == "delete") {
+            deleteBox.classList.add("delete");
+        } else if(e.target.parentElement && e.target.classList.contains("tab")) {
+            if(!draggedElement.isSameNode(e.target) && !draggedElement.isSameNode(e.target.nextSibling)) {
+                e.target.classList.add("dropZone");
+            }
+        }
+    }
+
+    function tabDragLeave(e) {
+        e.target.classList.remove("dropZone");
+        e.target.classList.remove("delete");
+    }
+
+    function onDrop(e) {
+        if(e.target.id == "delete") {
+            deleteTab(draggedElement);
+        } else if(e.target.parentElement && e.target.classList.contains("tab")) {
+            if(!draggedElement.isSameNode(e.target) && !draggedElement.isSameNode(e.target.nextSibling)) {
+                moveTab(draggedElement, e.target);
+            }
+        }
+    }
+
+    function onDragEnd(e) {
+        deleteBox.classList.add("hidden");
+        deleteBox.classList.remove("delete");
+        tabs.parentElement.getElementsByClassName("addtab")[0].classList.remove("dropZone");
+
+        for(let i = 0; i < tabs.children.length; i++) {
+            tabs.children[i].classList.remove("dropZone");
+        }
+    }
 }
 
 function addState(state) {
@@ -510,6 +485,9 @@ function pageClosing() {
 }
 
 function clearData() {
+    deleteBox.classList.add("hidden");
+    mask.classList.add("hidden");
+
     fsms = [new FSM(tab.firstElementChild.value)];
 
     while(tabs.firstElementChild)
@@ -519,11 +497,9 @@ function clearData() {
     switchTab(tabs.firstElementChild);
 
     localStorage.clear();
-    // canvas.classList.add("smoothMove");
     canvas.style.left = ((window.innerWidth - canvas.width) / 2) + "px";
     canvas.style.top = ((window.innerJHeight - canvas.height) / 2) + "px";
 
-    // canvas.classList.remove("smoothMove");
     context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
@@ -557,7 +533,8 @@ function addTab() {
 function switchTab(tab) {
     if(!tab.classList.contains("selected")) {
         let currentTab = getCurrentTabIndex();
-        renameTabEnd(tabs.children[currentTab])
+        renameTabEnd(tabs.children[currentTab]);
+        onMaskClick();
         tabs.children[currentTab].classList.remove("selected");
         tabs.children[currentTab].viewX = canvas.style.left;
         tabs.children[currentTab].viewY = canvas.style.top;
@@ -578,6 +555,7 @@ function tabsScroll(e) {
         tabs.scrollLeft -= 50;
 }
 function tabsTouchStart(e) {
+    e.preventDefault();
     let ts = e.targetTouches[0].clientX;
     tabs.ontouchmove = tabsTouchMove;
 
@@ -604,7 +582,7 @@ function moveTab(tab, afterTab) {
 
     if(from != to) {
         fsms.splice(to, 0, fsms.splice(from, 1)[0]);
-        afterTab.after(tab);
+        to ? afterTab.after(tab) : tabs.firstElementChild.before(tab);
     }
 }
 
@@ -785,6 +763,8 @@ var currentName;
 function renameTab(tab) {
     let tabText = tab.firstElementChild;
     currentName = tabText.value;
+
+    tabText.style.pointerEvents = "all"
     tabText.classList.add("alignTextLeft");
     tabText.disabled = false;
     tabText.select();
@@ -806,15 +786,18 @@ function renameTabEnd(tab) {
     }
     
     window.getSelection().empty()
+    tabText.style.pointerEvents = ""
 }
 function renameTabKeyPress(e) {
     if(e.key === "Enter") {
         e.preventDefault();
         renameTabEnd(e.srcElement.parentElement);
+        onMaskClick();
     } else if(e.key === "Escape") {
         e.preventDefault();
         e.srcElement.value = currentName;
         renameTabEnd(e.srcElement.parentElement);
+        onMaskClick();
     }
 }
 function onInput(e) {
