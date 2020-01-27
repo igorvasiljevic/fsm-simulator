@@ -12,6 +12,5 @@
     "start_url": "/index.html",
     "background_color": "#282828",
     "display": "standalone",
-    "theme_color": "#282828",
-    "scope": "/{repository}/"
+    "theme_color": "#282828"
   }
