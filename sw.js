@@ -1,9 +1,8 @@
-var CACHE_NAME = 'fsm-simulator-cache';
-var urlsToCache = [
+let CACHE_NAME = 'fsm-simulator-cache';
+let urlsToCache = [
     './index.html',
     './style.css',
     './manifest.webmanifest',
-    './sw.js',
     './fsm.js',
     './main.js',
     './res/icon.png',
@@ -12,6 +11,8 @@ var urlsToCache = [
 ];
 
 self.addEventListener('install', function(event) {
+    self.skipWaiting();
+
     event.waitUntil(
         caches.open(CACHE_NAME)
               .then(function(cache) {
@@ -20,11 +21,11 @@ self.addEventListener('install', function(event) {
     );
 });
 
-self.addEventListener('message', (event) => {
-    if(event.data.action === 'skipWaiting') {
-        self.skipWaiting();
-    }
-});
+// self.addEventListener('message', (event) => {
+//     if(event.data.action === 'skipWaiting') {
+//         self.skipWaiting();
+//     }
+// });
 
 self.addEventListener('fetch', function(event) {
     event.respondWith(
