@@ -1,7 +1,7 @@
 var CACHE_NAME = 'fsm-simulator-cache';
 var urlsToCache = [
     './',
-    './styles.css',
+    './style.css',
     './manifest.webmanifest',
     './sw.js',
     './fsm.js',

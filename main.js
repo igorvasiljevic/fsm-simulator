@@ -18,19 +18,17 @@ const canvasOptimizationThreshold = { desktop:150, mobile:30 };
 
 let messages;
 let deleteBox;
-let mask;
 
-// if ("serviceWorker" in navigator) {
-//     window.addEventListener('load', function() {
-//         navigator.serviceWorker.register("./sw.js");
-//     });
-// }
+if ("serviceWorker" in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register("./sw.js");
+    });
+}
 
-// document.body.ondragover = e => { e.preventDefault() };
+document.ondragover = e => { e.preventDefault() };
 document.addEventListener("DOMContentLoaded", function() {
     messages = document.getElementById("messages");
     deleteBox = document.getElementById("delete");
-    mask = document.getElementById("mask");
 
     tabs = document.getElementById("tabs");
     tab = tabs.firstElementChild;
@@ -529,7 +527,6 @@ function pageClosing() {
 
 function clearData() {
     deleteBox.classList.add("hidden");
-    mask.classList.add("hidden");
 
     fsms = [new FSM(tab.firstElementChild.value)];
 
@@ -577,7 +574,6 @@ function switchTab(tab) {
     if(!tab.classList.contains("selected")) {
         let currentTab = getCurrentTabIndex();
         renameTabEnd(tabs.children[currentTab]);
-        onMaskClick();
         tabs.children[currentTab].classList.remove("selected");
         tabs.children[currentTab].viewX = canvas.style.left;
         tabs.children[currentTab].viewY = canvas.style.top;
@@ -658,6 +654,11 @@ function windowResize() {
 }
 
 function canvasMouseDown(e) {
+    if(renaming) {
+        renameTabEnd(tabs.children[getCurrentTabIndex()]);
+        return;
+    }
+
     if(e.button == mouseButtons.LEFT_MOUSE) {
         let x = e.clientX;
         let y = e.clientY;
@@ -800,8 +801,10 @@ function canvasMouseDrag(e) {
     }
 }
 
-var currentName;
+let currentName;
+let renaming = false;
 function renameTab(tab) {
+    renaming = true;
     let tabText = tab.firstElementChild;
     currentName = tabText.value;
 
@@ -809,8 +812,6 @@ function renameTab(tab) {
     tabText.classList.add("alignTextLeft");
     tabText.disabled = false;
     tabText.select();
-
-    mask.classList.remove("hidden");
 }
 function renameTabEnd(tab) {
     let tabText = tab.firstElementChild;
@@ -828,23 +829,18 @@ function renameTabEnd(tab) {
     
     window.getSelection().empty()
     tabText.style.pointerEvents = ""
+    renaming = false;
 }
 function renameTabKeyPress(e) {
     if(e.key === "Enter") {
         e.preventDefault();
         renameTabEnd(e.srcElement.parentElement);
-        onMaskClick();
     } else if(e.key === "Escape") {
         e.preventDefault();
         e.srcElement.value = currentName;
         renameTabEnd(e.srcElement.parentElement);
-        onMaskClick();
     }
 }
 function onInput(e) {
     e.target.size = e.target.value.length || 1;
-}
-
-function onMaskClick() {
-    mask.classList.add("hidden");
 }
