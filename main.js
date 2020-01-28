@@ -72,9 +72,6 @@ document.addEventListener('DOMContentLoaded', function() {
     canvas.style.left = ((window.innerWidth - canvas.width) / 2) + 'px';
     canvas.style.top = ((window.innerHeight - canvas.height) / 2) + 'px';
     context = canvas.getContext('2d');
-    context.font = 'bold 22px Arial';
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
 
     window.addEventListener('resize', windowResize);
     window.addEventListener('scroll', drawFSM);
@@ -203,6 +200,33 @@ function addState(state) {
     fsms[getCurrentTabIndex()].addState(state);
     drawFSM();
 }
+function drawState(id, x, y) {
+    context.beginPath();
+    context.strokeStyle = 'rgb(15,15,15)';
+    context.lineWidth = 3;
+    context.fillStyle = 'rgb(235,235,235)';
+    context.arc(x, y, stateRadius, 0, 2 * Math.PI);
+    context.fill();
+    context.stroke();
+    context.fillStyle = 'rgb(15,15,15)';
+    context.font = 'bold 22px Arial';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillText(id, x, y + 2);
+}
+function drawStateGhost(id, x, y) {
+    context.beginPath();
+    context.strokeStyle = 'rgb(15,15,15)';
+    context.lineWidth = 3;
+    context.fillStyle = 'rgba(0,0,0,0.95)';
+    context.arc(x, y, stateRadius, 0, 2 * Math.PI);
+    context.fill();
+    context.fillStyle = 'rgba(100,100,100,0.4)';
+    context.font = 'bold 22px Arial';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillText(id, x, y + 2);
+}
 
 function dragState(state, e) {
     let startX = e.targetTouches[0].clientX - canvas.offsetLeft;
@@ -220,23 +244,10 @@ function dragState(state, e) {
         canvasBuffer.width = canvas.width;
         canvasBuffer.height = canvas.height;
 
-        
-
-        context.beginPath();
-        context.fillStyle = 'rgba(0,0,0,0.95)';
-        context.arc(state.x, state.y, stateRadius, 0, 2 * Math.PI);
-        context.fill();
-        context.fillStyle = 'rgba(100,100,100,0.4)';
-        context.fillText(state.id, state.x, state.y + 2);
+        drawStateGhost(state.id, state.x, state.y);
         canvasBufferContext.drawImage(canvas, 0, 0, canvas.width, canvas.height,
                                             0, 0, canvas.width, canvas.height);
-        context.beginPath();
-        context.fillStyle = 'rgb(235,235,235)';
-        context.arc(state.x, state.y, stateRadius, 0, 2 * Math.PI);
-        context.fill();
-        context.stroke();
-        context.fillStyle = 'rgb(15,15,15)';
-        context.fillText(state.id, state.x, state.y + 2);
+        drawState(state.id, state.x, state.y);
     }
 
     let newPositionX = state.x;
@@ -285,12 +296,7 @@ function dragState(state, e) {
         drawFSM();
 
         if(!newPositionValid) {
-            context.beginPath();
-            context.fillStyle = 'rgba(0,0,0,0.95)';
-            context.arc(newPositionX, newPositionY, stateRadius, 0, 2 * Math.PI);
-            context.fill();
-            context.fillStyle = 'rgba(100,100,100,0.4)';
-            context.fillText(state.id, newPositionX, newPositionY + 2);
+            drawStateGhost(state.id, newPositionX, newPositionY);
         }
     }
 
@@ -318,13 +324,7 @@ function dragState(state, e) {
         context.drawImage(canvasBuffer, 0, 0, canvas.width, canvas.height,
                                         0, 0, canvas.width, canvas.height);
 
-        context.beginPath();
-        context.fillStyle = 'rgb(235,235,235)';
-        context.arc(newPositionX, newPositionY, stateRadius, 0, 2 * Math.PI);
-        context.fill();
-        context.stroke();
-        context.fillStyle = 'rgb(15,15,15)';
-        context.fillText(state.id, newPositionX, newPositionY + 2);
+        drawState(state.id, newPositionX, newPositionY);
     }
     
     function stopDrag() {
@@ -370,21 +370,10 @@ function dragMouseState(state, e) {
         let canvasBufferContext = canvasBuffer.getContext('2d');
         canvasBuffer.width = canvas.width;
         canvasBuffer.height = canvas.height;
-        context.beginPath();
-        context.fillStyle = 'rgba(0,0,0,0.95)';
-        context.arc(state.x, state.y, stateRadius, 0, 2 * Math.PI);
-        context.fill();
-        context.fillStyle = 'rgba(100,100,100,0.4)';
-        context.fillText(state.id, state.x, state.y + 2);
+        drawStateGhost(state.id, state.x, state.y);
         canvasBufferContext.drawImage(canvas, 0, 0, canvas.width, canvas.height,
                                             0, 0, canvas.width, canvas.height);
-        context.beginPath();
-        context.fillStyle = 'rgb(235,235,235)';
-        context.arc(state.x, state.y, stateRadius, 0, 2 * Math.PI);
-        context.fill();
-        context.stroke();
-        context.fillStyle = 'rgb(15,15,15)';
-        context.fillText(state.id, state.x, state.y + 2);
+        drawState(state.id, state.x, state.y);
     }
     
     let newPositionX = state.x;
@@ -430,12 +419,7 @@ function dragMouseState(state, e) {
         drawFSM(state);
 
         if(!newPositionValid) {
-            context.beginPath();
-            context.fillStyle = 'rgba(0,0,0,0.95)';
-            context.arc(newPositionX, newPositionY, stateRadius, 0, 2 * Math.PI);
-            context.fill();
-            context.fillStyle = 'rgba(100,100,100,0.4)';
-            context.fillText(state.id, newPositionX, newPositionY + 2);
+            drawStateGhost(state.id, newPositionX, newPositionY);
         }
     }
 
@@ -460,13 +444,7 @@ function dragMouseState(state, e) {
         context.drawImage(canvasBuffer, 0, 0, canvas.width, canvas.height,
                                         0, 0, canvas.width, canvas.height);
 
-        context.beginPath();
-        context.fillStyle = 'rgb(235,235,235)';
-        context.arc(newPositionX, newPositionY, stateRadius, 0, 2 * Math.PI);
-        context.fill();
-        context.stroke();
-        context.fillStyle = 'rgb(15,15,15)';
-        context.fillText(state.id, newPositionX, newPositionY + 2);
+        drawState(state.id, newPositionX, newPositionY);
     }
     
     function stopDrag() {
@@ -505,8 +483,7 @@ function drawFSM(currentState) {
     if(states.length === 0)
         return;
     
-    context.strokeStyle = 'rgb(15,15,15)';
-    context.lineWidth = 3;
+    
     
     for(let i = 0; i < states.length; i++) {
         if(currentState && states[i].id == currentState) return; //skip state
@@ -514,23 +491,11 @@ function drawFSM(currentState) {
         let x = states[i].x;
         let y = states[i].y;
 
-        context.beginPath();
-        context.fillStyle = 'rgb(235,235,235)';
-        context.arc(x, y, stateRadius, 0, 2 * Math.PI);
-        context.fill();
-        context.stroke();
-        context.fillStyle = 'rgb(15,15,15)';
-        context.fillText(states[i].id, x, y + 2);
+        drawState(states[i].id, x, y);
     }
 
     if(currentState) {
-        context.beginPath();
-        context.fillStyle = 'rgb(235,235,235)';
-        context.arc(currentState.x, currentState.y, stateRadius, 0, 2 * Math.PI);
-        context.fill();
-        context.stroke();
-        context.fillStyle = 'rgb(15,15,15)';
-        context.fillText(currentState.id, currentState.x, currentState.y + 2);
+        drawState(currentState.id, currentState.x, currentState.y);
     }
 }
 
