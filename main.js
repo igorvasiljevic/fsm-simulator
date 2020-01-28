@@ -7,8 +7,6 @@ const stateEdgePadding = { top:45, bottom:60, left:20, right:20, between:10 };
 const tabsRightOffset = 0; //= 100;
 const maxTabNameLength = 50;
 let tabs, tab;
-let tabInitialMaxWidth;
-
 
 let canvas, context;
 let fsms = [];
@@ -51,54 +49,54 @@ function isMobile() {
 }
 let mobile = isMobile();
 
-if ('serviceWorker' in navigator) {
-    if(["localhost","127.0.0.1"].includes(location.hostname)){
-        console.log("Service worker omitted on " + location.hostname);
-    } else {
+(function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-            navigator.serviceWorker.register('./sw.js').then(reg => {
-                if(!navigator.serviceWorker.controller) {
-                    return;
-                }
+            navigator.serviceWorker.register('./sw.js');
+            
+            // .then(reg => {
+            //     if(!navigator.serviceWorker.controller) {
+            //         return;
+            //     }
 
-                if(reg.waiting) {
-                    updateReady(reg.waiting);
-                    return;
-                }
+            //     if(reg.waiting) {
+            //         updateReady(reg.waiting);
+            //         return;
+            //     }
 
-                if(reg.installing) {
-                    trackInstalling(reg.installing);
-                    return;
-                }
+            //     if(reg.installing) {
+            //         trackInstalling(reg.installing);
+            //         return;
+            //     }
 
-                reg.addEventListener('updatefound', () => {
-                    trackInstalling(reg.installing);
-                });
-            });
+            //     reg.addEventListener('updatefound', () => {
+            //         trackInstalling(reg.installing);
+            //     });
+            // });
 
-            let refreshing;
-            navigator.serviceWorker.addEventListener('controllerchange', () => {
-                if(refreshing) return;
-                window.location.reload();
-                refreshing = true;
-            });
+            // let refreshing;
+            // navigator.serviceWorker.addEventListener('controllerchange', () => {
+            //     if(refreshing) return;
+            //     refreshing = true;
+            //     window.location.reload();
+            // });
 
         });
 
-        function trackInstalling(worker) {
-            worker.addEventListener('statechange', () => {
-                if(worker.state == 'installed')
-                    updateReady(worker);
-            });
-        }
+        // function trackInstalling(worker) {
+        //     worker.addEventListener('statechange', () => {
+        //         if(worker.state == 'installed')
+        //             updateReady(worker);
+        //     });
+        // }
         
-        function updateReady(worker) {
-            console.log('Update being applied');
+        // function updateReady(worker) {
+        //     console.log('Update being applied');
         
-            worker.postMessage({action: 'skipWaiting'});
-        }
+        //     worker.postMessage({action: 'skipWaiting'});
+        // }
     }
-}
+}) ();
 
 
 document.ondragover = e => { e.preventDefault() };
@@ -111,8 +109,6 @@ document.addEventListener('DOMContentLoaded', function() {
     tab.firstElementChild.maxLength = maxTabNameLength;
     tab.firstElementChild.size = tab.firstElementChild.value.length;
     tab.title = tab.firstElementChild.title = tab.firstElementChild.value;
-    tabInitialMaxWidth = window.getComputedStyle(tab, null).getPropertyValue("max-width");    
-    tab.style.maxWidth = '0px';
 
     if (typeof(Storage) !== 'undefined' && 'fsms' in localStorage) {
         let tmpFSMS = JSON.parse(localStorage.getItem('fsms'));
@@ -130,8 +126,6 @@ document.addEventListener('DOMContentLoaded', function() {
         createTab(fsms[i].name);
     }
     tabs.firstElementChild.classList.add('selected');
-
-
 
     canvas = document.getElementById('canvas');
     canvas.width = window.innerWidth*canvasSizeMultiplier;
@@ -614,7 +608,6 @@ function createTab(name) {
     newTab.firstElementChild.size = name.length;
     newTab.classList.remove('selected');
     tabs.appendChild(newTab);
-    setTimeout(() => { newTab.style.maxWidth = tabInitialMaxWidth; }, 0);
     
     return newTab;
 }
@@ -623,9 +616,7 @@ function addTab() {
     let newTab = createTab();
     fsms.push(new FSM(newTab.firstElementChild.value));
     switchTab(newTab);
-    newTab.addEventListener(transitionEventName, () => {
-        tabs.scrollLeft += tabs.scrollWidth
-    });
+    tabs.scrollLeft += tabs.scrollWidth;
 }
 
 function switchTab(tab) {
@@ -669,13 +660,19 @@ function deleteTab(tab) {
         let from = getTabIndex(tab);
         switchTab(tabs.children[from ? from-1 : from+1]);
         tab.addEventListener(transitionEventName, tabRemoved);
-        tab.style.opacity = '0.6';
-        tab.style.maxWidth = '0px';
+        collapseTab(tab);
         fsms.splice(from, 1);
     }
 }
 function tabRemoved(e) {
     e.target.remove();
+}
+function collapseTab(tab) {
+    tab.style.opacity = '0.4';
+    tab.style.width = tab.scrollWidth + 'px';
+    requestAnimationFrame(() => {
+        tab.style.width = '0px';
+    });
 }
 function moveTab(tab, afterTab) {
     let from = getTabIndex(tab);
@@ -783,7 +780,7 @@ function canvasDrag(e) {
        csY < window.innerHeight - stateRadius - stateEdgePadding.bottom) {
         
         let states = fsms[getCurrentTabIndex()].states;
-        for(let i = 0; i < states.length; i++) {
+        for(var i = 0; i < states.length; i++) {
             let a = csX - canvas.offsetLeft - states[i].x;
             let b = csY - canvas.offsetTop - states[i].y;
             let dist = a*a + b*b;
@@ -791,6 +788,7 @@ function canvasDrag(e) {
             let minDist = stateRadius + stateEdgePadding.between;
             if(dist < minDist*minDist) break;
         }
+
 
         if(i < states.length) {
             dragState(states[i], e);

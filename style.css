@@ -40,8 +40,7 @@ html, body {
     border-radius: 0 0 12px 12px;
     z-index: 15;
     transition: background-color 0.2s;
-    max-width: 170px;
-    transition: max-width 0.2s;
+    transition: width 0.2s;
 }
 .tab:active {
     background-color: rgb(30, 30, 30);
@@ -51,7 +50,7 @@ html, body {
     z-index: 20;
 }
 .dropZone {
-    border-right: 2px solid red;
+    border-right: 2px solid rgba(255, 0, 0, 0.8);
 }
 @media (hover: hover) {
     .tab:hover {
@@ -130,6 +129,7 @@ h2 {
     vertical-align: middle;
     color: rgb(200, 200, 200);
     font-weight: bolder;
+    pointer-events: none;
 }
 
 h3 {
@@ -156,8 +156,7 @@ canvas {
 }
 
 .console {
-    background-color: rgba(0, 0, 0, 0.288);
-    color: rgb(200, 200, 200);;
+    color: rgb(200, 200, 200);
     padding-left: 7px;
     padding-top: 3px;
     width: 100%;
@@ -166,13 +165,19 @@ canvas {
 }
 
 .deleteBox {
-    background-color: rgb(0,0,0,0.5);;
+    display: table;
+    text-align: center;
+    background-color: rgb(0,0,0,0.5);
+    user-select: none;
     height: 70%;
     width: 100%;
 }
+.deleteBox h2 {
+    color: rgba(255, 255, 255, 0.438);
+}
 
 .delete {
-    border: 2px solid red;
+    border: 2px solid rgb(194, 0, 0);
 }
 
 .hidden {
