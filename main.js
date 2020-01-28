@@ -19,25 +19,36 @@ const canvasOptimizationThreshold = { desktop:150, mobile:30 };
 let messages;
 let deleteBox;
 
-if ("serviceWorker" in navigator) {
+if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
-        navigator.serviceWorker.register("./sw.js");
+        navigator.serviceWorker.register('./sw.js');
     });
 }
 
-document.ondragover = e => { e.preventDefault() };
-document.addEventListener("DOMContentLoaded", function() {
-    messages = document.getElementById("messages");
-    deleteBox = document.getElementById("delete");
+let mobile = false;
+const devices = ['Android', 'webOS',
+                 'iPhone', 'iPad','iPod',
+                 'BlackBerry','Windows Phone'];
+for(let i = 0; i < devices.length; i++) {
+    if(navigator.userAgent.includes(devices[i])) {
+        mobile = true;
+        break;
+    }
+}
 
-    tabs = document.getElementById("tabs");
+document.ondragover = e => { e.preventDefault() };
+document.addEventListener('DOMContentLoaded', function() {
+    messages = document.getElementById('messages');
+    deleteBox = document.getElementById('delete');
+
+    tabs = document.getElementById('tabs');
     tab = tabs.firstElementChild;
     tab.firstElementChild.maxLength = maxTabNameLength;
     tab.firstElementChild.size = tab.firstElementChild.value.length;
     tab.title = tab.firstElementChild.title = tab.firstElementChild.value;
 
-    if (typeof(Storage) !== "undefined" && "fsms" in localStorage) {
-        var tmpFSMS = JSON.parse(localStorage.getItem("fsms"));
+    if (typeof(Storage) !== 'undefined' && 'fsms' in localStorage) {
+        var tmpFSMS = JSON.parse(localStorage.getItem('fsms'));
         tmpFSMS.forEach(fsm => {
             fsms.push(new FSM(fsm));
         });
@@ -51,28 +62,28 @@ document.addEventListener("DOMContentLoaded", function() {
     for(let i = 0; i < fsms.length; i++) {
         createTab(fsms[i].name);
     }
-    tabs.firstElementChild.classList.add("selected");
+    tabs.firstElementChild.classList.add('selected');
 
 
 
-    canvas = document.getElementById("canvas");
+    canvas = document.getElementById('canvas');
     canvas.width = window.innerWidth*canvasSizeMultiplier;
     canvas.height = window.innerHeight*canvasSizeMultiplier;
-    canvas.style.left = ((window.innerWidth - canvas.width) / 2) + "px";
-    canvas.style.top = ((window.innerHeight - canvas.height) / 2) + "px";
-    context = canvas.getContext("2d");
-    context.font = "bold 22px Arial";
-    context.textAlign = "center";
-    context.textBaseline = "middle";
+    canvas.style.left = ((window.innerWidth - canvas.width) / 2) + 'px';
+    canvas.style.top = ((window.innerHeight - canvas.height) / 2) + 'px';
+    context = canvas.getContext('2d');
+    context.font = 'bold 22px Arial';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
 
-    window.addEventListener("resize", windowResize);
-    window.addEventListener("scroll", drawFSM);
-    window.addEventListener("beforeunload", pageClosing);
+    window.addEventListener('resize', windowResize);
+    window.addEventListener('scroll', drawFSM);
+    window.addEventListener('beforeunload', pageClosing);
 
 
-    tabs.addEventListener("wheel", tabsScroll, {passive: true});
-    tabs.addEventListener("touchstart", tabsTouchStart, {passive: true});
-    tabs.addEventListener("dragstart", tabDragStart, {passive: true});
+    tabs.addEventListener('wheel', tabsScroll, {passive: true});
+    tabs.addEventListener('touchstart', tabsTouchStart, {passive: true});
+    tabs.addEventListener('dragstart', tabDragStart, {passive: true});
 
     document.ondragenter = tabDragEnter;
     document.ondragleave = tabDragLeave;
@@ -80,10 +91,10 @@ document.addEventListener("DOMContentLoaded", function() {
     document.ondragend = onDragEnd;
     
     
-    canvas.addEventListener("mousedown", canvasMouseDown);
-    // canvas.addEventListener("contextmenu", canvasContextMenu);
-    //canvas.addEventListener("wheel", canvasScroll);
-    canvas.addEventListener("touchstart", canvasDrag, {passive: true});
+    canvas.addEventListener('mousedown', canvasMouseDown);
+    // canvas.addEventListener('contextmenu', canvasContextMenu);
+    //canvas.addEventListener('wheel', canvasScroll);
+    canvas.addEventListener('touchstart', canvasDrag, {passive: true});
 
     windowResize();
     drawFSM();
@@ -98,11 +109,9 @@ function getTabIndex(tab) {
 }
 
 function getCurrentTabIndex() {
-    let currentTab = tabs.getElementsByClassName("selected")[0];
+    let currentTab = tabs.getElementsByClassName('selected')[0];
     return getTabIndex(currentTab);
 }
-
-
 
 let draggedElement;
 function tabDragStart(e) {
@@ -111,23 +120,26 @@ function tabDragStart(e) {
     e.stopPropagation();
     e.dataTransfer.effectAllowed = 'move';
 
-    let fsm = fsms[getTabIndex(draggedElement)];
-    let url = URL.createObjectURL(new File([JSON.stringify(fsm)], 'fsm.json'));
-    e.dataTransfer.setData("DownloadURL", "text:" + draggedElement.firstElementChild.value + ".json:" + url);
+    if(mobile) {
+        e.dataTransfer.setData('text/plain', 'text');
+    } else {
+        let fsm = fsms[getTabIndex(draggedElement)];
+        let url = URL.createObjectURL(new File([JSON.stringify(fsm)], 'fsm.json'));
+        e.dataTransfer.setData('DownloadURL', 'text:' + draggedElement.firstElementChild.value + '.json:' + url);
+    }
 
     draggedElement.style.opacity = 0.4;
-
-    deleteBox.classList.remove("hidden");
+    deleteBox.classList.remove('hidden');
 }
 
 function tabDragEnter(e) {
     e.preventDefault()
     e.stopPropagation();
-    if(e.target.id == "delete") {
-        deleteBox.classList.add("delete");
-    } else if(e.target.parentElement && e.target.classList.contains("tab")) {
+    if(e.target.id == 'delete') {
+        deleteBox.classList.add('delete');
+    } else if(e.target.parentElement && e.target.classList.contains('tab')) {
         if(!draggedElement.isSameNode(e.target) && !draggedElement.isSameNode(e.target.nextSibling)) {
-            e.target.classList.add("dropZone");
+            e.target.classList.add('dropZone');
         }
     }
 }
@@ -135,8 +147,8 @@ function tabDragEnter(e) {
 function tabDragLeave(e) {
     e.preventDefault()
     e.stopPropagation();
-    e.target.classList.remove("dropZone");
-    e.target.classList.remove("delete");
+    e.target.classList.remove('dropZone');
+    e.target.classList.remove('delete');
 }
 
 function onDrop(e) {
@@ -145,9 +157,9 @@ function onDrop(e) {
 
     onDragEnd();
 
-    if(e.target.id == "delete") {
+    if(e.target.id == 'delete') {
         deleteTab(draggedElement);
-    } else if(e.target.parentElement && e.target.classList.contains("tab")) {
+    } else if(e.target.parentElement && e.target.classList.contains('tab')) {
         if(!draggedElement.isSameNode(e.target) && !draggedElement.isSameNode(e.target.nextSibling)) {
             moveTab(draggedElement, e.target);
         }
@@ -159,7 +171,7 @@ function onDrop(e) {
                 let reader = new FileReader();
                 reader.onload = function (event) {
                     let fsm = JSON.parse(event.target.result);
-                    if(fsm.hasOwnProperty("name") && fsm.hasOwnProperty("states")) {
+                    if(fsm.hasOwnProperty('name') && fsm.hasOwnProperty('states')) {
                         fsms.push(new FSM(fsm));
                         createTab(fsm.name);
                     }
@@ -174,12 +186,12 @@ function onDrop(e) {
 function onDragEnd() {
     if(draggedElement)
         draggedElement.style.opacity = 1;
-    deleteBox.classList.add("hidden");
-    deleteBox.classList.remove("delete");
-    tabs.parentElement.getElementsByClassName("addtab")[0].classList.remove("dropZone");
+    deleteBox.classList.add('hidden');
+    deleteBox.classList.remove('delete');
+    tabs.parentElement.getElementsByClassName('addtab')[0].classList.remove('dropZone');
 
     for(let i = 0; i < tabs.children.length; i++) {
-        tabs.children[i].classList.remove("dropZone");
+        tabs.children[i].classList.remove('dropZone');
     }
 }
 
@@ -203,24 +215,27 @@ function dragState(state, e) {
 
     let canvasBuffer;
     if(optimized) {
-        canvasBuffer = document.createElement("canvas");
-        let canvasBufferContext = canvasBuffer.getContext("2d");
+        canvasBuffer = document.createElement('canvas');
+        let canvasBufferContext = canvasBuffer.getContext('2d');
         canvasBuffer.width = canvas.width;
         canvasBuffer.height = canvas.height;
+
+        
+
         context.beginPath();
-        context.fillStyle = "rgba(0,0,0,0.95)";
+        context.fillStyle = 'rgba(0,0,0,0.95)';
         context.arc(state.x, state.y, stateRadius, 0, 2 * Math.PI);
         context.fill();
-        context.fillStyle = "rgba(100,100,100,0.4)";
+        context.fillStyle = 'rgba(100,100,100,0.4)';
         context.fillText(state.id, state.x, state.y + 2);
         canvasBufferContext.drawImage(canvas, 0, 0, canvas.width, canvas.height,
                                             0, 0, canvas.width, canvas.height);
         context.beginPath();
-        context.fillStyle = "rgb(235,235,235)";
+        context.fillStyle = 'rgb(235,235,235)';
         context.arc(state.x, state.y, stateRadius, 0, 2 * Math.PI);
         context.fill();
         context.stroke();
-        context.fillStyle = "rgb(15,15,15)";
+        context.fillStyle = 'rgb(15,15,15)';
         context.fillText(state.id, state.x, state.y + 2);
     }
 
@@ -271,10 +286,10 @@ function dragState(state, e) {
 
         if(!newPositionValid) {
             context.beginPath();
-            context.fillStyle = "rgba(0,0,0,0.95)";
+            context.fillStyle = 'rgba(0,0,0,0.95)';
             context.arc(newPositionX, newPositionY, stateRadius, 0, 2 * Math.PI);
             context.fill();
-            context.fillStyle = "rgba(100,100,100,0.4)";
+            context.fillStyle = 'rgba(100,100,100,0.4)';
             context.fillText(state.id, newPositionX, newPositionY + 2);
         }
     }
@@ -304,11 +319,11 @@ function dragState(state, e) {
                                         0, 0, canvas.width, canvas.height);
 
         context.beginPath();
-        context.fillStyle = "rgb(235,235,235)";
+        context.fillStyle = 'rgb(235,235,235)';
         context.arc(newPositionX, newPositionY, stateRadius, 0, 2 * Math.PI);
         context.fill();
         context.stroke();
-        context.fillStyle = "rgb(15,15,15)";
+        context.fillStyle = 'rgb(15,15,15)';
         context.fillText(state.id, newPositionX, newPositionY + 2);
     }
     
@@ -351,24 +366,24 @@ function dragMouseState(state, e) {
 
     let canvasBuffer;
     if(optimized) {
-        canvasBuffer = document.createElement("canvas");
-        let canvasBufferContext = canvasBuffer.getContext("2d");
+        canvasBuffer = document.createElement('canvas');
+        let canvasBufferContext = canvasBuffer.getContext('2d');
         canvasBuffer.width = canvas.width;
         canvasBuffer.height = canvas.height;
         context.beginPath();
-        context.fillStyle = "rgba(0,0,0,0.95)";
+        context.fillStyle = 'rgba(0,0,0,0.95)';
         context.arc(state.x, state.y, stateRadius, 0, 2 * Math.PI);
         context.fill();
-        context.fillStyle = "rgba(100,100,100,0.4)";
+        context.fillStyle = 'rgba(100,100,100,0.4)';
         context.fillText(state.id, state.x, state.y + 2);
         canvasBufferContext.drawImage(canvas, 0, 0, canvas.width, canvas.height,
                                             0, 0, canvas.width, canvas.height);
         context.beginPath();
-        context.fillStyle = "rgb(235,235,235)";
+        context.fillStyle = 'rgb(235,235,235)';
         context.arc(state.x, state.y, stateRadius, 0, 2 * Math.PI);
         context.fill();
         context.stroke();
-        context.fillStyle = "rgb(15,15,15)";
+        context.fillStyle = 'rgb(15,15,15)';
         context.fillText(state.id, state.x, state.y + 2);
     }
     
@@ -416,10 +431,10 @@ function dragMouseState(state, e) {
 
         if(!newPositionValid) {
             context.beginPath();
-            context.fillStyle = "rgba(0,0,0,0.95)";
+            context.fillStyle = 'rgba(0,0,0,0.95)';
             context.arc(newPositionX, newPositionY, stateRadius, 0, 2 * Math.PI);
             context.fill();
-            context.fillStyle = "rgba(100,100,100,0.4)";
+            context.fillStyle = 'rgba(100,100,100,0.4)';
             context.fillText(state.id, newPositionX, newPositionY + 2);
         }
     }
@@ -446,11 +461,11 @@ function dragMouseState(state, e) {
                                         0, 0, canvas.width, canvas.height);
 
         context.beginPath();
-        context.fillStyle = "rgb(235,235,235)";
+        context.fillStyle = 'rgb(235,235,235)';
         context.arc(newPositionX, newPositionY, stateRadius, 0, 2 * Math.PI);
         context.fill();
         context.stroke();
-        context.fillStyle = "rgb(15,15,15)";
+        context.fillStyle = 'rgb(15,15,15)';
         context.fillText(state.id, newPositionX, newPositionY + 2);
     }
     
@@ -490,7 +505,7 @@ function drawFSM(currentState) {
     if(states.length === 0)
         return;
     
-    context.strokeStyle = "rgb(15,15,15)";
+    context.strokeStyle = 'rgb(15,15,15)';
     context.lineWidth = 3;
     
     for(let i = 0; i < states.length; i++) {
@@ -500,33 +515,33 @@ function drawFSM(currentState) {
         let y = states[i].y;
 
         context.beginPath();
-        context.fillStyle = "rgb(235,235,235)";
+        context.fillStyle = 'rgb(235,235,235)';
         context.arc(x, y, stateRadius, 0, 2 * Math.PI);
         context.fill();
         context.stroke();
-        context.fillStyle = "rgb(15,15,15)";
+        context.fillStyle = 'rgb(15,15,15)';
         context.fillText(states[i].id, x, y + 2);
     }
 
     if(currentState) {
         context.beginPath();
-        context.fillStyle = "rgb(235,235,235)";
+        context.fillStyle = 'rgb(235,235,235)';
         context.arc(currentState.x, currentState.y, stateRadius, 0, 2 * Math.PI);
         context.fill();
         context.stroke();
-        context.fillStyle = "rgb(15,15,15)";
+        context.fillStyle = 'rgb(15,15,15)';
         context.fillText(currentState.id, currentState.x, currentState.y + 2);
     }
 }
 
 function pageClosing() {
-    if (typeof(Storage) !== "undefined")
-        localStorage.setItem("fsms", JSON.stringify(fsms));
-    else alert("Local storage not found. All unsaved data will be lost!");
+    if (typeof(Storage) !== 'undefined')
+        localStorage.setItem('fsms', JSON.stringify(fsms));
+    else alert('Local storage not found. All unsaved data will be lost!');
 }
 
 function clearData() {
-    deleteBox.classList.add("hidden");
+    deleteBox.classList.add('hidden');
 
     fsms = [new FSM(tab.firstElementChild.value)];
 
@@ -537,16 +552,16 @@ function clearData() {
     switchTab(tabs.firstElementChild);
 
     localStorage.clear();
-    canvas.style.left = ((window.innerWidth - canvas.width) / 2) + "px";
-    canvas.style.top = ((window.innerJHeight - canvas.height) / 2) + "px";
+    canvas.style.left = ((window.innerWidth - canvas.width) / 2) + 'px';
+    canvas.style.top = ((window.innerJHeight - canvas.height) / 2) + 'px';
 
     context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function clearCurrentTab() {
     fsms[getCurrentTabIndex()].states = [];
-    canvas.style.left = ((window.innerWidth - canvas.width) / 2) + "px";
-    canvas.style.top = ((window.innerHeight - canvas.height) / 2) + "px";
+    canvas.style.left = ((window.innerWidth - canvas.width) / 2) + 'px';
+    canvas.style.top = ((window.innerHeight - canvas.height) / 2) + 'px';
     context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
@@ -558,7 +573,7 @@ function createTab(name) {
     newTab.firstElementChild.value = name;
     newTab.title = newTab.firstElementChild.title = name;
     newTab.firstElementChild.size = name.length;
-    newTab.classList.remove("selected");
+    newTab.classList.remove('selected');
     tabs.appendChild(newTab);
     return name;
 }
@@ -571,17 +586,17 @@ function addTab() {
 }
 
 function switchTab(tab) {
-    if(!tab.classList.contains("selected")) {
+    if(!tab.classList.contains('selected')) {
         let currentTab = getCurrentTabIndex();
         renameTabEnd(tabs.children[currentTab]);
-        tabs.children[currentTab].classList.remove("selected");
+        tabs.children[currentTab].classList.remove('selected');
         tabs.children[currentTab].viewX = canvas.style.left;
         tabs.children[currentTab].viewY = canvas.style.top;
-        tab.classList.add("selected");
+        tab.classList.add('selected');
 
         // center tab on saved position or center of canvas
-        canvas.style.left = tab.viewX || ((window.innerWidth - canvas.width) / 2) + "px";
-        canvas.style.top = tab.viewY || ((window.innerHeight - canvas.height) / 2) + "px";
+        canvas.style.left = tab.viewX || ((window.innerWidth - canvas.width) / 2) + 'px';
+        canvas.style.top = tab.viewY || ((window.innerHeight - canvas.height) / 2) + 'px';
 
         drawFSM();
     }
@@ -630,10 +645,13 @@ function windowResize() {
     document.documentElement.style.setProperty('--vh', `${vh}px`);
 
     let redrawFSM = false;
-    if(redrawFSM = canvas.innerWidth < window.innerWidth * canvasSizeMultiplier)
+    if(canvas.width < window.innerWidth * canvasSizeMultiplier) {
+        redrawFSM = true;
         canvas.width = window.innerWidth * canvasSizeMultiplier;
-    if(redrawFSM = canvas.innerHeight < window.innerHeight * canvasSizeMultiplier)
+    } if(canvas.height < window.innerHeight * canvasSizeMultiplier) {
+        redrawFSM = true;
         canvas.height = window.innerHeight * canvasSizeMultiplier;
+    }
     if(redrawFSM)
         drawFSM();
 
@@ -649,8 +667,8 @@ function windowResize() {
     else if (canvasOffsetY < window.innerHeight - canvas.height)
         canvasOffsetY = window.innerHeight - canvas.height;
 
-    canvas.style.left = canvasOffsetX + "px";
-    canvas.style.top = canvasOffsetY + "px";
+    canvas.style.left = canvasOffsetX + 'px';
+    canvas.style.top = canvasOffsetY + 'px';
 }
 
 function canvasMouseDown(e) {
@@ -697,7 +715,7 @@ function canvasMouseDown(e) {
 
 // function canvasContextMenu(e) {
 //     e.preventDefault();
-//     console.log("canvas context menu!")
+//     console.log('canvas context menu!')
 // }
 
 // function canvasScroll(e) {
@@ -755,8 +773,8 @@ function canvasDrag(e) {
         else if (canvasOffsetY < window.innerHeight - canvas.height)
             canvasOffsetY = window.innerHeight - canvas.height;
 
-        canvas.style.left = canvasOffsetX + "px";
-        canvas.style.top = canvasOffsetY + "px";
+        canvas.style.left = canvasOffsetX + 'px';
+        canvas.style.top = canvasOffsetY + 'px';
     }
     function touchEnd() {
         canvas.ontouchmove = null;
@@ -791,8 +809,8 @@ function canvasMouseDrag(e) {
         else if (canvasOffsetY < window.innerHeight - canvas.height)
             canvasOffsetY = window.innerHeight - canvas.height;
 
-        canvas.style.left = canvasOffsetX + "px";
-        canvas.style.top = canvasOffsetY + "px";
+        canvas.style.left = canvasOffsetX + 'px';
+        canvas.style.top = canvasOffsetY + 'px';
     }
 
     function stopDrag() {
@@ -808,15 +826,15 @@ function renameTab(tab) {
     let tabText = tab.firstElementChild;
     currentName = tabText.value;
 
-    tabText.style.pointerEvents = "all"
-    tabText.classList.add("alignTextLeft");
+    tabText.style.pointerEvents = 'all'
+    tabText.classList.add('alignTextLeft');
     tabText.disabled = false;
     tabText.select();
 }
 function renameTabEnd(tab) {
     let tabText = tab.firstElementChild;
     tabText.disabled = true;
-    tabText.classList.remove("alignTextLeft");
+    tabText.classList.remove('alignTextLeft');
     
     if(tabText.value != currentName) {
         let newName = tabText.value.trim().substring(0, maxTabNameLength) || currentName;
@@ -828,14 +846,14 @@ function renameTabEnd(tab) {
     }
     
     window.getSelection().empty()
-    tabText.style.pointerEvents = ""
+    tabText.style.pointerEvents = ''
     renaming = false;
 }
 function renameTabKeyPress(e) {
-    if(e.key === "Enter") {
+    if(e.key === 'Enter') {
         e.preventDefault();
         renameTabEnd(e.srcElement.parentElement);
-    } else if(e.key === "Escape") {
+    } else if(e.key === 'Escape') {
         e.preventDefault();
         e.srcElement.value = currentName;
         renameTabEnd(e.srcElement.parentElement);
