@@ -31,14 +31,17 @@ html, body {
 .tab {
     display: table;
     flex-shrink: 0;
-    padding: 9px 15px 9px 15px;
+    padding: 9px 0 9px 0;
     border-right: 1px solid rgb(30, 30, 30);
     background-color: rgb(43, 43, 43);
     user-select: none;
+    overflow: hidden;
     height: 100%;
     border-radius: 0 0 12px 12px;
     z-index: 15;
     transition: background-color 0.2s;
+    max-width: 170px;
+    transition: max-width 0.2s;
 }
 .tab:active {
     background-color: rgb(30, 30, 30);
@@ -144,8 +147,8 @@ input {
     color: rgb(200, 200, 200);
     font-size: 15px;
     font-weight: bold;
-    margin: -10px;
     user-select: none;
+    margin: 0 9px 0 9px;
 }
 
 canvas {

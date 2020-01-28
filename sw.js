@@ -1,6 +1,6 @@
 var CACHE_NAME = 'fsm-simulator-cache';
 var urlsToCache = [
-    './',
+    './index.html',
     './style.css',
     './manifest.webmanifest',
     './sw.js',
@@ -18,6 +18,12 @@ self.addEventListener('install', function(event) {
                   return cache.addAll(urlsToCache);
               })
     );
+});
+
+self.addEventListener('message', (event) => {
+    if(event.data.action === 'skipWaiting') {
+        self.skipWaiting();
+    }
 });
 
 self.addEventListener('fetch', function(event) {

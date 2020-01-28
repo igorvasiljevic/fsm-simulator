@@ -6,10 +6,12 @@ const stateEdgePadding = { top:45, bottom:60, left:20, right:20, between:10 };
 
 const tabsRightOffset = 0; //= 100;
 const maxTabNameLength = 50;
-var tabs, tab;
+let tabs, tab;
+let tabInitialMaxWidth;
 
-var canvas, context;
-var fsms = [];
+
+let canvas, context;
+let fsms = [];
 
 const canvasSizeMultiplier = 3;
 
@@ -19,22 +21,85 @@ const canvasOptimizationThreshold = { desktop:150, mobile:30 };
 let messages;
 let deleteBox;
 
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js');
-    });
-}
+function getTransitionEventName(){
+    let t;
+    let el = document.createElement('fakeelement');
+    let transitions = {
+      'transition':'transitionend',
+      'OTransition':'oTransitionEnd',
+      'MozTransition':'transitionend',
+      'WebkitTransition':'webkitTransitionEnd'
+    }
 
-let mobile = false;
-const devices = ['Android', 'webOS',
-                 'iPhone', 'iPad','iPod',
-                 'BlackBerry','Windows Phone'];
-for(let i = 0; i < devices.length; i++) {
-    if(navigator.userAgent.includes(devices[i])) {
-        mobile = true;
-        break;
+    for(t in transitions){
+        if( el.style[t] !== undefined ){
+            return transitions[t];
+        }
     }
 }
+const transitionEventName = getTransitionEventName();
+
+function isMobile() {
+    const devices = ['Android', 'webOS',
+                 'iPhone', 'iPad','iPod',
+                 'BlackBerry','Windows Phone'];
+
+    for(d in devices) {
+        if(navigator.userAgent.includes(devices[d]))
+            return true;
+    }
+}
+let mobile = isMobile();
+
+if ('serviceWorker' in navigator) {
+    if(["localhost","127.0.0.1"].includes(location.hostname)){
+        console.log("Service worker omitted on " + location.hostname);
+    } else {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('./sw.js').then(reg => {
+                if(!navigator.serviceWorker.controller) {
+                    return;
+                }
+
+                if(reg.waiting) {
+                    updateReady(reg.waiting);
+                    return;
+                }
+
+                if(reg.installing) {
+                    trackInstalling(reg.installing);
+                    return;
+                }
+
+                reg.addEventListener('updatefound', () => {
+                    trackInstalling(reg.installing);
+                });
+            });
+
+            let refreshing;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if(refreshing) return;
+                window.location.reload();
+                refreshing = true;
+            });
+
+        });
+
+        function trackInstalling(worker) {
+            worker.addEventListener('statechange', () => {
+                if(worker.state == 'installed')
+                    updateReady(worker);
+            });
+        }
+        
+        function updateReady(worker) {
+            console.log('Update being applied');
+        
+            worker.postMessage({action: 'skipWaiting'});
+        }
+    }
+}
+
 
 document.ondragover = e => { e.preventDefault() };
 document.addEventListener('DOMContentLoaded', function() {
@@ -46,9 +111,11 @@ document.addEventListener('DOMContentLoaded', function() {
     tab.firstElementChild.maxLength = maxTabNameLength;
     tab.firstElementChild.size = tab.firstElementChild.value.length;
     tab.title = tab.firstElementChild.title = tab.firstElementChild.value;
+    tabInitialMaxWidth = window.getComputedStyle(tab, null).getPropertyValue("max-width");    
+    tab.style.maxWidth = '0px';
 
     if (typeof(Storage) !== 'undefined' && 'fsms' in localStorage) {
-        var tmpFSMS = JSON.parse(localStorage.getItem('fsms'));
+        let tmpFSMS = JSON.parse(localStorage.getItem('fsms'));
         tmpFSMS.forEach(fsm => {
             fsms.push(new FSM(fsm));
         });
@@ -508,13 +575,20 @@ function pageClosing() {
 function clearData() {
     deleteBox.classList.add('hidden');
 
-    fsms = [new FSM(tab.firstElementChild.value)];
-
-    while(tabs.firstElementChild)
-        tabs.firstElementChild.remove();
-    tabCount = 1;
-    tabs.appendChild(tab.cloneNode(true));
-    switchTab(tabs.firstElementChild);
+    if(fsms.length == 1) {
+        fsms[0].states = [];
+        let firstTab = tabs.firstElementChild;
+        let firstTabText = firstTab.firstElementChild;
+        fsms[0].name = firstTab.title = firstTabText.title = firstTabText.value = tab.firstElementChild.value;
+        firstTabText.size = firstTabText.value.length || 1;
+    } else {
+        fsms = [new FSM(tab.firstElementChild.value)];
+        while(tabs.firstElementChild)
+            tabs.firstElementChild.remove();
+        createTab();
+        tabs.firstElementChild.classList.add('selected');
+        switchTab(tabs.firstElementChild);
+    }
 
     localStorage.clear();
     canvas.style.left = ((window.innerWidth - canvas.width) / 2) + 'px';
@@ -540,14 +614,18 @@ function createTab(name) {
     newTab.firstElementChild.size = name.length;
     newTab.classList.remove('selected');
     tabs.appendChild(newTab);
-    return name;
+    setTimeout(() => { newTab.style.maxWidth = tabInitialMaxWidth; }, 0);
+    
+    return newTab;
 }
 
 function addTab() {
-    let name = createTab();
-    fsms.push(new FSM(name));
-    switchTab(tabs.children[tabs.children.length-1]);
-    tabs.scrollLeft += tabs.scrollWidth;
+    let newTab = createTab();
+    fsms.push(new FSM(newTab.firstElementChild.value));
+    switchTab(newTab);
+    newTab.addEventListener(transitionEventName, () => {
+        tabs.scrollLeft += tabs.scrollWidth
+    });
 }
 
 function switchTab(tab) {
@@ -579,7 +657,7 @@ function tabsTouchStart(e) {
     tabs.ontouchmove = tabsTouchMove;
 
     function tabsTouchMove(e) {
-        var te = e.targetTouches[0].clientX;
+        let te = e.targetTouches[0].clientX;
         tabs.scrollLeft += ts-te
         ts = te;
     }
@@ -590,9 +668,14 @@ function deleteTab(tab) {
     } else {
         let from = getTabIndex(tab);
         switchTab(tabs.children[from ? from-1 : from+1]);
-        tab.remove();
+        tab.addEventListener(transitionEventName, tabRemoved);
+        tab.style.opacity = '0.6';
+        tab.style.maxWidth = '0px';
         fsms.splice(from, 1);
     }
+}
+function tabRemoved(e) {
+    e.target.remove();
 }
 function moveTab(tab, afterTab) {
     let from = getTabIndex(tab);
@@ -700,7 +783,7 @@ function canvasDrag(e) {
        csY < window.innerHeight - stateRadius - stateEdgePadding.bottom) {
         
         let states = fsms[getCurrentTabIndex()].states;
-        for(var i = 0; i < states.length; i++) {
+        for(let i = 0; i < states.length; i++) {
             let a = csX - canvas.offsetLeft - states[i].x;
             let b = csY - canvas.offsetTop - states[i].y;
             let dist = a*a + b*b;
