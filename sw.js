@@ -1,4 +1,4 @@
-let version = '0.1';
+let version = '0.2';
 
 let CACHE_NAME = 'fsm-simulator-cache-' + version;
 let urlsToCache = [
