@@ -49,15 +49,14 @@ function isMobile() {
 }
 let mobile = isMobile();
 
-(function registerServiceWorker() {
+function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-            navigator.serviceWorker.register('./sw.js');
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
             
             // .then(reg => {
-            //     if(!navigator.serviceWorker.controller) {
+            //     if(!navigator.serviceWorker.controller)
             //         return;
-            //     }
 
             //     if(reg.waiting) {
             //         updateReady(reg.waiting);
@@ -74,12 +73,12 @@ let mobile = isMobile();
             //     });
             // });
 
-            // let refreshing;
-            // navigator.serviceWorker.addEventListener('controllerchange', () => {
-            //     if(refreshing) return;
-            //     refreshing = true;
-            //     window.location.reload();
-            // });
+            let refreshing;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if(refreshing) return;
+                refreshing = true;
+                window.location.reload();
+            });
 
         });
 
@@ -89,18 +88,18 @@ let mobile = isMobile();
         //             updateReady(worker);
         //     });
         // }
-        
-        // function updateReady(worker) {
-        //     console.log('Update being applied');
-        
-        //     worker.postMessage({action: 'skipWaiting'});
-        // }
-    }
-}) ();
 
+        // function updateReady(worker) {
+        //     messages.innerText = 'Update found - Reload to check it out';
+        //     messages.onclick = () => { worker.postMessage('skipWaiting') }
+        // }
+
+    }
+};
+registerServiceWorker();
 
 document.ondragover = e => { e.preventDefault() };
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     messages = document.getElementById('messages');
     deleteBox = document.getElementById('delete');
 
@@ -155,8 +154,9 @@ document.addEventListener('DOMContentLoaded', function() {
     canvas.addEventListener('touchstart', canvasDrag, {passive: true});
 
     windowResize();
-    drawFSM();
 });
+
+window.addEventListener("load", drawFSM);
 
 function allowDragOver(e) {
     e.preventDefault();
