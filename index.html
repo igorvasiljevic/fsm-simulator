@@ -10,36 +10,23 @@
     <meta name="description" content="Finite state machine simulator">
     <meta name="author" content="17112">
 
-    <link rel="shortcut icon" type="image/png" href="./res/icon.png">
     <link rel="manifest" href="manifest.webmanifest">
     <meta name="theme-color" content="#282828">
+    <link rel="shortcut icon" type="image/png" href="res/icon.png">
     <link rel="apple-touch-icon" href="res/appleicon.png">
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/tabs.css">
+    <link rel="stylesheet" href="css/canvas.css">
+    <link rel="stylesheet" href="css/style.css">
 
-    <script src="fsm.js" ></script>
-    <script src="main.js"></script>
+    <script src="index.js" type="module"></script>
+    <noscript>The site can't function without JavaScript</noscript>
 </head>
-<body id="body" class="fixedFillHeight">
-    <div class="tabsContainer float top left">
-        <div class="addtab tab" title="New tab" onclick="addTab()"><h2>+</h2></div>
-        <div id="tabs">
-            <div class="tab selected"
-                 draggable="true"
-                 onclick="switchTab(this)"
-                 ondblclick="renameTab(this)"
-                 onblur="renameTabEnd(this)"
-                 onkeydown="renameTabKeyPress(event)">
-                <div class="verticalAlign">
-                    <input disabled type="text" value="Tab" oninput="onInput(event)">
-                </div>
-            </div>
-        </div>
-    </div>
-    <img title="Clear all data" src="res/clear.svg" onclick="clearData()" class="float top right">
-    <main class="float top left"><canvas id="canvas" class="float"></canvas></main>
-    <div id="messages" class="console float bottom left"></div>
-    <img title="Clear tab" src="res/clear.svg" onclick="clearCurrentTab()" class="float bottom right">
-    <div id="delete" class="deleteBox float bottom left hidden"><h2>Drag here to delete tab</h2></div>
+<body>
+    <g-tabs class="float expand"></g-tabs>
+    <img id="more" title="Clear all data" src="res/more.svg" class="float right">
+    <g-canvas class="float expand hide_overflow"></g-canvas>
+    <img id="clearTab" title="Clear tab" src="res/clear.svg" class="float bottom right">
+    <div id="messages" contenteditable="true" class="float bottom">CCCACCCB</div>
 </body>
 </html>

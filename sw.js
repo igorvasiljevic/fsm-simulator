@@ -2,12 +2,25 @@ let version = '0.2';
 
 let CACHE_NAME = 'fsm-simulator-cache-' + version;
 let urlsToCache = [
+    './',
     './index.html',
-    './style.css',
+    './index.js',
     './manifest.webmanifest',
-    './fsm.js',
-    './main.js',
-    './res/grid.png',
+
+    './src/constants.js',
+    './src/fsm.js',
+    './src/fsmcanvas.js',
+    './src/swsetup.js',
+
+    './components/canvas.js',
+    './components/tabs.js',
+
+    './css/canvas.css',
+    './css/tabs.css',
+    './css/style.css',
+
+    './res/grid.svg',
+    './res/more.svg',
     './res/clear.svg'
 ];
 
@@ -15,10 +28,6 @@ self.addEventListener('install', event => {
     self.skipWaiting();
     event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)));
 });
-
-// self.addEventListener('message', event  => {
-//     if(event.data === 'skipWaiting') self.skipWaiting();
-// });
 
 self.addEventListener('activate', event => event.waitUntil(caches.keys().then(cacheNames =>
     Promise.all(cacheNames
@@ -36,13 +45,10 @@ self.addEventListener('fetch', event => event.respondWith(
             if(!response || response.status !== 200 || response.type !== 'basic')
                 return response;
 
-            // IMPORTANT: Clone the response. A response is a stream
-            // and because we want the browser to consume the response
-            // as well as the cache consuming the response, we need
-            // to clone it so we have two streams.
-            let responseToCache = response.clone();
-
-            caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseToCache));
+            const responseClone = response.clone();
+            caches.open(CACHE_NAME).then(cache =>
+                cache.put(event.request, responseClone)
+            );
 
             return response;
         });

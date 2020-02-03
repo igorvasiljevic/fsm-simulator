@@ -1,0 +1,79 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial;
+}
+
+html, body  {
+    background-color: rgb(40, 40, 40);
+}
+
+html, body, main {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}
+
+.float {
+    position: absolute;
+}
+.expand {
+    width: 100%;
+    height: 100%;
+}
+.hide_overflow {
+    overflow: hidden;
+}
+.right {
+    right: 0;
+}
+.bottom {
+    bottom: 0;
+}
+
+
+img {
+    user-select: none;
+    background-color: rgb(32, 32, 32);
+    border-radius: 50% 0 0 50%;
+    border-top: 1px solid rgb(46, 46, 46);
+    border-bottom: 1px solid rgb(56, 56, 56);
+    border-left: 1px solid rgb(56, 56, 56);
+    width: 38px;
+    height: 39px;
+    z-index: 30;
+    margin-top: -1px;
+    margin-bottom: 30px;
+    transition: background-color 0.2s;
+    box-shadow: blue 10px 10px 10 10;
+}
+img:active {
+    background-color: rgb(25, 25, 25);
+}
+@media (hover: hover) {
+    img:hover {
+        background-color: rgb(25, 25, 25);
+    }
+    img:active {
+        background-color: rgb(20, 20, 20);
+    }
+}
+
+
+#messages {
+    color: rgb(200, 200, 200);
+    padding-left: 7px;
+    padding-top: 3px;
+    width: 100%;
+    height: 40px;
+    user-select: none;
+    font-size: 16px;
+}
+.inputSelected {
+    color: red;
+    font-size: 20px;
+    font-weight: bold;
+    margin-left: 3px;
+    margin-right: 3px;
+}
