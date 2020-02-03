@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     <title>FSM Simulator</title>
     <meta name="description" content="Finite state machine simulator">
@@ -16,7 +17,7 @@
 
     <link rel="stylesheet" href="style.css">
 
-    <script src="fsm.js"></script>
+    <script src="fsm.js" ></script>
     <script src="main.js"></script>
 </head>
 <body id="body" class="fixedFillHeight">
@@ -29,14 +30,15 @@
                  ondblclick="renameTab(this)"
                  onblur="renameTabEnd(this)"
                  onkeydown="renameTabKeyPress(event)">
-                <input disabled type="text" value="Tab" oninput="onInput(event)">
+                <div class="verticalAlign">
+                    <input disabled type="text" value="Tab" oninput="onInput(event)">
+                </div>
             </div>
         </div>
     </div>
     <img title="Clear all data" src="res/clear.svg" onclick="clearData()" class="float top right">
     <main class="float top left"><canvas id="canvas" class="float"></canvas></main>
-    <div id="messages" class="console float bottom left">
-        <div id="asdasd"></div></div>
+    <div id="messages" class="console float bottom left"></div>
     <img title="Clear tab" src="res/clear.svg" onclick="clearCurrentTab()" class="float bottom right">
     <div id="delete" class="deleteBox float bottom left hidden"><h2>Drag here to delete tab</h2></div>
 </body>

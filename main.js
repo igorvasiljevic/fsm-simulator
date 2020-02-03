@@ -1,3 +1,19 @@
+// import { Tabs } from './js/tabs.js'
+
+// let tabs1 = Tabs(document.getElementById("tabs"));
+
+
+// let tabs2 = Tabs();
+
+// tabs1.add("First");
+// console.log(tabs1.getCurrent());
+// tabs1.add("First");
+// console.log(tabs1.getCurrent());
+
+// console.log(tabs2.getCurrent());
+
+console.time('load_time');
+window.addEventListener('load', () => { console.timeEnd('load_time'); });
 
 const mouseButtons = { LEFT_MOUSE: 0, MIDDLE_MOUSE: 1, RIGHT_MOUSE: 2 }
 
@@ -19,7 +35,7 @@ const canvasOptimizationThreshold = { desktop:150, mobile:30 };
 let messages;
 let deleteBox;
 
-function getTransitionEventName(){
+function getTransitionEventName() {
     let t;
     let el = document.createElement('fakeelement');
     let transitions = {
@@ -96,34 +112,34 @@ function registerServiceWorker() {
 
     }
 };
-registerServiceWorker();
+// registerServiceWorker();
 
-document.ondragover = e => { e.preventDefault() };
+document.ondragover = e => e.preventDefault();
 document.addEventListener('DOMContentLoaded', () => {
     messages = document.getElementById('messages');
     deleteBox = document.getElementById('delete');
 
+    let addtab = document.getElementsByClassName("addtab")[0];
+    addtab.onclick = addTab;
+
     tabs = document.getElementById('tabs');
     tab = tabs.firstElementChild;
-    tab.firstElementChild.maxLength = maxTabNameLength;
-    tab.firstElementChild.size = tab.firstElementChild.value.length;
-    tab.title = tab.firstElementChild.title = tab.firstElementChild.value;
+    let tabText = getTabInput(tab);
+    tabText.maxLength = maxTabNameLength;
+    tabText.size = tabText.value.length;
+    tab.title = tabText.title = tabText.value;
 
     if (typeof(Storage) !== 'undefined' && 'fsms' in localStorage) {
         let tmpFSMS = JSON.parse(localStorage.getItem('fsms'));
-        tmpFSMS.forEach(fsm => {
-            fsms.push(new FSM(fsm));
-        });
+        tmpFSMS.forEach(fsm => fsms.push(new FSM(fsm)));
     }
-    if(fsms.length == 0) {
-        fsms.push(new FSM(tab.firstElementChild.value));
-    }
+    if(fsms.length == 0)
+        fsms.push(new FSM(tabText.value));
 
     tab = tab.cloneNode(true);
     tabs.firstElementChild.remove();
-    for(let i = 0; i < fsms.length; i++) {
+    for(let i = 0; i < fsms.length; i++)
         createTab(fsms[i].name);
-    }
     tabs.firstElementChild.classList.add('selected');
 
     canvas = document.getElementById('canvas');
@@ -158,10 +174,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.addEventListener("load", drawFSM);
 
-function allowDragOver(e) {
-    e.preventDefault();
-}
-
 function getTabIndex(tab) {
     return Array.prototype.indexOf.call(tabs.children, tab);
 }
@@ -169,6 +181,10 @@ function getTabIndex(tab) {
 function getCurrentTabIndex() {
     let currentTab = tabs.getElementsByClassName('selected')[0];
     return getTabIndex(currentTab);
+}
+
+function getTabInput(tab) {
+    return tab.firstElementChild.firstElementChild;
 }
 
 let draggedElement;
@@ -183,7 +199,7 @@ function tabDragStart(e) {
     } else {
         let fsm = fsms[getTabIndex(draggedElement)];
         let url = URL.createObjectURL(new File([JSON.stringify(fsm)], 'fsm.json'));
-        e.dataTransfer.setData('DownloadURL', 'text:' + draggedElement.firstElementChild.value + '.json:' + url);
+        e.dataTransfer.setData('DownloadURL', 'text:' + getTabInput(draggedElement).value + '.json:' + url);
     }
 
     draggedElement.style.opacity = 0.4;
@@ -193,13 +209,11 @@ function tabDragStart(e) {
 function tabDragEnter(e) {
     e.preventDefault()
     e.stopPropagation();
-    if(e.target.id == 'delete') {
+    if(e.target.id == 'delete')
         deleteBox.classList.add('delete');
-    } else if(e.target.parentElement && e.target.classList.contains('tab')) {
-        if(!draggedElement.isSameNode(e.target) && !draggedElement.isSameNode(e.target.nextSibling)) {
+    else if(e.target.parentElement && e.target.classList.contains('tab'))
+        if(!draggedElement.isSameNode(e.target) && !draggedElement.isSameNode(e.target.nextSibling))
             e.target.classList.add('dropZone');
-        }
-    }
 }
 
 function tabDragLeave(e) {
@@ -218,9 +232,8 @@ function onDrop(e) {
     if(e.target.id == 'delete') {
         deleteTab(draggedElement);
     } else if(e.target.parentElement && e.target.classList.contains('tab')) {
-        if(!draggedElement.isSameNode(e.target) && !draggedElement.isSameNode(e.target.nextSibling)) {
+        if(!draggedElement.isSameNode(e.target) && !draggedElement.isSameNode(e.target.nextSibling))
             moveTab(draggedElement, e.target);
-        }
     } else {
         if (e.dataTransfer.files) {
             for(let i = 0; i < e.dataTransfer.files.length; i++) {
@@ -248,13 +261,9 @@ function onDragEnd() {
     deleteBox.classList.remove('delete');
     tabs.parentElement.getElementsByClassName('addtab')[0].classList.remove('dropZone');
 
-    for(let i = 0; i < tabs.children.length; i++) {
+    for(let i = 0; i < tabs.children.length; i++)
         tabs.children[i].classList.remove('dropZone');
-    }
 }
-
-
-
 
 
 function addState(state) {
@@ -307,7 +316,7 @@ function dragState(state, e) {
 
         drawStateGhost(state.id, state.x, state.y);
         canvasBufferContext.drawImage(canvas, 0, 0, canvas.width, canvas.height,
-                                            0, 0, canvas.width, canvas.height);
+                                              0, 0, canvas.width, canvas.height);
         drawState(state.id, state.x, state.y);
     }
 
@@ -321,15 +330,14 @@ function dragState(state, e) {
         newPositionX += x - startX;
         newPositionY += y- startY;
         
-        if(newPositionX < stateRadius + stateEdgePadding.left) {
+        if(newPositionX < stateRadius + stateEdgePadding.left)
             newPositionX = stateRadius + stateEdgePadding.left;
-        } else if(newPositionX > canvas.width - stateRadius - stateEdgePadding.right) {
+        else if(newPositionX > canvas.width - stateRadius - stateEdgePadding.right)
             newPositionX = canvas.width - stateRadius - stateEdgePadding.right;
-        } if(newPositionY < stateRadius + stateEdgePadding.top) {
+        if(newPositionY < stateRadius + stateEdgePadding.top)
             newPositionY = stateRadius + stateEdgePadding.top;
-        } else if(newPositionY > canvas.height - stateRadius - stateEdgePadding.bottom) {
+        else if(newPositionY > canvas.height - stateRadius - stateEdgePadding.bottom)
             newPositionY = canvas.height - stateRadius - stateEdgePadding.bottom;
-        }
 
         let newPositionValid = true;
         for(let i = 0; i < states.length; i++) {
@@ -356,9 +364,8 @@ function dragState(state, e) {
 
         drawFSM();
 
-        if(!newPositionValid) {
+        if(!newPositionValid)
             drawStateGhost(state.id, newPositionX, newPositionY);
-        }
     }
 
     function startTouchDragOptimized(e) {
@@ -368,15 +375,14 @@ function dragState(state, e) {
         newPositionX += x - startX;
         newPositionY += y- startY;
         
-        if(newPositionX < stateRadius + stateEdgePadding.left) {
+        if(newPositionX < stateRadius + stateEdgePadding.left)
             newPositionX = stateRadius + stateEdgePadding.left;
-        } else if(newPositionX > canvas.width - stateRadius - stateEdgePadding.right) {
+        else if(newPositionX > canvas.width - stateRadius - stateEdgePadding.right)
             newPositionX = canvas.width - stateRadius - stateEdgePadding.right;
-        } if(newPositionY < stateRadius + stateEdgePadding.top) {
+        if(newPositionY < stateRadius + stateEdgePadding.top)
             newPositionY = stateRadius + stateEdgePadding.top;
-        } else if(newPositionY > canvas.height - stateRadius - stateEdgePadding.bottom) {
+        else if(newPositionY > canvas.height - stateRadius - stateEdgePadding.bottom)
             newPositionY = canvas.height - stateRadius - stateEdgePadding.bottom;
-        }
 
         startX = x;
         startY = y;
@@ -444,15 +450,14 @@ function dragMouseState(state, e) {
         newPositionX += e.clientX - startX;
         newPositionY += e.clientY - startY;
         
-        if(newPositionX < stateRadius + stateEdgePadding.left) {
+        if(newPositionX < stateRadius + stateEdgePadding.left)
             newPositionX = stateRadius + stateEdgePadding.left;
-        } else if(newPositionX > canvas.width - stateRadius - stateEdgePadding.right) {
+        else if(newPositionX > canvas.width - stateRadius - stateEdgePadding.right)
             newPositionX = canvas.width - stateRadius - stateEdgePadding.right;
-        } if(newPositionY < stateRadius + stateEdgePadding.top) {
+        if(newPositionY < stateRadius + stateEdgePadding.top)
             newPositionY = stateRadius + stateEdgePadding.top;
-        } else if(newPositionY > canvas.height - stateRadius - stateEdgePadding.bottom) {
+        else if(newPositionY > canvas.height - stateRadius - stateEdgePadding.bottom)
             newPositionY = canvas.height - stateRadius - stateEdgePadding.bottom;
-        }
         
         let newPositionValid = true;
         for(let i = 0; i < states.length; i++) {
@@ -479,24 +484,22 @@ function dragMouseState(state, e) {
         
         drawFSM(state);
 
-        if(!newPositionValid) {
+        if(!newPositionValid)
             drawStateGhost(state.id, newPositionX, newPositionY);
-        }
     }
 
     function startDragOptimized(e) {
         newPositionX += e.clientX - startX;
         newPositionY += e.clientY - startY;
         
-        if(newPositionX < stateRadius + stateEdgePadding.left) {
+        if(newPositionX < stateRadius + stateEdgePadding.left)
             newPositionX = stateRadius + stateEdgePadding.left;
-        } else if(newPositionX > canvas.width - stateRadius - stateEdgePadding.right) {
+        else if(newPositionX > canvas.width - stateRadius - stateEdgePadding.right)
             newPositionX = canvas.width - stateRadius - stateEdgePadding.right;
-        } if(newPositionY < stateRadius + stateEdgePadding.top) {
+        if(newPositionY < stateRadius + stateEdgePadding.top)
             newPositionY = stateRadius + stateEdgePadding.top;
-        } else if(newPositionY > canvas.height - stateRadius - stateEdgePadding.bottom) {
+        else if(newPositionY > canvas.height - stateRadius - stateEdgePadding.bottom)
             newPositionY = canvas.height - stateRadius - stateEdgePadding.bottom;
-        }
         
         startX = e.clientX;
         startY = e.clientY;
@@ -541,23 +544,19 @@ function dragMouseState(state, e) {
 function drawFSM(currentState) {
     context.clearRect(0, 0, canvas.width, canvas.height);
     const states = fsms[getCurrentTabIndex()].states;
+
     if(states.length === 0)
         return;
     
-    
-    
     for(let i = 0; i < states.length; i++) {
-        if(currentState && states[i].id == currentState) return; //skip state
-
-        let x = states[i].x;
-        let y = states[i].y;
-
-        drawState(states[i].id, x, y);
+        //skip state so it can be drawn last
+        if(currentState && states[i].id == currentState)
+            return; 
+        drawState(states[i].id, states[i].x, states[i].y);
     }
 
-    if(currentState) {
+    if(currentState)
         drawState(currentState.id, currentState.x, currentState.y);
-    }
 }
 
 function pageClosing() {
@@ -568,15 +567,16 @@ function pageClosing() {
 
 function clearData() {
     deleteBox.classList.add('hidden');
+    let defaultTabText = getTabInput(tab);
 
     if(fsms.length == 1) {
         fsms[0].states = [];
         let firstTab = tabs.firstElementChild;
-        let firstTabText = firstTab.firstElementChild;
-        fsms[0].name = firstTab.title = firstTabText.title = firstTabText.value = tab.firstElementChild.value;
+        let firstTabText = getTabInput(firstTab);
+        fsms[0].name = firstTab.title = firstTabText.title = firstTabText.value = defaultTabText.value;
         firstTabText.size = firstTabText.value.length || 1;
     } else {
-        fsms = [new FSM(tab.firstElementChild.value)];
+        fsms = [new FSM(defaultTabText.value)];
         while(tabs.firstElementChild)
             tabs.firstElementChild.remove();
         createTab();
@@ -598,14 +598,12 @@ function clearCurrentTab() {
     context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function createTab(name) {
-    if(!name)
-        name = tab.firstElementChild.value;
-    
+function createTab(name = getTabInput(tab).value) {
     let newTab = tab.cloneNode(true);
-    newTab.firstElementChild.value = name;
-    newTab.title = newTab.firstElementChild.title = name;
-    newTab.firstElementChild.size = name.length;
+    let newTabText = getTabInput(newTab);
+    newTabText.value = name;
+    newTab.title = newTabText.title = name;
+    newTabText.size = name.length;
     newTab.classList.remove('selected');
     tabs.appendChild(newTab);
     
@@ -614,7 +612,7 @@ function createTab(name) {
 
 function addTab() {
     let newTab = createTab();
-    fsms.push(new FSM(newTab.firstElementChild.value));
+    fsms.push(new FSM(getTabInput(newTab).value));
     switchTab(newTab);
     tabs.scrollLeft += tabs.scrollWidth;
 }
@@ -869,7 +867,7 @@ let currentName;
 let renaming = false;
 function renameTab(tab) {
     renaming = true;
-    let tabText = tab.firstElementChild;
+    let tabText = getTabInput(tab);
     currentName = tabText.value;
 
     tabText.style.pointerEvents = 'all'
@@ -878,7 +876,7 @@ function renameTab(tab) {
     tabText.select();
 }
 function renameTabEnd(tab) {
-    let tabText = tab.firstElementChild;
+    let tabText = getTabInput(tab);
     tabText.disabled = true;
     tabText.classList.remove('alignTextLeft');
     
@@ -891,18 +889,18 @@ function renameTabEnd(tab) {
         tab.title = tabText.title = tabText.value;
     }
     
-    window.getSelection().empty()
-    tabText.style.pointerEvents = ''
+    window.getSelection().empty();
+    tabText.style.pointerEvents = '';
     renaming = false;
 }
 function renameTabKeyPress(e) {
     if(e.key === 'Enter') {
         e.preventDefault();
-        renameTabEnd(e.srcElement.parentElement);
+        renameTabEnd(e.srcElement.parentElement.parentElement);
     } else if(e.key === 'Escape') {
         e.preventDefault();
         e.srcElement.value = currentName;
-        renameTabEnd(e.srcElement.parentElement);
+        renameTabEnd(e.srcElement.parentElement.parentElement);
     }
 }
 function onInput(e) {
