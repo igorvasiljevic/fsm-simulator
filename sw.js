@@ -7,7 +7,6 @@ let urlsToCache = [
     './manifest.webmanifest',
     './fsm.js',
     './main.js',
-    './res/icon.png',
     './res/grid.png',
     './res/clear.svg'
 ];

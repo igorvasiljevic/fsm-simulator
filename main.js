@@ -112,7 +112,7 @@ function registerServiceWorker() {
 
     }
 };
-// registerServiceWorker();
+registerServiceWorker();
 
 document.ondragover = e => e.preventDefault();
 document.addEventListener('DOMContentLoaded', () => {
