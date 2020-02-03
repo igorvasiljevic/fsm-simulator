@@ -5,12 +5,12 @@ let urlsToCache = [
     './',
     './index.html',
     './index.js',
+    './swsetup.js',
     './manifest.webmanifest',
 
     './src/constants.js',
     './src/fsm.js',
     './src/fsmcanvas.js',
-    './src/swsetup.js',
 
     './components/canvas.js',
     './components/tabs.js',

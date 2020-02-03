@@ -1,5 +1,5 @@
 import * as Constants from './src/constants.js'
-import { registerServiceWorker } from './src/swsetup.js'
+import { registerServiceWorker } from './swsetup.js'
 import './components/tabs.js'
 import './components/canvas.js'
 import FSMCanvas from './src/fsmcanvas.js'
