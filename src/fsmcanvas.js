@@ -264,7 +264,8 @@ export default class FSMCanvas {
             if(i < states.length) {
                 switch(this.tool) {
                     case 'add_transition':
-                        this._dragTransition(states[i], e);
+                        if(!this.selected)
+                            this._dragTransition(states[i], e);
                         break;
                     default:
                         this._dragState(states[i], e);

@@ -144,18 +144,18 @@ function loadData() {
 // ---------------------------//
 // SW SETUP                   //
 // ---------------------------//
-window.addEventListener('load', () => {
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js');
+// window.addEventListener('load', () => {
+//     if ('serviceWorker' in navigator) {
+//         navigator.serviceWorker.register('./sw.js');
 
-        let refreshing;
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-            if(refreshing) return;
-            refreshing = true;
-            window.location.reload();
-        });
-    }
-});
+//         let refreshing;
+//         navigator.serviceWorker.addEventListener('controllerchange', () => {
+//             if(refreshing) return;
+//             refreshing = true;
+//             window.location.reload();
+//         });
+//     }
+// });
 
 
 // ---------------------------//
