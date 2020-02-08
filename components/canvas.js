@@ -7,7 +7,7 @@ customElements.define('g-canvas', class extends HTMLElement {
         this._canvas = this.getElementsByTagName('canvas')[0];
     }
 
-    set pixelRatio(ratio) { this._pixelRatio = ratio; console.log(ratio); }
+    set pixelRatio(ratio) { this._pixelRatio = ratio }
 
     resize(width, height) {
         this._canvas.width = width * this._pixelRatio;

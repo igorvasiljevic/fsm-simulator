@@ -1,12 +1,11 @@
-import { State } from './fsm.js';
-
 export default class FSMCanvas {
     constructor({
         canvas,
         stateRadius,
         stateEdgePadding,
         canvasOptimizationThreshold,
-        mouseButtons
+        mouseButtons,
+        getInput
     }) {
         this.canvas = canvas;
         this.context = canvas.context;
@@ -14,6 +13,15 @@ export default class FSMCanvas {
         this.stateEdgePadding = stateEdgePadding;
         this.canvasOptimizationThreshold = canvasOptimizationThreshold;
         this.mouseButtons = mouseButtons;
+        this.getInput = getInput;
+
+        this.selected = null;
+        
+        this.gap = this.stateRadius + 1;
+        this.arrowAngle = 160 * (Math.PI / 180);
+        this.arrowLength = 15;
+        this.loopp = this.stateRadius + 10;
+        this.loopr = this.stateRadius/1.3;
 
         canvas.addEventListener('mousedown', this._canvasMouseDown.bind(this));
         canvas.addEventListener('touchstart', this._canvasDrag.bind(this), {passive: true});
@@ -26,7 +34,14 @@ export default class FSMCanvas {
         this.drawFSM();
     }
 
-    set accepted(val) { this._accepted = val; }
+    set accepted(val) { this._accepted = val }
+
+    set tool(name) { this._tool = name }
+    get tool() { return this._tool }
+    get selected() { return this._selected }
+    set selected(stateId) {
+        this._selected = (this._selected == stateId) ? null : stateId;
+    }
 
     drawFSM() {
         this.context.clearRect(0, 0, this.context.canvas.scrollWidth, this.context.canvas.scrollHeight);
@@ -51,14 +66,19 @@ export default class FSMCanvas {
         this.context.beginPath();
 
         this.context.strokeStyle = 'rgb(15,15,15)';
+        if(this.FSM.initial == id)
+            this.context.strokeStyle = 'blue';
         if(this.FSM.current.includes(id)) {
             if(this.hasOwnProperty('_accepted'))
                 this.context.strokeStyle = this._accepted && this.FSM.final.includes(id) ? 'green' : 'red';
             else this.context.strokeStyle = 'yellow';
         }
-        this.context.lineWidth = 3;
-        this.context.fillStyle = 'rgb(235,235,235)';
 
+        this.context.fillStyle = 'rgb(235,235,235)';
+        if(this._selected == id)
+            this.context.fillStyle = 'rgb(160, 190, 255)';
+        this.context.lineWidth = 3;
+        
         this.context.arc(x, y, this.stateRadius, 0, 2 * Math.PI);
         this.context.fill();
         this.context.stroke();
@@ -91,69 +111,61 @@ export default class FSMCanvas {
     }
 
     _drawStateTransitions(state) {
-        const gap = this.stateRadius + 1;
-        const arrowAngle = 0.13;
-        const arrowLength = 37;
-        const loopp = this.stateRadius + 10;
-        const loopr = this.stateRadius/1.3;
-
         for(let sid in state.transitions) {
-            if(sid == state.id) {
-                // state has transition into itself
+            const tstate = this.FSM.getState(sid);
+            this._drawArrow(state.x, state.y, tstate.x, tstate.y,
+                                state.transitions[tstate.id].filter(Boolean).join(','));
+        }
+    }
 
-                this.context.beginPath();
-                this.context.strokeStyle = 'rgb(15,15,15)';
-                this.context.fillStyle = 'rgb(235,235,235)';
-                this.context.font = 'bold 18px Arial';
-                this.context.textAlign = 'center';
-                this.context.textBaseline = 'middle';
-                this.context.lineWidth = 2;
+    _drawArrow(x1,y1,x2,y2,text,pad = true) {
+        const gap = pad ? this.gap : 0;
 
-                // Arrow body
-                this.context.arc(state.x, state.y - loopp, loopr, 0, 2 * Math.PI);
+        this.context.beginPath();
+        this.context.strokeStyle = 'rgb(15,15,15)';
+        this.context.fillStyle = 'rgb(235,235,235)';
+        this.context.font = 'bold 18px Arial';
+        this.context.textAlign = 'center';
+        this.context.textBaseline = 'middle';
+        this.context.lineWidth = 2;
 
-                this.context.stroke();
-                this.context.fillText(state.transitions[state.id].join(','),
-                    state.x, state.y - loopp - loopr);
+        if(Math.abs(x1 - x2) < this.stateRadius && Math.abs(y1 - y2) < this.stateRadius) {
+            this.context.arc(x1, y1 - this.loopp, this.loopr, 0, 2 * Math.PI);
+            this.context.stroke();
+            this.context.fillText(text, x1, y1 - this.loopp - this.loopr);
+        } else {
+            let vx = x2 - x1;
+            let vy = y2 - y1;
 
-            } else {
-                const tstate = this.FSM.states[Number.parseInt(sid)];
+            // normalization of the line vector
+            const vlenght = Math.sqrt(vx*vx + vy*vy);
+            vx = vx / vlenght;
+            vy = vy / vlenght;
 
-                this.context.beginPath();
-                this.context.strokeStyle = 'rgb(15,15,15)';
-                this.context.fillStyle = 'rgb(235,235,235)';
-                this.context.font = 'bold 18px Arial';
-                this.context.textAlign = 'center';
-                this.context.textBaseline = 'middle';
-                this.context.lineWidth = 2;
-                
-                let vx = tstate.x - state.x;
-                let vy = tstate.y - state.y;
-                let vlenght = Math.sqrt(vx*vx + vy*vy);
-                vx = vx / vlenght;
-                vy = vy / vlenght;
+            const startx = x1 + vx*this.gap;
+            const starty = y1 + vy*this.gap;
+            const endx = x2 - vx*gap;
+            const endy = y2 - vy*gap;
 
-                let vx2 = Math.cos(arrowAngle)*vx - Math.sin(arrowAngle)*vy;
-                let vy2 = Math.sin(arrowAngle)*vx + Math.cos(arrowAngle)*vy;
+            let vx2 = Math.cos(this.arrowAngle)*vx - Math.sin(this.arrowAngle)*vy;
+            let vy2 = Math.sin(this.arrowAngle)*vx + Math.cos(this.arrowAngle)*vy;
 
-                let vx3 = Math.cos(-arrowAngle)*vx - Math.sin(-arrowAngle)*vy;
-                let vy3 = Math.sin(-arrowAngle)*vx + Math.cos(-arrowAngle)*vy;
+            let vx3 = Math.cos(-this.arrowAngle)*vx - Math.sin(-this.arrowAngle)*vy;
+            let vy3 = Math.sin(-this.arrowAngle)*vx + Math.cos(-this.arrowAngle)*vy;
 
-                //Arrow body
-                this.context.moveTo(state.x + vx*gap, state.y + vy*gap);
-                this.context.lineTo(tstate.x - vx*gap, tstate.y - vy*gap);
+            //Arrow body
+            this.context.moveTo(startx, starty);
+            this.context.lineTo(endx, endy);
 
-                // Arrow head
-                this.context.lineTo(tstate.x - vx2*arrowLength, tstate.y - vy2*arrowLength);
-                this.context.moveTo(tstate.x - vx*gap, tstate.y - vy*gap);
-                this.context.lineTo(tstate.x - vx3*arrowLength, tstate.y - vy3*arrowLength);
+            // Arrow head
+            this.context.moveTo(endx, endy);
+            this.context.lineTo(endx + vx2*this.arrowLength, endy + vy2*this.arrowLength);
+            this.context.moveTo(endx, endy);
+            this.context.lineTo(endx + vx3*this.arrowLength, endy + vy3*this.arrowLength);
 
-                this.context.stroke();
-                
-                this.context.fillText(state.transitions[sid].join(', '),
-                    (state.x + tstate.x) / 2 - vx*gap,
-                    (state.y + tstate.y) / 2 - vy*gap);
-            }
+            this.context.stroke();
+
+            this.context.fillText(text, (x1+x2)/2, (y1+y2)/2);
         }
     }
 
@@ -183,9 +195,43 @@ export default class FSMCanvas {
                 }
 
                 if(i < states.length) {
-                    this._dragMouseState(states[i], e);
+                    console.log(this.tool);
+                    if(this.tool) {
+                        switch(this.tool) {
+                            case 'delete_state':
+                                this._removeState(states[i].id);
+                                break;
+                            case 'add_transition':
+                                if(this.selected != null)
+                                    this._createTransition(this.FSM.getState(this.selected), states[i], e);
+                                else this._dragTransition(states[i], e);
+                                break;
+                            case 'set_final_state':
+                                this._setFinalState(states[i].id);
+                                break;
+                            case 'set_initial_state':
+                                this._setInitialState(states[i].id);
+                                break;
+                        } 
+                    } else {
+                        this.selected = states[i].id;
+                        this._dragMouseState(states[i], e);
+                    }
                 } else if(!tooClose) {
-                    this.FSM.addState(x,y);
+                    if(document.activeElement && (
+                       document.activeElement.tagName === 'INPUT' ||
+                       document.activeElement.getAttribute('contenteditable')))
+                        return;
+                    const newStateId = this.FSM.addState(x,y).id;
+                    this.selected = null;
+                    switch(this.tool) {
+                        case 'set_final_state':
+                            this._setFinalState(newStateId);
+                            break;
+                        case 'set_initial_state':
+                            this._setInitialState(newStateId);
+                            break;
+                    }
                     this.drawFSM();
                 }
 
@@ -216,7 +262,13 @@ export default class FSMCanvas {
 
 
             if(i < states.length) {
-                this._dragState(states[i], e);
+                switch(this.tool) {
+                    case 'add_transition':
+                        this._dragTransition(states[i], e);
+                        break;
+                    default:
+                        this._dragState(states[i], e);
+                }
                 return;
             }
         } 
@@ -253,8 +305,6 @@ export default class FSMCanvas {
         function startDrag(e) {
             newPositionX += e.clientX - startX;
             newPositionY += e.clientY - startY;
-
-            // console.log(this);
 
             if(newPositionX < this.stateRadius + this.stateEdgePadding.LEFT)
                 newPositionX = this.stateRadius + this.stateEdgePadding.LEFT;
@@ -349,8 +399,8 @@ export default class FSMCanvas {
         const canvas = this.context.canvas;
         let startX = e.targetTouches[0].clientX - canvas.offsetLeft;
         let startY = e.targetTouches[0].clientY - canvas.offsetTop;
-        let states = this.FSM.states;
-        let optimized = this.canvasOptimizationThreshold.MOBILE < states.length;
+        const states = this.FSM.states;
+        const optimized = this.canvasOptimizationThreshold.MOBILE < states.length;
         
         canvas.ontouchend = stopDrag.bind(this);
         canvas.ontouchmove = optimized ? startTouchDragOptimized.bind(this) : startTouchDrag.bind(this);
@@ -422,7 +472,7 @@ export default class FSMCanvas {
             let y = e.targetTouches[0].clientY - canvas.offsetTop;
     
             newPositionX += x - startX;
-            newPositionY += y- startY;
+            newPositionY += y - startY;
             
             if(newPositionX < this.stateRadius + this.stateEdgePadding.LEFT)
                 newPositionX = this.stateRadius + this.stateEdgePadding.LEFT;
@@ -471,6 +521,132 @@ export default class FSMCanvas {
     
             this.drawFSM();
         }
+    }
+
+    _dragTransition(state, e) {
+        const canvas = this.context.canvas;
+        const states = this.FSM.states;
+        let x, y;
+        if(e.targetTouches) {
+            x = e.targetTouches[0].clientX - canvas.offsetLeft;
+            y = e.targetTouches[0].clientY - canvas.offsetTop;
+
+            canvas.ontouchend = stopDrag.bind(this);
+            canvas.ontouchmove = startDrag.bind(this);
+        } else {
+            x = e.clientX - canvas.offsetLeft;
+            y = e.clientY - canvas.offsetTop;
+
+            canvas.onmouseup = stopDrag.bind(this);
+            canvas.onmousemove = startDrag.bind(this);
+        }
+
+        function startDrag(e) {          
+            if(e.targetTouches) {
+                x = e.targetTouches[0].clientX - canvas.offsetLeft;
+                y = e.targetTouches[0].clientY - canvas.offsetTop;
+            } else {
+                x = e.clientX - canvas.offsetLeft;
+                y = e.clientY - canvas.offsetTop;
+            }
+
+            this.drawFSM();
+            this._drawArrow(state.x, state.y, x, y, '', false);
+        }
+        
+        function stopDrag() {
+            canvas.onmousemove = null;
+            canvas.onmouseup = null;
+            canvas.ontouchend = null;
+            canvas.ontouchmove = null;
+
+            for(var i = 0; i < states.length; i++) {
+                let a = states[i].x - x;
+                let b = states[i].y - y;
+                let dist = a*a + b*b;
+                
+                let minDist = this.stateRadius;
+                if(dist < minDist*minDist) break;
+            }
+
+            if(i < states.length)
+                this._createTransition(state, states[i]);
+
+            this.drawFSM();
+        }
+    }
+
+    _createTransition(fromState, toState, e) {
+        if(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        const canvas = this.context.canvas;
+        let tx = (fromState.x + toState.x) / 2 + canvas.offsetLeft;
+        let ty = (fromState.y + toState.y) / 2 + canvas.offsetTop;
+        if(fromState.equals(toState)) {
+            tx = fromState.x + canvas.offsetLeft;
+            ty = fromState.y - this.loopp - this.loopr + canvas.offsetTop;
+        } else {
+            tx = (fromState.x + toState.x) / 2 + canvas.offsetLeft;
+            ty = (fromState.y + toState.y) / 2 + canvas.offsetTop;
+        }
+
+        const text = fromState.transitions[toState.id] ?
+                     fromState.transitions[toState.id].join(',') : 
+                    '';
+        if(!text) fromState.addTransition(toState.id, '');
+        else fromState.transitions[toState.id] = [''];
+        this.drawFSM();
+        this._getInput(tx, ty, text, input => {
+            console.log(input.trim() ? true : false);
+            if(input.trim())
+                fromState.transitions[toState.id] = input.split(',')
+                                                         .map(Function.prototype.call, String.prototype.trim)
+                                                         .sort();
+            else delete fromState.transitions[toState];
+            this.drawFSM();
+        })
+    }
+
+    _getInput(x, y, text, callback) {
+        this.getInput.style.left = (x-40) + 'px';
+        this.getInput.style.top = (y-11) + 'px';
+        this.getInput.value = text;
+        this.getInput.classList.remove('not_shown');
+        
+
+        let cancel = false;
+        this.getInput.onkeyup = e => {
+            if(e.key === 'Escape' || e.key === 'Enter') {
+                if(e.key === 'Escape') cancel = true;
+                this.getInput.onkeyup = null;
+                this.getInput.blur();
+            }
+        };
+        this.getInput.onblur = e => {
+            this.getInput.onblur = null;
+            this.getInput.classList.add('not_shown');
+            if(cancel) callback('');
+            else callback(this.getInput.value);
+        };
+        this.getInput.focus();
+    }
+
+    _removeState(stateId) {
+        this.FSM.removeState(stateId);
+        this.drawFSM();
+    }
+
+    _setFinalState(stateId) {
+        this.FSM.toggleFinal(stateId);
+        this.drawFSM();
+    }
+
+    _setInitialState(stateId) {
+        this.FSM.setInitial(stateId);
+        this.drawFSM();
     }
 }
 

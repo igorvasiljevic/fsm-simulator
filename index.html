@@ -22,11 +22,26 @@
     <script src="index.js" type="module"></script>
     <noscript>The site can't function without JavaScript</noscript>
 </head>
-<body>
+<body style="user-select: none;">
     <g-tabs class="float expand"></g-tabs>
     <img id="more" title="Clear all data" src="res/more.svg" class="float right">
     <g-canvas class="float expand hide_overflow"></g-canvas>
-    <img id="clearTab" title="Clear tab" src="res/clear.svg" class="float bottom right">
-    <div id="messages" contenteditable="true" class="float bottom">CCCACCCB</div>
+    <div id="toolContainer" class="inlineBlock fit float bottom">
+        <div id="inputString" contenteditable="true">CCCACCCB</div>
+        <div id="bottomBar">
+            <div id="tools" class="flex float bottom">
+                <img id="delete_state" title="Delete state" src="res/clear.svg">
+                <img id="add_transition" title="Add transitions" src="res/add_transition.svg">
+                <img id="set_final_state" title="Set final states" src="res/set_final_state.svg">
+                <img id="set_initial_state" title="Set initial state" src="res/set_initial_state.svg">
+            </div>
+            <div id="runstep" class="flex float bottom right">
+                <img id="step" title="Clear tab" src="res/step.svg">
+                <img id="run" title="Clear tab" src="res/run.svg">
+            </div>
+        </div>
+    </div>
+    <div id="toast" class="hidden">Toast</div>
+    <input type="text" id="getInput" class="float not_shown">
 </body>
 </html>

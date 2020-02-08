@@ -7,7 +7,7 @@ export const MOUSE_BUTTONS = {
 
 export const STATE_RADIUS = 22;
 export const STATE_EDGE_PADDING = {
-    TOP:45, BOTTOM:60, LEFT:20, RIGHT:20, BETWEEN:10 };
+    TOP:45, BOTTOM:60, LEFT:20, RIGHT:20, BETWEEN:20 };
 
 export const CANVAS_SIZE_MULTIPLIER = 2;
 export const CANVAS_MIN_SIZE_MULTIPLIER = 1.5;
@@ -24,6 +24,10 @@ export const PIXEL_RATIO = (() => {
 // after what number of states will the drawing on state drag be optimized
 export const CANVAS_OPTIMIZATION_THRESHOLD = {
     DESKTOP:10, MOBILE:5 };
+
+
+export const STRING_ACCEPTED = 'String accepted';
+export const STRING_NOT_ACCEPTED = 'String not accepted';
 
 export const TRANSITION_EVENT_NAME = (() => {
     let t;
