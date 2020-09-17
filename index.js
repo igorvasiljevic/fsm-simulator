@@ -6,7 +6,7 @@ function previousPage() {
 }
 
 function nextPage() {
-    window.location.href = "simulator.html";
+    document.location.href = "simulator.html";
 }
 
 
