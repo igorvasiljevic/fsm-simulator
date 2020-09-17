@@ -1,4 +1,3 @@
-
 const state_element_template = 
     `<div class="state">
         <svg class="svg no_events" width="54" height="54" xmlns="http://www.w3.org/2000/svg">

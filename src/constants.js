@@ -1,5 +1,3 @@
-
-
 const EPSILON = "$";
 
 const TutorialFSMS = {

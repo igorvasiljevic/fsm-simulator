@@ -1,3 +1,5 @@
+registerServiceWorker();
+
 
 let fsm_canvas;
 

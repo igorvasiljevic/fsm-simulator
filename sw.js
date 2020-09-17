@@ -6,26 +6,24 @@ let urlsToCache = [
     './index.html',
     './index.js',
     './manifest.webmanifest',
+    './styles.css',
+
 
     './src/constants.js',
     './src/fsm.js',
     './src/fsmcanvas.js',
+    './src/lang.js',
+    './src/simulator.js',
+    './src/util.js',
 
-    './components/canvas.js',
-    './components/tabs.js',
-
-    './css/canvas.css',
-    './css/tabs.css',
-    './css/style.css',
-
+    './res/add_transition.svg',
+    './res/delete.svg',
     './res/grid.svg',
     './res/more.svg',
-    './res/clear.svg',
-    './res/add_transition.svg',
+    './res/run.svg',
     './res/set_final_state.svg',
     './res/set_initial_state.svg',
-    './res/step.svg',
-    './res/run.svg'
+    './res/step.svg'
 ];
 
 self.addEventListener('install', event => {

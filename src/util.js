@@ -1,3 +1,19 @@
+const registerServiceWorker = () => {
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js');
+
+            let refreshing;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if(refreshing) return;
+                refreshing = true;
+                window.location.reload();
+            });
+        });
+    }
+}
+
+
 const Data = (() => {
     if (typeof(Storage) == "undefined")
     return {
