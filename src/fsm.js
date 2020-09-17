@@ -1,139 +1,141 @@
-export class State {
-    constructor(x, y) {
-        this.id = null;
+
+
+
+class State {
+    constructor(id) {
+        this.id = id.toString();
+        this.name = this.id;
         this.transitions = {};
+        this.final = false;
+        this.x = 0;
+        this.y = 0;
+    }
+
+    setName(name) {
+        this.name = name;
+        return this;
+    }
+
+    setTransitions(transitions) {
+        this.transitions = transitions;
+        return this;
+    }
+
+    setFinal(final) {
+        this.final = final;
+        return this;
+    }
+
+    setPosition(x, y) {
         this.x = x;
         this.y = y;
+        return this;
     }
 
-    equals(state) {
-        return this.id === state.id;
+    addTransition(id, symbol) {
+        this.transitions[id] ?
+            this.transitions[id].push(symbol) :
+            this.transitions[id] = [symbol];
     }
 
-    addTransition(stateId, input) {
-        if(this.transitions[stateId]) {
-            if(!this.transitions[stateId].includes(input)) {
-                this.transitions[stateId].push(input);
-                this.transitions[stateId].sort();
-            }
-        } else this.transitions[stateId] = [input];
+    removeTransition(id) {
+        delete this.transitions[id];
     }
 }
 
-export class FSM {
+class FSM {
     constructor(fsm) {
-        this.states = [];
-        this.current = [];
-        this.final = [];
-        this._currentId = -1;
-
-        if(typeof fsm == "object") {
-            this.name = fsm.name;
-            this.initial = fsm.initial;
-            this.final = fsm.final || [];
+        if(fsm) {
+            this.next_state_id = fsm.next_state_id;
+            this.initial_state = fsm.initial_state.toString();
             
-            
-            fsm.states.forEach(state => {
-                const newState = new State(state.x, state.y);
-                newState.id = state.id;
-                if(state.id > this._currentId)
-                    this._currentId = Number.parseInt(state.id);
-                newState.transitions = state.transitions || {};
-                this.states.push(newState);
-            });
-        } else if(typeof fsm == "string") {
-            this.name = fsm;
+            this.states = [];
+            for(let state_object of fsm.states)
+                this.states.push(new State(state_object.id)
+                    .setName(state_object.name)
+                    .setTransitions(state_object.transitions)
+                    .setFinal(state_object.final)
+                    .setPosition(state_object.x, state_object.y)
+                );
         } else {
-            this.name = null;
+            this.next_state_id = 0;
+            this.initial_state = this.next_state_id.toString();
+
+            this.states = [new State(this.next_state_id).setName("S")];
+
+            ++this.next_state_id;
         }
     }
 
-    toFile() {
-        return JSON.stringify(this, (k,v) => {
-            switch(k) {
-                case 'name': case 'current': case '_currentId': return undefined;
-                case 'transitions': return Object.keys(v).length ? v : undefined;
-                default: return v
-            }
-        })
+    getState(id) {
+        for(let state of this.states)
+            if(state.id === id)
+                return state;
     }
 
-    getState(stateId) {
-        for(let i = 0; i < this.states.length; i++)
-            if(this.states[i].id == stateId)
-                return this.states[i];
-        return null;
-    }
-
-    addState(x,y) {
-        const state = new State(x,y);
-        state.id = ++this._currentId;
-        if(this.states.length == 0) this.initial = state.id;
+    addState() {
+        let state = new State(this.next_state_id++);
         this.states.push(state);
         return state;
     }
 
-    removeState(stateId) {
-        this.states = this.states.filter(s => { return s.id != stateId });
-        this.final = this.final.filter(s => { return s.id != stateId });
-        for(let i = 0; i < this.states.length; i++)
-            delete this.states[i].transitions[stateId];
-        if(this.initial == stateId)
-            this.initial = this.states.length == 0 ? null : this.states[0].id;
-        this.reset();
+    removeState(id) {
+        if(id == this.initial_state)
+            return;
+
+        for(let i in this.states)
+            delete this.states[i].transitions[id];
+
+        for(let i in this.states)
+            if(this.states[i].id === id)
+                this.states.splice(i, 1);
     }
 
-    addStateTransition(fromStateId, toStateId, input) {
-        for(let i = 0; i < this.states.length; i++) {
-            if(this.states[i].id == fromStateId) {
-                this.states[i].addTransition(toStateId, input);
-                return;
+    transition(symbol, current_states) {
+        let new_current_states = [];
+
+        if(!current_states) {
+            current_states = [this.initial_state];
+            new_current_states = current_states;
+        }
+
+        for(let state_id of current_states) {
+            let state = this.getState(state_id);
+
+            for(let transition_state_id in state.transitions) {
+                if(!new_current_states.includes(transition_state_id) && state.transitions[transition_state_id].includes(symbol))
+                    new_current_states.push(transition_state_id);
+
+                // epsilon transition
+                for(let new_current_state_id of new_current_states) {
+                    let new_current_state = this.getState(new_current_state_id);
+
+                    for(let new_transition_state_id in new_current_state.transitions)
+                        if(!new_current_states.includes(new_transition_state_id) && new_current_state.transitions[new_transition_state_id].includes(EPSILON))
+                            new_current_states.push(new_transition_state_id);
+                }
+
             }
         }
+
+        return new_current_states;
     }
 
-    toggleFinal(stateId) {
-        let index = this.final.indexOf(stateId);
-        if(index < 0) this.final.push(stateId);
-        else this.final.splice(index, 1);
+    test(array, current_states) {
+        if(!current_states)
+            current_states = this.transition("", current_states);
+
+        for(let symbol of array)
+            current_states = this.transition(symbol, current_states);
+
+        return current_states;
     }
 
-    setInitial(stateId) {
-        this.initial = stateId;
-    }
+    accepted(current_states) {
+        for(let state of current_states)
+            if(this.getState(state).final)
+                return true;
 
-    reset() {
-        this.current = [];
-    }
-
-    input(input) {
-        if(this.states.length == 0) return;
-        
-        const newCurrent = [];
-        this.current.forEach(sid => {
-            const state = this.getState(sid);
-            for(let ts in state.transitions) {
-                if(state.transitions[ts].includes(input) && !newCurrent.includes(Number.parseInt(ts))) {
-                    newCurrent.push(Number.parseInt(ts));
-                }
-            }
-        });
-        this.current = newCurrent;
-    }
-
-    test(inputString) {
-        if(this.states.length == 0) return;
-        if(this.current.length == 0) this.current = [this.initial];
-
-        const inputArray = (inputString.indexOf(',') < 0) ?
-                                inputString.split('') :
-                                inputString.split(',');
-        for(let i = 0; i < inputArray.length; i++)
-            this.input(inputArray[i]);
-        return this.valid();
-    }
-
-    valid() {
-        return this.current.some(state => this.final.includes(state));
+        return false;
     }
 }

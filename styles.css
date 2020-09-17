@@ -1,0 +1,334 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+html {
+    background-color: rgb(34, 34, 34);
+    color: rgb(200, 200, 200);
+}
+
+hr {
+    border-top-style: 1px solid  rgb(200, 200, 200);
+    max-width: 850px;
+    margin: 3em auto 1em;
+}
+
+header {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+header p {
+    color: rgb(80, 80, 80);
+    text-align: right;
+    margin: 5px 1em 5px 5px;
+}
+
+header a {
+    color: rgb(150, 150, 150);
+    text-decoration: none;
+    text-align: right;
+    padding: 0px 5px;
+    cursor: pointer;
+}
+
+header h1 {
+    margin-top: 0.5em;
+    text-align: center;
+    font-size: 3.2em;
+    font-weight: 100;
+    font-style: italic;
+}
+
+header h4 {
+    color: rgb(150, 150, 150);
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 100;
+    font-style: italic;
+    margin-top: 10px;
+}
+
+main {
+    max-width: 850px;
+    margin: 3em auto auto;
+
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+main p {
+    margin: 2em 25px;
+    line-height: 1.5;
+}
+
+footer {
+    margin: 0px auto 2em;
+    color: rgb(100, 100, 100);
+    text-align: center;
+}
+
+footer .bottom_navigation {
+    display: table;
+    margin: 0px auto;
+}
+
+footer ul {
+    padding: 0px;
+    list-style: none;
+    text-align: center;
+    vertical-align: middle;
+}
+
+footer li {
+    float: left;
+    padding: 1em;
+    color: rgb(80, 80, 80);
+    font-size: 1.3em;
+    text-decoration: none;
+    cursor: pointer;
+}
+footer li:active {
+    background-color: rgb(32, 32, 32);
+}
+footer span {
+    color: rgb(150, 150, 150);
+}
+
+
+.fsm_frame {
+    position: relative;
+    overflow: hidden;
+
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;
+    height: 400px;
+    left: 0px;
+    top: 0px;
+}
+
+.fsm_canvas {
+    background-image: url("res/grid.svg");
+    background-position: center center;
+    position: absolute;
+
+    width: 200%;
+    height: 200%;
+}
+
+.not_selectable {
+    user-select: none;
+}
+
+.default_cursor {
+    cursor: default;
+}
+
+.no_events {
+    pointer-events: none;
+}
+
+.disabled {
+    display: none;
+}
+
+.state {
+    position: absolute;
+    z-index: 2;
+}
+.state_current {
+    fill: rgba(228, 225, 43, 0.9);
+}
+.state_accepted {
+    fill: rgb(6, 124, 6);
+}
+.state_not_accepted {
+    fill: rgb(124, 6, 6);
+}
+.state_selected {
+    fill: rgba(99, 178, 243, 0.9);
+}
+.svg {
+    display: block;
+}
+.state_text {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0);
+    width: 100%;
+    height: 100%;
+    left: 0px;
+    top: 0px;
+    border: 0px;
+    outline: 0px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.transition {
+    position: absolute;
+    z-index: 0;
+}
+
+.transition_text {
+    position: absolute;
+    width: 100%;
+    top: 2px;
+    text-align: center;
+    vertical-align: middle;
+    background-color: rgba(0, 0, 0, 0);
+    color: rgb(200, 200, 200);
+    border: 0px;
+    outline: 0px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.loop_text {
+    left: 0px;
+    top: -2px;
+}
+
+img {
+    user-select: none;
+    width: 45px;
+    height: 45px;
+    z-index: 30;
+    transition: background-color 0.2s ease 0s;
+    background-color: rgb(28, 28, 28);
+}
+
+img:active {
+    background-color: rgb(25, 25, 25);
+}
+
+@media (hover: hover) {
+    img:hover {
+        background-color: rgb(25, 25, 25);
+    }
+
+    img:active {
+        background-color: rgb(20, 20, 20);
+    }
+}
+
+.bottom_bar {
+    position: absolute;
+    width: 100%;
+    height: 50px;
+    bottom: 0px;
+    background-color: rgb(34, 34, 34);
+    z-index: 20;
+    display: flex;
+    flex-direction: row;
+    white-space: nowrap;
+    border-bottom: 1px solid rgb(40, 40, 40);
+}
+
+.fsm_string_container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+.fsm_string {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+    color: rgb(200, 200, 200);
+    background-color: rgb(34, 34, 34);
+    border: 0px;
+    outline: 0px;
+    overflow: hidden;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 20px;
+    line-height: 50px;
+    cursor: text;
+
+    scroll-behavior: smooth;
+}
+
+.inputSelected {
+    color: red;
+    font-weight: bold;
+    margin-left: 3px;
+    margin-right: 3px;
+}
+
+.fsm_runstep {
+    position: relative;
+    display: flex;
+    right: 0px;
+    bottom: 0px;
+    background-color: rgb(32, 32, 32);
+    border-radius: 99999px 0px 0px 99999px;
+    border-top: 1px solid rgb(46, 46, 46);
+    border-left: 1px solid rgb(56, 56, 56);
+    border-bottom: 1px solid rgb(56, 56, 56);
+}
+
+.fsm_runstep img {
+    margin: 1px 5px 1px 1px;
+    border-radius: 50%;
+}
+
+.toggle_toolbar {
+    position: absolute;
+    border-top-left-radius: 50%;
+    bottom: 49px;
+    right: 0px;
+    background-color: rgb(34, 34, 34);
+    border-top: 1px solid rgb(46, 46, 46);
+    border-left: 1px solid rgb(56, 56, 56);
+    border-bottom: 1px solid rgb(28, 28, 28);
+}
+
+.toolbar {
+    position: absolute;
+    height: 50px;
+    right: -100%;
+    bottom: 0px;
+    z-index: 50;
+    background-color: rgb(34, 34, 34);
+    border-radius: 99999px 0px 0px 99999px;
+    border-top: 1px solid rgb(46, 46, 46);
+    border-bottom: 1px solid rgb(56, 56, 56);
+    border-left: 1px solid rgb(56, 56, 56);
+    transition: right 0.2s ease-out;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+.toolbar_show {
+    right: 0px;
+}
+.toolbar img {
+    border-radius: 50%;
+    margin-right: 5px;
+}
+.tool_selected {
+    background-color: rgb(25, 25, 25);
+    border: 2px solid rgb(172, 0, 0);
+}
+
+
+
+.home * {
+    background-color: rgb(34, 34, 34);
+    position: absolute;
+    z-index: 100;
+    transform: rotate(180deg);
+}

@@ -1,0 +1,53 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>FSM Simulator</title>
+    <meta name="description" content="Finite state machine simulator">
+    <meta name="author" content="17112">
+
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#282828">
+    <link rel="shortcut icon" type="image/png" href="res/icon.png">
+    <link rel="apple-touch-icon" href="res/appleicon.png">
+
+    <link rel="stylesheet" href="styles.css">
+    
+    <noscript>This site can't function without JavaScript</noscript>
+    <script src="src/constants.js"></script>
+    <script src="src/util.js"></script>
+    <script src="src/lang.js"></script>
+    <script src="src/fsm.js"></script>
+    <script src="src/fsmcanvas.js"></script>
+    <script src="src/simulator.js"></script>
+</head>
+<body>
+    <a class="home" href="/"><img src="res/step.svg"></a>
+    <div class="fsm_frame" style="width: 100%; height: 100%; left: 0px; top: 0px;">
+        <div class="fsm_canvas" style="width: 200%; height: 200%;"></div>
+        <div class="bottom_bar">
+            <div class="fsm_string_container">
+                <input type="text" autocomplete="off" spellcheck="false" class="fsm_string">
+                <div class="fsm_string"></div>
+            </div>
+            <div class="fsm_runstep">
+                <img class="step" title="Step" src="res/step.svg">
+                <img class="run" title="Run" src="res/run.svg">
+            </div>
+            <img class="toggle_toolbar" title="Toolbar" src="res/more.svg">
+            <div class="toolbar">
+                <img id="delete" class="delete" title="Delete" src="res/delete.svg">
+                <img id="initial" class="set_initial_state" title="Set initial state" src="res/set_initial_state.svg">
+                <img id="final" class="set_final_state" title="Set final states" src="res/set_final_state.svg">
+                <img id="transition" class="add_transition" title="Add transitions" src="res/add_transition.svg">
+            </div>
+        </div>
+    </div>
+    
+    <p id="output" class="no_events not_selectable" style="position: absolute; padding: 1em;"></p>
+</body>
+</html>

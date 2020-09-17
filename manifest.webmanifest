@@ -1,7 +1,7 @@
 {
-    "name": "FSM Simulator",
+    "name": "Finite State Machines",
     "short_name": "FSM",
-    "description": "Finite State Machine Simulator",
+    "description": "Finite State Machine lessons and simulator",
     "icons": [
         {
           "src": "res/icon.png",
