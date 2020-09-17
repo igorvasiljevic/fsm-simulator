@@ -1,6 +1,3 @@
-registerServiceWorker();
-
-
 let fsm_canvas;
 
 window.addEventListener('load', () => {
