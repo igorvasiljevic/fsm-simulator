@@ -5,8 +5,11 @@ let fsm_canvas;
 
 window.addEventListener('load', () => {
 
-    let fsm_frame = document.getElementsByClassName("fsm_frame")[0];
+    document.getElementById("home").onmousedown = () => {
+        window.location.href = "/";
+    }
 
+    let fsm_frame = document.getElementsByClassName("fsm_frame")[0];
     fsm_canvas = new FSMCanvas(fsm_frame);
 
     fsm_canvas.setString(Data.get("string"));

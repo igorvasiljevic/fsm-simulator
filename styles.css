@@ -324,9 +324,7 @@ img:active {
     border: 2px solid rgb(172, 0, 0);
 }
 
-
-
-.home * {
+#home {
     background-color: rgb(34, 34, 34);
     position: absolute;
     z-index: 100;
