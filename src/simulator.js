@@ -6,7 +6,7 @@ let fsm_canvas;
 window.addEventListener('load', () => {
 
     document.getElementById("home").onmousedown = () => {
-        window.location.href = "/";
+        window.location.href = "/fsm-simulator/";
     }
 
     let fsm_frame = document.getElementsByClassName("fsm_frame")[0];
