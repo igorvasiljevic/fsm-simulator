@@ -21,26 +21,61 @@ function setLanguage(new_language) {
         Data.remove("lang") :
         Data.set("lang", language);
 
-    for(let element of document.getElementsByClassName("lang"))
-        element.innerText = dictionary[element.id][language];
+    
+    for(let element of document.getElementsByClassName("lang")) {
+        if(dictionary[element.id] && dictionary[element.id][language])
+            element.innerText = dictionary[element.id][language];
+    }
     
 }
 
 const dictionary = {
-    "finite_state_machines": {
-        "en": "Finite State Machines",
+    "txt_finite_state_machines": {
+        "en": "Finite-State Machines",
         "bs": "Konačni Automati"
     },
-    "author": {
+    "txt_author": {
         "en": "by Igor Vasiljević",
         "bs": "Igor Vasiljević"
     },
-    "previous_page": {
+    "txt_previous_page": {
         "en": "Previous",
         "bs": "Nazad"
     },
-    "next_page": {
+    "txt_next_page": {
         "en": "Next",
         "bs": "Dalje"
+    },
+    "txt_gettin_started": {
+        "en": "Getting started",
+        "bs": "Uvod"
+    },
+    "txt_dfsm": {
+        "en": "Deterministic finite-state machines",
+        "bs": "Deterministički konačni automati"
+    },
+    "txt_definition" : {
+        "en" : "Definition",
+        "bs" : "Definicija"
+    },
+    "txt_initial" : {
+        "en" : "Initial state",
+        "bs" : "Početno stanje"
+    },
+    "txt_final" : {
+        "en" : "Final state",
+        "bs" : "Prihvatljivo stanje"
+    },
+    "txt_transition": {
+        "en" : "Transitions",
+        "bs" : "Prijelazi"
+    },
+    "txt_nfsm": {
+        "en" : "Nondeterministic finite-state machines",
+        "bs" : "Nedeterministički konačni automati"
+    },
+    "txt_enfsm": {
+        "en" : "Nondeterministic finite-state machines with ε-transitions",
+        "bs" : "Nedeterministički konačni automati s ε-prijelazima"
     }
 }

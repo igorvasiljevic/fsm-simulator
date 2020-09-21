@@ -1,5 +1,5 @@
 
-const home_folder = "/fsm-simulator/";
+const home_folder = "/fsm-simulator";
 const EPSILON = "$";
 
 const TutorialFSMS = {

@@ -1,7 +1,7 @@
 const registerServiceWorker = () => {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js');
+            navigator.serviceWorker.register(home_folder + '/sw.js');
 
             let refreshing;
             navigator.serviceWorker.addEventListener('controllerchange', () => {

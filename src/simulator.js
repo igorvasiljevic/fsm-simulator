@@ -2,9 +2,14 @@ let fsm_canvas;
 
 window.addEventListener('load', () => {
 
+    let download = document.getElementById("download");
+    let toggle_btn = document.getElementsByClassName("toggle_options_menu")[0];
+    let options_menu = document.getElementsByClassName("options_menu")[0];
+    let load_menu = document.getElementsByClassName("load_menu")[0];
     let fsm_frame = document.getElementsByClassName("fsm_frame")[0];
-    fsm_canvas = new FSMCanvas(fsm_frame);
 
+
+    fsm_canvas = new FSMCanvas(fsm_frame);
     fsm_canvas.setString(Data.get("string"));
     try {
         setFSM(new FSM(JSON.parse(Data.get("fsm"))));
@@ -13,9 +18,6 @@ window.addEventListener('load', () => {
     }
     
 
-    let toggle_btn = document.getElementsByClassName("toggle_options_menu")[0];
-    let options_menu = document.getElementsByClassName("options_menu")[0];
-    let load_menu = document.getElementsByClassName("load_menu")[0];
     toggle_btn.onmousedown = () => {
         if(options_menu.classList.contains("menu_show")) {
             options_menu.parentElement.onmousedown();
@@ -27,7 +29,6 @@ window.addEventListener('load', () => {
 
     }
     options_menu.parentElement.onmousedown = () => {
-        console.log("parent");
         options_menu.classList.remove("menu_show");
         load_menu.classList.remove("menu_show");
         setTimeout(() => {
@@ -86,15 +87,19 @@ window.addEventListener('load', () => {
         Data.set("fsm", JSON.stringify(fsm_canvas.fsm));
         Data.set("string", fsm_canvas.fsm_string.value);
     }
-    document.getElementById("download").onmousedown = e => {
+
+
+    download.download = "fsm.fsm"; // TODO: take name from tab
+    download.href = window.URL.createObjectURL(new Blob());
+    download.onmousedown = e => {
         e.stopPropagation();
+
+        let fsm_data = new Blob([JSON.stringify(fsm_canvas.fsm)], { type:'text/plain' });        
+        download.href = window.URL.createObjectURL(fsm_data);
+        window.URL.revokeObjectURL(fsm_data);
     }
 
     function setFSM(fsm) {
-        let download_link = document.getElementById("download");
-        let fsm_data = new Blob([JSON.stringify(fsm)], { type:'text/plain' });        
-        download_link.download = "fsm.fsm"; // TODO: take name from tab
-        download_link.href = window.URL.createObjectURL(fsm_data);
         fsm_canvas.setFSM(fsm);
         fsm_canvas.draw();
     }
