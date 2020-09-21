@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     <title>Finite State Machines</title>
@@ -21,6 +21,8 @@
     <script src="src/constants.js"></script>
     <script src="src/util.js"></script>
     <script src="src/lang.js"></script>
+    <script src="src/theme.js"></script>
+    <script src="src/events.js"></script>
     <script src="src/fsm.js"></script>
     <script src="src/fsmcanvas.js"></script>
     <script src="index.js"></script>
@@ -31,12 +33,16 @@
             <a onclick="setLanguage('bs')">Bosanski</a>
             •
             <a onclick="setLanguage('en')">English</a>
+            <img id="theme" title="Change theme" src="res/theme.svg">
         </p>
         <h1 id="finite_state_machines" class="lang">Finite State Machines</h1>
         <h4 id="author" class="lang">by Igor Vasiljević</h4>
     </header>
     <hr>
     <main>
+        <p>
+            <input type="file">
+        </p>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
             magna aliqua. Vestibulum mattis ullamcorper velit sed. Mauris commodo quis imperdiet massa tincidunt nunc.
             Turpis massa sed elementum tempus egestas sed sed risus. Faucibus a pellentesque sit amet porttitor. Velit
@@ -45,7 +51,7 @@
             aenean pharetra magna ac placerat vestibulum lectus. Nunc scelerisque viverra mauris in aliquam sem
             fringilla ut. Semper viverra nam libero justo laoreet sit amet cursus sit.</p>
 
-        <div class="fsm_frame" data-fsm="first" data-string="">
+        <div class="fsm_frame" data-fsm="First" data-string="">
             <div class="fsm_canvas" ></div>
             <div class="bottom_bar">
                 <div class="fsm_string_container">
@@ -74,7 +80,7 @@
             curabitur gravida arcu ac tortor. Est lorem ipsum dolor sit amet. Nisi vitae suscipit tellus mauris a diam
             maecenas sed.</p>
 
-        <div class="fsm_frame" data-fsm="second" data-string="a">
+        <div class="fsm_frame" data-fsm="Second" data-string="a">
             <div class="fsm_canvas"></div>
             <div class="bottom_bar">
                 <div class="fsm_string_container">
@@ -107,7 +113,7 @@
             hendrerit dolor magna eget est. Id interdum velit laoreet id donec ultrices tincidunt. Et molestie ac
             feugiat sed lectus vestibulum.</p>
 
-        <div class="fsm_frame" data-fsm="third" data-string="ccaccaccbccbcc">
+        <div class="fsm_frame" data-fsm="Third" data-string="ccaccaccbccbcc">
             <div class="fsm_canvas"></div>
             <div class="bottom_bar">
                 <div class="fsm_string_container">
@@ -136,7 +142,7 @@
             duis. Et leo duis ut diam quam. A lacus vestibulum sed arcu non odio euismod lacinia at. Fusce ut placerat
             orci nulla. Tincidunt dui ut ornare lectus sit amet est placerat in.</p>
 
-        <div class="fsm_frame" data-fsm="third" data-string="ccaccaccbccbcc">
+        <div class="fsm_frame" data-fsm="Third" data-string="ccaccaccbccbcc">
             <div class="fsm_canvas"></div>
             <div class="bottom_bar">
                 <div class="fsm_string_container">

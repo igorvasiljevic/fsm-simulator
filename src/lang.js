@@ -1,7 +1,7 @@
 const default_language = "en";
 let language;
 
-document.addEventListener("DOMContentLoaded", e => {
+document.addEventListener("DOMContentLoaded", () => {
     let new_language = Data.get("lang")
                     || window.navigator.userLanguage
                     || window.navigator.language

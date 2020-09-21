@@ -13,6 +13,8 @@ const registerServiceWorker = () => {
     }
 }
 
+registerServiceWorker();
+
 
 const Data = (() => {
     if (typeof(Storage) == "undefined")

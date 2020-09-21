@@ -1,3 +1,58 @@
+
+
+:root {
+    --bg_color:rgb(34, 34, 34); 
+
+    --border_top:rgb(46, 46, 46);
+    --border_bottom: rgb(56, 56, 56);
+    --border_left:rgb(56, 56, 56);
+    --border_right:rgb(46, 46, 46);
+
+    --text_color:rgb(200, 200, 200);
+    --faded_text_color: rgb(150, 150, 150);
+    --disabled_text_color:rgb(80, 80, 80);
+
+    --item_color: rgb(28, 28, 28);
+    --item_hover: rgb(25, 25, 25);
+    --item_active:rgb(20, 20, 20);
+
+    --state_current: rgb(228, 225, 43);
+    --state_accepted: rgb(6, 124, 6);
+    --state_not_accepted: rgb(124, 6, 6);
+    --state_selected: rgb(99, 178, 243);
+
+    --tool_selected: rgb(172, 0, 0);
+
+    --invert: 0;
+}
+
+.light {
+    --bg_color: rgb(221, 221, 221); 
+
+    --border_top: rgb(209, 209, 209);
+    --border_bottom:  rgb(199, 199, 199);
+    --border_left: rgb(199, 199, 199);
+    --border_right:rgb(209, 209, 209);
+
+    --text_color: rgb(55, 55, 55);
+    --faded_text_color: rgb(105, 105, 105);
+    --disabled_text_color: rgb(175, 175, 175);
+
+    --item_color: rgb(134, 134, 134);
+    --item_hover: rgb(146, 146, 146);
+    --item_active: rgb(155, 155, 155);
+
+    --state_current: rgb(228, 225, 43);
+    --state_accepted: rgb(6, 124, 6);
+    --state_not_accepted: rgb(124, 6, 6);
+    --state_selected: rgb(99, 178, 243);
+
+    --tool_selected: rgb(172, 0, 0);    
+
+    --invert: 1;
+}
+
+
 * {
     margin: 0px;
     padding: 0px;
@@ -10,12 +65,13 @@ html, body {
 }
 
 html {
-    background-color: rgb(34, 34, 34);
-    color: rgb(200, 200, 200);
+    background-color: var(--bg_color);
+    color: var(--text_color);
 }
 
 hr {
-    border-top-style: 1px solid  rgb(200, 200, 200);
+    border: none;
+    border-top: 1px solid var(--text_color);
     max-width: 850px;
     margin: 3em auto 1em;
 }
@@ -24,18 +80,41 @@ header {
     font-family: Georgia, 'Times New Roman', Times, serif;
 }
 header p {
-    color: rgb(80, 80, 80);
-    text-align: right;
-    margin: 5px 1em 5px 5px;
+    display: flex;
+    color: var(--disabled_text_color);
+    padding: 5px 5px 5px 5px;
+    width: 100%;
+
+    justify-content: flex-end;
+    align-items: center;
 }
 
 header a {
-    color: rgb(150, 150, 150);
+    color: var(--faded_text_color);
     text-decoration: none;
     text-align: right;
-    padding: 0px 5px;
+    padding: 0px 10px;
     cursor: pointer;
 }
+
+header img {
+    margin: 0 5px;
+    padding: 3px;
+    height: 38px;
+    width: 38px;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0);
+    filter: invert(var(--invert));
+}
+header img:hover {
+    background-color: rgba(0, 0, 0, 0);
+    opacity: 50%;
+}
+header img:active {
+    background-color: rgba(0, 0, 0, 0);
+    opacity: 30%;
+}
+
 
 header h1 {
     margin-top: 0.5em;
@@ -46,7 +125,7 @@ header h1 {
 }
 
 header h4 {
-    color: rgb(150, 150, 150);
+    color:var(--faded_text_color);
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
     font-weight: 100;
@@ -68,7 +147,7 @@ main p {
 
 footer {
     margin: 0px auto 2em;
-    color: rgb(100, 100, 100);
+    color: var(--faded_text_color);;
     text-align: center;
 }
 
@@ -87,16 +166,19 @@ footer ul {
 footer li {
     float: left;
     padding: 1em;
-    color: rgb(80, 80, 80);
+    color:var(--disabled_text_color);
     font-size: 1.3em;
     text-decoration: none;
     cursor: pointer;
 }
+footer li:hover {
+    background-color: var(--item_hover);
+}
 footer li:active {
-    background-color: rgb(32, 32, 32);
+    background-color: var(--item_active);
 }
 footer span {
-    color: rgb(150, 150, 150);
+    color: var(--faded_text_color);
 }
 
 
@@ -112,13 +194,22 @@ footer span {
     top: 0px;
 }
 
-.fsm_canvas {
-    background-image: url("res/grid.svg");
-    background-position: center center;
+.fsm_canvas {    
     position: absolute;
 
     width: 200%;
     height: 200%;
+}
+.fsm_canvas::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-position: center center;
+    background-image: url("res/grid.svg");
+    filter: invert(var(--invert));
 }
 
 .not_selectable {
@@ -137,21 +228,22 @@ footer span {
     display: none;
 }
 
+
 .state {
     position: absolute;
     z-index: 2;
 }
 .state_current {
-    fill: rgba(228, 225, 43, 0.9);
+    fill: var(--state_current);
 }
 .state_accepted {
-    fill: rgb(6, 124, 6);
+    fill:var(--state_accepted);
 }
 .state_not_accepted {
-    fill: rgb(124, 6, 6);
+    fill:var(--state_not_accepted);
 }
 .state_selected {
-    fill: rgba(99, 178, 243, 0.9);
+    fill:var(--state_selected);
 }
 .svg {
     display: block;
@@ -179,11 +271,11 @@ footer span {
 .transition_text {
     position: absolute;
     width: 100%;
-    top: 2px;
+    top: -4px;
     text-align: center;
     vertical-align: middle;
     background-color: rgba(0, 0, 0, 0);
-    color: rgb(200, 200, 200);
+    color: var(--text_color);
     border: 0px;
     outline: 0px;
     text-decoration: none;
@@ -193,7 +285,7 @@ footer span {
 
 .loop_text {
     left: 0px;
-    top: -2px;
+    top: -8px;
 }
 
 img {
@@ -202,29 +294,25 @@ img {
     height: 45px;
     z-index: 30;
     transition: background-color 0.2s ease 0s;
-    background-color: rgb(28, 28, 28);
+    background-color: var(--item_color);
 }
-
+img:hover {
+    background-color:var(--item_hover);
+}
 img:active {
-    background-color: rgb(25, 25, 25);
+    background-color: var(--item_active);
+}
+img svg {
+    filter: invert(var(--invert));
 }
 
-@media (hover: hover) {
-    img:hover {
-        background-color: rgb(25, 25, 25);
-    }
-
-    img:active {
-        background-color: rgb(20, 20, 20);
-    }
-}
 
 .bottom_bar {
     position: absolute;
     width: 100%;
     height: 50px;
     bottom: 0px;
-    background-color: rgb(34, 34, 34);
+    background-color:var(--bg_color);
     z-index: 20;
     display: flex;
     flex-direction: row;
@@ -246,8 +334,8 @@ img:active {
     width: 100%;
     height: 100%;
     user-select: none;
-    color: rgb(200, 200, 200);
-    background-color: rgb(34, 34, 34);
+    color: var(--text_color);
+    background-color: var(--bg_color);
     border: 0px;
     outline: 0px;
     overflow: hidden;
@@ -271,12 +359,13 @@ img:active {
     position: relative;
     display: flex;
     right: 0px;
+    transition: margin 0.2s ease-out;
     bottom: 0px;
-    background-color: rgb(32, 32, 32);
+    background-color: var(--bg_color);
     border-radius: 99999px 0px 0px 99999px;
-    border-top: 1px solid rgb(46, 46, 46);
-    border-left: 1px solid rgb(56, 56, 56);
-    border-bottom: 1px solid rgb(56, 56, 56);
+    border-top: 1px solid var(--border_top);
+    border-left: 1px solid var(--border_left);
+    border-bottom: 1px solid var(--border_bottom);
 }
 
 .fsm_runstep img {
@@ -289,23 +378,22 @@ img:active {
     border-top-left-radius: 50%;
     bottom: 49px;
     right: 0px;
-    background-color: rgb(34, 34, 34);
-    border-top: 1px solid rgb(46, 46, 46);
-    border-left: 1px solid rgb(56, 56, 56);
-    border-bottom: 1px solid rgb(28, 28, 28);
+    z-index: 55;
+    background-color: var(--bg_color);
+    border-top: 1px solid var(--border_top);
+    border-left: 1px solid var(--border_left);
 }
-
 .toolbar {
     position: absolute;
     height: 50px;
     right: -100%;
     bottom: 0px;
     z-index: 50;
-    background-color: rgb(34, 34, 34);
+    background-color: var(--bg_color);
     border-radius: 99999px 0px 0px 99999px;
-    border-top: 1px solid rgb(46, 46, 46);
-    border-bottom: 1px solid rgb(56, 56, 56);
-    border-left: 1px solid rgb(56, 56, 56);
+    border-top: 1px solid var(--border_top);
+    border-left: 1px solid var(--border_left);
+    border-bottom: 1px solid var(--border_bottom);
     transition: right 0.2s ease-out;
     display: flex;
     flex-direction: row;
@@ -317,16 +405,97 @@ img:active {
 }
 .toolbar img {
     border-radius: 50%;
-    margin-right: 5px;
+    margin-right: 3px;
+    margin-left: 2px;
 }
 .tool_selected {
-    background-color: rgb(25, 25, 25);
-    border: 2px solid rgb(172, 0, 0);
+    background-color: var(--bg_color);
+    border: 2px solid var(--tool_selected);
 }
 
-#home {
-    background-color: rgb(34, 34, 34);
+.home {
+    background-color: var(--bg_color);
     position: absolute;
     z-index: 100;
     transform: rotate(180deg);
+}
+
+@media only screen and (min-width: 700px) {
+    .toggle_toolbar {
+        display: none;
+    }
+    .toolbar {
+        right: 0px;
+    }
+    .fsm_runstep {
+        margin-right: 210px;
+        border-radius: 99999px 99999px 99999px 99999px;
+        border-right: 1px solid var(--border_right);
+    }
+    .fsm_runstep img {
+        margin: 1px 1px 1px 1px;
+    }
+
+}
+
+.toggle_options_menu {
+    background-color: var(--bg_color);
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 100;
+}
+.options {
+    position: absolute;
+    z-index: 90;
+    overflow: hidden;
+
+    width: 100%;
+    height: 100%;
+}
+.options_menu, .load_menu {
+    position: absolute;
+    right: -180px;
+    z-index: 2;
+    transition: right 0.1s ease-in-out;
+
+    width: 180px;
+    max-height: 400px;
+    overflow: auto;
+    background-color:var(--bg_color);
+    border: 1px solid var(--border_top);
+    
+    list-style: none;
+
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.menu_show {
+    right: 0;
+}
+.options_menu li, .load_menu li {
+    font-size: 1.2em;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 0.8em;
+    user-select: none;
+}
+.options_menu li:hover, .load_menu li:hover {
+    background-color: var(--item_hover);
+}
+.options_menu li:active, .load_menu li:active {
+    background-color: var(--item_active);
+}
+.options_menu li a {
+    color: inherit;
+    text-decoration: none;
+}
+input[type="file"] {
+    display: none;
+}
+.list_item {
+    width: 100%;
+    height: 100%;
+    padding: 0.8em;
+    cursor: pointer;
 }

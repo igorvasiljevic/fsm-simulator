@@ -1,7 +1,9 @@
+
+const home_folder = "/fsm-simulator/";
 const EPSILON = "$";
 
 const TutorialFSMS = {
-    "first": {
+    "First": {
         "initial_state": 0,
         "next_state_id": 1,
         "states": [
@@ -15,7 +17,7 @@ const TutorialFSMS = {
             }
         ]
     },
-    "second": {
+    "Second": {
         "initial_state": 0,
         "next_state_id": 2,
         "states": [
@@ -40,7 +42,7 @@ const TutorialFSMS = {
             }
         ]
     },
-    "third": {
+    "Third": {
         "initial_state": 0,
         "next_state_id": 4,
         "states": [
@@ -89,6 +91,156 @@ const TutorialFSMS = {
                 "y": 100
             }
         ]
-    }
+    },
+    "FSM 1": {
+        "initial_state": 0,
+        "next_state_id": 2,
+        "states": [
+            {
+                "id": "0",
+                "name": "S",
+                "transitions": {
+                    "1": ["a"],
+                },
+                "final": false,
+                "x": -80,
+                "y": 0
+            },
+            {
+                "id": "1",
+                "name": "X",
+                "transitions": {
+                },
+                "final": false,
+                "x": 80,
+                "y": 0
+            }
+        ]
+    },
+    "FSM 2": {
+        "initial_state": 0,
+        "next_state_id": 2,
+        "states": [
+            {
+                "id": "0",
+                "name": "S",
+                "transitions": {
+                    "1": ["a"],
+                },
+                "final": false,
+                "x": -80,
+                "y": 0
+            },
+            {
+                "id": "1",
+                "name": "X",
+                "transitions": {
+                },
+                "final": false,
+                "x": 80,
+                "y": 0
+            }
+        ]
+    },
+    "FSM 3": {
+        "initial_state": 0,
+        "next_state_id": 2,
+        "states": [
+            {
+                "id": "0",
+                "name": "S",
+                "transitions": {
+                    "1": ["a"],
+                },
+                "final": false,
+                "x": -80,
+                "y": 0
+            },
+            {
+                "id": "1",
+                "name": "X",
+                "transitions": {
+                },
+                "final": false,
+                "x": 80,
+                "y": 0
+            }
+        ]
+    },
+    "FSM 4": {
+        "initial_state": 0,
+        "next_state_id": 2,
+        "states": [
+            {
+                "id": "0",
+                "name": "S",
+                "transitions": {
+                    "1": ["a"],
+                },
+                "final": false,
+                "x": -80,
+                "y": 0
+            },
+            {
+                "id": "1",
+                "name": "X",
+                "transitions": {
+                },
+                "final": false,
+                "x": 80,
+                "y": 0
+            }
+        ]
+    },
+    "FSM 5": {
+        "initial_state": 0,
+        "next_state_id": 2,
+        "states": [
+            {
+                "id": "0",
+                "name": "S",
+                "transitions": {
+                    "1": ["a"],
+                },
+                "final": false,
+                "x": -80,
+                "y": 0
+            },
+            {
+                "id": "1",
+                "name": "X",
+                "transitions": {
+                },
+                "final": false,
+                "x": 80,
+                "y": 0
+            }
+        ]
+    },
+    "FSM 6": {
+        "initial_state": 0,
+        "next_state_id": 2,
+        "states": [
+            {
+                "id": "0",
+                "name": "S",
+                "transitions": {
+                    "1": ["a"],
+                },
+                "final": false,
+                "x": -80,
+                "y": 0
+            },
+            {
+                "id": "1",
+                "name": "X",
+                "transitions": {
+                },
+                "final": false,
+                "x": 80,
+                "y": 0
+            }
+        ]
+    },
     
 }

@@ -10,9 +10,9 @@ const state_element_template =
 const transition_element_template = 
     `<div class="transition">
         <svg class="svg" width="50" height="26" xmlns="http://www.w3.org/2000/svg">
-            <line stroke="#000" x1="0" y1="13" x2="100%" y2="13" stroke-width="2"></line>
-            <line stroke="#000" x1="0" y1="13" x2="10" y2="8" stroke-width="2"></line>
-            <line stroke="#000" x1="0" y1="13" x2="10" y2="18" stroke-width="2"></line>
+            <line class="no_events" stroke="#000" x1="0" y1="13" x2="100%" y2="13" stroke-width="2"></line>
+            <line class="no_events" stroke="#000" x1="0" y1="13" x2="10" y2="8" stroke-width="2"></line>
+            <line class="no_events" stroke="#000" x1="0" y1="13" x2="10" y2="18" stroke-width="2"></line>
         </svg>
         <input type="text" autocomplete="off" spellcheck="false" class="transition_text not_selectable no_events">
     </div>`;
@@ -20,9 +20,9 @@ const transition_element_template =
 const loop_element_template =
     `<div class="transition">
         <svg class="svg" width="44" height="50" xmlns="http://www.w3.org/2000/svg">           
-            <ellipse stroke="#000" stroke-width="2" cx="50%" cy="28" rx="19" ry="19" fill="none"></ellipse>
-            <line stroke="#000" x1="36" y1="31" x2="35" y2="43.5" stroke-width="2" fill="none"></line>
-            <line stroke="#000" x1="45" y1="36" x2="34.5" y2="43.5" stroke-width="2" fill="none"></line>
+            <ellipse class="no_events" stroke="#000" stroke-width="2" cx="50%" cy="28" rx="19" ry="19" fill="none"></ellipse>
+            <line class="no_events" stroke="#000" x1="36" y1="31" x2="35" y2="43.5" stroke-width="2" fill="none"></line>
+            <line class="no_events" stroke="#000" x1="45" y1="36" x2="34.5" y2="43.5" stroke-width="2" fill="none"></line>
         </svg>
         <input type="text" autocomplete="off" spellcheck="false" class="loop_text transition_text not_selectable no_events">
     </div>`;
@@ -38,6 +38,10 @@ class FSMCanvas {
 
         this.string_input_index = -1;
 
+        let toolbar = this.frame.getElementsByClassName("toolbar")[0];
+        this.fsm_string = this.frame.getElementsByClassName("fsm_string")[0];
+        this.fake_fsm_string = this.frame.getElementsByClassName("fsm_string")[1];
+
         // bug fix using bottom bar fixed
         if(this.frame.style.height === "100%") {
             this.frame.style.position = "absolute";
@@ -46,19 +50,15 @@ class FSMCanvas {
 
 
         // canvas centering
-        this.canvas.style.left = `${(this.frame.clientWidth - this.canvas.clientWidth)/2}px`;
-        this.canvas.style.top = `${(this.frame.clientHeight - this.canvas.clientHeight)/2}px`;
+        move(this.canvas,
+            (this.frame.clientWidth - this.canvas.clientWidth)/2,
+            (this.frame.clientHeight - this.canvas.clientHeight)/2);
         this.canvasWidth = this.canvas.clientWidth;
         this.clientHeight = this.canvas.clientHeight;
         window.onresize = e => {
-            this.canvas.style.left = `${(this.frame.clientWidth - this.canvas.clientWidth)/2}px`;
-            this.canvas.style.top = `${(this.frame.clientHeight - this.canvas.clientHeight)/2}px`;
-
-            // if(this.fsm)
-            //     for(let state of this.fsm.states) {
-            //         state.x -= this.canvasWidth/2;
-            //         state.y -= this.clientHeight/2;
-            //     }
+            move(this.canvas,
+                (this.frame.clientWidth - this.canvas.clientWidth)/2,
+                (this.frame.clientHeight - this.canvas.clientHeight)/2);
 
             this.canvasWidth = this.canvas.clientWidth;
             this.clientHeight = this.canvas.clientHeight;
@@ -66,32 +66,73 @@ class FSMCanvas {
             this.repositionTransitions();
         }
         // canvas movement
-        this.canvas.onmousedown = e => {
-            this.canvas.onmousemove = e => {
-                e.preventDefault();
-                this.mouseMove(this.canvas, e);
-            }
+        Events(this.canvas, {
+            click: e => {
+                if(e.target.classList.contains("state")) {
+                    this.stateClicked(e.target.id);
+                } else if(e.target.classList.contains("svg") && e.target.parentElement.classList.contains("transition")) {
+                    this.transition_clicked(e.target.parentElement.from_id, e.target.parentElement.to_id);
+                }
+            },
+            dblclick: e => {
+                if(e.target.classList.contains("fsm_canvas")) {
+                    let canvasRect = e.target.getBoundingClientRect();
+                    this.fsm.addState().setPosition(
+                        e.clientX - canvasRect.x - this.canvas.clientWidth / 2,
+                        e.clientY - canvasRect.y - this.canvas.clientHeight / 2);
+                    this.draw();
+                } else if(e.target.classList.contains("state")) {
+                    let state_text = e.target.getElementsByClassName("state_text")[0];
+                    state_text.focus();
+                    state_text.setSelectionRange(0, state_text.value.length);
+                } else if(e.target.classList.contains("svg") && e.target.parentElement.classList.contains("transition")) {
+                    let transition_text = e.target.parentElement.getElementsByClassName("transition_text")[0];
 
-            this.canvas.onmouseup = e => {
-                this.canvas.onmousemove = null;
-                this.canvas.onmouseup = null;
-                this.fsm.addState().setPosition(e.layerX - this.canvas.clientWidth / 2, e.layerY - this.canvas.clientHeight / 2);
-                this.draw();
-            }
-        }
-        this.canvas.ontouchstart = e => {
-            this.oldX = e.targetTouches[0].clientX;
-            this.oldY = e.targetTouches[0].clientY;
+                    transition_text.focus();
+                    transition_text.setSelectionRange(0, transition_text.value.length);
+                }
+            },
+            move: (el, e) => {
+                if(el.classList.contains("fsm_canvas")) {
+                    if(!e.touches || e.touches.length === 1) {
+                        let elRect = el.getBoundingClientRect();
+                        let parentRect = el.parentElement.getBoundingClientRect();
+                        move(el,
+                            elRect.x - parentRect.x + e.movementX,
+                            elRect.y - parentRect.y + e.movementY);
+                    }
+                } else if(el.classList.contains("state")) {
+                    e.preventDefault();
+                    let elRect = el.getBoundingClientRect();
+                    let parentRect = el.parentElement.getBoundingClientRect();
+                    move(el,
+                        elRect.x - parentRect.x + e.movementX,
+                        elRect.y - parentRect.y + e.movementY);
+                    
+                    let state = this.fsm.getState(el.id);
+                    state.x = elRect.x + elRect.width/2 - parentRect.x + e.movementX - this.canvas.clientWidth / 2;
+                    state.y = elRect.y + elRect.height/2 - parentRect.y + e.movementY - this.canvas.clientHeight / 2;
 
-            this.canvas.ontouchmove = e => {
-                e.preventDefault();
-                this.touchMove(this.canvas, e);
+                    this.repositionTransitions();
+                }
             }
-        }
+            // ,wheel: e => {
+            //     if(e.shiftKey) {
+            //         if(!this.canvas.zoom) this.canvas.zoom = 1;
+                    
+            //         this.canvas.zoom = clamp(this.canvas.zoom - e.deltaY/1000, 0.5, 5);
+
+            //         this.canvas.style.transform = `scale(${this.canvas.zoom})`;
+
+            //         move(this.canvas,
+            //             (this.frame.clientWidth - this.canvas.clientWidth)/2,
+            //             (this.frame.clientHeight - this.canvas.clientHeight)/2);
+            //     }
+            // }
+        });
 
         
         // tools
-        let toolbar = this.frame.getElementsByClassName("toolbar")[0];
         this.frame.getElementsByClassName("toggle_toolbar")[0].onmousedown = e => {
             if(toolbar.classList.contains("toolbar_show")) {
                 toolbar.classList.remove("toolbar_show");
@@ -138,11 +179,6 @@ class FSMCanvas {
                 if(this.from_state_selected) {
                     let from = this.fsm.getState(this.from_state_selected);
                     
-                    state_element.ondblclick = () => {
-                        state_text.focus();
-                        state_text.setSelectionRange(0, state_text.value.length);
-                    }
-
                     if(!from.transitions[id]) {
                         from.addTransition(id, "");
                         this.draw();
@@ -159,7 +195,6 @@ class FSMCanvas {
                 } else {
                     this.from_state_selected = id;
                     state_element.getElementsByClassName("fill")[0].classList.add("state_selected");
-                    state_element.ondblclick = null;
                 }
             }
 
@@ -174,8 +209,6 @@ class FSMCanvas {
 
 
         // fsm string
-        this.fsm_string = this.frame.getElementsByClassName("fsm_string")[0];
-        this.fake_fsm_string = this.frame.getElementsByClassName("fsm_string")[1];
         this.fake_fsm_string.innerText = this.fsm_string.value;
         this.fake_fsm_string.title = this.fsm_string.value;
         this.fsm_string.onkeydown = e => {
@@ -276,49 +309,8 @@ class FSMCanvas {
         }
     }
 
-    mouseMove(element, e) {
-        function stop(e) {
-            element.onmousemove = null;
-            element.onmouseup = null;
-            element.onmouseout = null;
-        }
-
-        element.onmouseup = stop;
-        element.onmouseout = stop;
-
-        this.setPosition(element, element.offsetLeft + e.movementX, element.offsetTop + e.movementY);
-    }
-
-    touchMove(element, e) {
-        function stop(e) {
-            element.ontouchmove = null;
-            element.ontouchend = null;
-            element.ontouchcancel = null;
-        }
-
-        element.ontouchend = stop;
-        element.ontouchcancel = stop;
-
-        let x = e.targetTouches[0].clientX - this.oldX;
-        let y = e.targetTouches[0].clientY - this.oldY;
-        this.oldX = e.targetTouches[0].clientX;
-        this.oldY = e.targetTouches[0].clientY;
-
-        this.setPosition(element, element.offsetLeft + x, element.offsetTop + y);
-    }
-
-    setPosition(element, x, y) {
-        x = element.clientWidth > element.parentElement.clientWidth ? 
-            clamp(x, element.parentElement.clientWidth - element.clientWidth, 0) :
-            clamp(x, 0, element.parentElement.clientWidth - element.clientWidth);
-
-        y = element.clientHeight > element.parentElement.clientHeight ? 
-            clamp(y, element.parentElement.clientHeight - element.clientHeight, 0) :
-            clamp(y, 0, element.parentElement.clientHeight - element.clientHeight);
-        
-
-        element.style.left = `${x}px`;
-        element.style.top = `${y}px`;
+    move(element, x, y) {
+        element.style.transform = `translate(${x}px, ${y}px)`;
     }
 
     draw() {
@@ -345,48 +337,10 @@ class FSMCanvas {
             if(state.id === this.fsm.initial_state)
                 this.drawArrowInto(state);
 
-            state_element.style.left = `${state.x + (this.canvas.clientWidth - state_element.clientWidth)/2}px`;
-            state_element.style.top = `${state.y + (this.canvas.clientHeight - state_element.clientHeight)/2}px`;
+            move(state_element,
+                state.x + (this.canvas.clientWidth - state_element.clientWidth)/2,
+                state.y + (this.canvas.clientHeight - state_element.clientHeight)/2);
 
-            // state movement
-            state_element.onmousedown = e => {
-                e.stopPropagation();
-
-                state_element.onmousemove = e => {
-                    e.preventDefault();
-                    this.mouseMove(state_element, e);
-
-                    state.x = state_element.offsetLeft - (this.canvas.clientWidth - state_element.clientWidth)/2;
-                    state.y = state_element.offsetTop - (this.canvas.clientHeight - state_element.clientHeight)/2;
-                    this.repositionTransitions();
-                }
-
-                state_element.onmouseup = e => {
-                    e.stopPropagation();
-                    state_element.onmousemove = null;
-                    state_element.onmouseup = null;
-                    this.stateClicked(state.id);
-                }
-            }
-            state_element.ontouchstart = e => {
-                this.oldX = e.targetTouches[0].clientX;
-                this.oldY = e.targetTouches[0].clientY;
-
-                state_element.ontouchmove = e => {
-                    e.preventDefault();
-                    this.touchMove(state_element, e);
-
-                    state.x = state_element.offsetLeft - (this.canvas.clientWidth - state_element.clientWidth)/2;
-                    state.y = state_element.offsetTop - (this.canvas.clientHeight - state_element.clientHeight)/2;
-                    this.repositionTransitions();
-                }
-            }
-
-            // state text edit
-            state_element.ondblclick = e => {
-                state_text.focus();
-                state_text.setSelectionRange(0, state_text.value.length);
-            }
             state_text.onkeydown = e => {
                 if(e.key === "Enter" || e.keyCode === 13)
                     state_text.blur();
@@ -396,6 +350,7 @@ class FSMCanvas {
                     state.name = state_text.value :
                     state_text.value = state.name;
             }
+
         }
     }
 
@@ -403,8 +358,9 @@ class FSMCanvas {
         for(let state_element of this.canvas.getElementsByClassName("state")) {
             let state = this.fsm.getState(state_element.id);
 
-            state_element.style.left = `${state.x + (this.canvas.clientWidth - state_element.clientWidth)/2}px`;
-            state_element.style.top = `${state.y + (this.canvas.clientHeight - state_element.clientHeight)/2}px`;
+            move(state_element,
+                state.x + (this.canvas.clientWidth - state_element.clientWidth)/2,
+                state.y + (this.canvas.clientHeight - state_element.clientHeight)/2);
         }
     }
 
@@ -433,8 +389,9 @@ class FSMCanvas {
                     transition_text.value = from.transitions[transition].join(",");
                     
                     // position
-                    transition_element.style.left = `${from.x + (this.canvas.clientWidth - transition_element.clientWidth)/2}px`;
-                    transition_element.style.top = `${from.y - 40 + (this.canvas.clientHeight - transition_element.clientHeight)/2}px`;
+                    move(transition_element,
+                        from.x + (this.canvas.clientWidth - transition_element.clientWidth)/2,
+                        from.y - 40 + (this.canvas.clientHeight - transition_element.clientHeight)/2);
                 } else {
                     // create transition element
                     transition_element = this.transition_element_template.cloneNode(true);
@@ -456,29 +413,17 @@ class FSMCanvas {
                     svg.style.width = length;
 
                     // position
-                    transition_element.style.left = `${(x1 + x2 + this.canvas.clientWidth - transition_element.clientWidth)/2}px`;
-                    transition_element.style.top = `${(y1 + y2 + this.canvas.clientHeight - transition_element.clientHeight)/2}px`;
+                    move(transition_element,
+                        (x1 + x2 + this.canvas.clientWidth - transition_element.clientWidth)/2,
+                        (y1 + y2 + this.canvas.clientHeight - transition_element.clientHeight)/2);
 
                     // rotate
                     let angle = Math.atan2(y1 - y2, x1 - x2);
                     svg.style.transform = `rotate(${angle}rad)`;
                     
-
-                    
                 }
 
                 // transition text edit
-                svg.onmousedown = e => {
-                    e.stopPropagation();
-
-                    svg.onmouseup = e => {
-                        this.transition_clicked(from.id, to.id);
-                    }
-                }
-                svg.ondblclick = e => {
-                    transition_text.focus();
-                    transition_text.setSelectionRange(0, transition_text.value.length);
-                }
                 transition_text.onkeydown = e => {
                     if(e.key === "Enter" || e.keyCode === 13)
                         transition_text.blur();
@@ -493,8 +438,6 @@ class FSMCanvas {
                         transition_element.remove();
                     }
                 }
-
-
             }
         }
     }
@@ -507,12 +450,14 @@ class FSMCanvas {
 
             if(!from){
                 // initial
-                transition_element.style.left = `${to.x - 50 + (this.canvas.clientWidth - transition_element.clientWidth)/2}px`;
-                transition_element.style.top = `${to.y + (this.canvas.clientHeight - transition_element.clientHeight)/2}px`;
+                move(transition_element,
+                    to.x - 50 + (this.canvas.clientWidth - transition_element.clientWidth)/2,
+                    to.y + (this.canvas.clientHeight - transition_element.clientHeight)/2);
             } else if(from.id === to.id) {
                 // loop
-                transition_element.style.left = `${from.x + (this.canvas.clientWidth - transition_element.clientWidth)/2}px`;
-                transition_element.style.top = `${from.y - 40 + (this.canvas.clientHeight - transition_element.clientHeight)/2}px`;
+                move(transition_element,
+                    from.x + (this.canvas.clientWidth - transition_element.clientWidth)/2,
+                    from.y - 40 + (this.canvas.clientHeight - transition_element.clientHeight)/2);
             } else {
                 let x1 = from.x;
                 let y1 = from.y;
@@ -526,8 +471,9 @@ class FSMCanvas {
                 svg.style.width = length;
 
                 // center
-                transition_element.style.left = `${(x1 + x2 + this.canvas.clientWidth - transition_element.clientWidth)/2}px`;
-                transition_element.style.top = `${(y1 + y2 + this.canvas.clientHeight - transition_element.clientHeight)/2}px`;
+                move(transition_element,
+                    (x1 + x2 + this.canvas.clientWidth - transition_element.clientWidth)/2,
+                    (y1 + y2 + this.canvas.clientHeight - transition_element.clientHeight)/2);
 
                 // rotate
                 let angle = Math.atan2(y1 - y2, x1 - x2);
@@ -546,8 +492,9 @@ class FSMCanvas {
         transition_element.to_id = state.id;
 
         svg.style.width = 100 - this.getState(state.id).clientWidth;
-        transition_element.style.left = `${state.x - 50 + (this.canvas.clientWidth - transition_element.clientWidth)/2}px`;
-        transition_element.style.top = `${state.y + (this.canvas.clientHeight - transition_element.clientHeight)/2}px`;
+        move(transition_element,
+            state.x - 50 + (this.canvas.clientWidth - transition_element.clientWidth)/2,
+            state.y + (this.canvas.clientHeight - transition_element.clientHeight)/2);
         svg.style.transform = `rotate(${Math.PI}rad)`;
 
         svg.onmousedown = e => { e.stopPropagation() }
@@ -565,7 +512,7 @@ class FSMCanvas {
             + `<span class="inputSelected">${string[this.string_input_index]}</span>`
             + string.slice(this.string_input_index + 1, string.length);
 
-        this.fake_fsm_string.scrollLeft = (this.string_input_index - 20) * ((this.fake_fsm_string.scrollWidth) / string.length) ;
+        this.fake_fsm_string.scrollLeft = (this.string_input_index - 10) * ((this.fake_fsm_string.scrollWidth) / string.length) ;
     }
 
     reset() {

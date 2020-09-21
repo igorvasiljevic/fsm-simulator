@@ -1,6 +1,3 @@
-registerServiceWorker();
-
-
 function previousPage() {
     console.log("Previous page");
 }

@@ -4,16 +4,18 @@ let CACHE_NAME = 'fsm-simulator-cache-' + version;
 let urlsToCache = [
     './',
     './index.html',
+    './simulator.html',
     './index.js',
     './manifest.webmanifest',
     './styles.css',
 
-
     './src/constants.js',
+    './src/events.js',
     './src/fsm.js',
     './src/fsmcanvas.js',
     './src/lang.js',
     './src/simulator.js',
+    './src/theme.js',
     './src/util.js',
 
     './res/add_transition.svg',
@@ -23,7 +25,8 @@ let urlsToCache = [
     './res/run.svg',
     './res/set_final_state.svg',
     './res/set_initial_state.svg',
-    './res/step.svg'
+    './res/step.svg',
+    './res/theme.svg'
 ];
 
 self.addEventListener('install', event => {
