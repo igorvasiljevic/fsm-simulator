@@ -1,0 +1,96 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>Finite-State Machines</title>
+    <meta name="description" content="Finite State Machine lessons and simulator">
+    <meta name="author" content="17112">
+
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#282828">
+    <link rel="shortcut icon" type="image/png" href="res/icon.png">
+    <link rel="apple-touch-icon" href="res/appleicon.png">
+
+    <link rel="stylesheet" href="css/styles.css">
+
+    <noscript>This site can't function without JavaScript</noscript>
+    <script src="src/core.js"></script>
+    <script src="index.js"></script>
+</head>
+<body>
+    <header>
+        <p class="not_selectable">
+            <a onclick="setLanguage('bs')">Bosanski</a>
+            •
+            <a onclick="setLanguage('en')">English</a>
+            <img id="theme" title="Change theme" src="res/theme.svg">
+        </p>
+        <h1 id="txt_finite_state_machines" class="lang">Finite-State Machines</h1>
+        <h4 id="txt_author" class="lang">by Igor Vasiljević</h4>
+    </header>
+    <hr>
+    <main>
+        
+        <p>Risus quis varius quam quisque id. Elit sed vulputate mi sit amet. Ut tortor pretium viverra suspendisse
+            potenti nullam. Arcu risus quis varius quam quisque. In ante metus dictum at tempor commodo ullamcorper a.
+            Enim nulla aliquet porttitor lacus luctus accumsan tortor.</p>
+        
+        <div class="list">
+            <ul class="subject_list">
+                <li><a href="simulator.html">Simulator</a></li>
+                <li><a id="txt_gettin_started" class="lang" href="#getting_started_el">Getting started</a></li>
+
+                <li>
+                    <span id="txt_dfsm" class="lang">Deterministic finite-state machines</span>
+                    <ul class="lesson_list">
+                        <li><a id="txt_definition" class="lang" href="lessons/1.html">Definition</a></li>
+                        <li><a id="txt_initial" class="lang" href="lessons/2.html">Initial state</a></li>
+                        <li><a id="txt_final" class="lang" href="lessons/3.html">Final state</a></li>
+                        <li><a id="txt_transition" class="lang" href="lessons/4.html">Transitions</a></li>
+                    </ul>
+                </li>
+                
+                <li>
+                    <span id="txt_nfsm" class="lang">Nondeterministic finite-state machines</span>
+                    <ul class="lesson_list">
+                        <li><a id="txt_definition" class="lang" href="#">Definition</a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <span id="txt_enfsm" class="lang">Nondeterministic finite-state machines with ε-transitions</span>
+                    <ul class="lesson_list">
+                        <li><a id="txt_definition" class="lang" href="#">Definition</a></li>
+                    </ul>
+                </li>
+                
+            </ul>
+        </div>
+
+        <h3 id="getting_started_el"><span id="txt_gettin_started" class="lang">Getting started</span></h3>
+        <p>Donec pretium vulputate sapien nec sagittis aliquam malesuada bibendum. Magna etiam tempor orci eu lobortis
+            elementum nibh tellus molestie. Diam vulputate ut pharetra sit.Risus quis varius quam quisque id. Elit sed vulputate mi sit amet. Ut tortor pretium viverra suspendisse
+            potenti nullam. Arcu risus quis varius quam quisque. In ante metus dictum at tempor commodo ullamcorper a.
+            Enim nulla aliquet porttitor lacus luctus accumsan tortor.Risus quis varius quam quisque id. Elit sed vulputate mi sit amet. Ut tortor pretium viverra suspendisse
+            potenti nullam. Arcu risus quis varius quam quisque. In ante metus dictum at tempor commodo ullamcorper a.
+            Enim nulla aliquet porttitor lacus luctus accumsan tortor.</p>
+        <p>Risus quis varius quam quisque id. Elit sed vulputate mi sit amet. Ut tortor pretium viverra suspendisse
+            potenti nullam. Arcu risus quis varius quam quisque. In ante metus dictum at tempor commodo ullamcorper a.
+            Enim nulla aliquet porttitor lacus luctus accumsan tortor.Risus quis varius quam quisque id. Elit sed vulputate mi sit amet. Ut tortor pretium viverra suspendisse
+            potenti nullam. Arcu risus quis varius quam quisque. In ante metus dictum at tempor commodo ullamcorper a.
+            Enim nulla aliquet porttitor lacus luctus accumsan tortor.</p>
+    </main>
+    <hr>
+    <footer>
+        <ul class="bottom_navigation">
+            <!-- <li class="not_selectable" onclick="previousPage()">←&nbsp;&nbsp;&nbsp;<span id="previous_page" class="lang">Previous</span></li>
+            <li class="not_selectable no_events">•</li> -->
+            <li class="not_selectable" onclick="nextPage()"><span id="txt_next_page" class="lang">Start</span>&nbsp;&nbsp;&nbsp;→</li>
+        </ul>
+    </footer>
+</body>
+</html>
