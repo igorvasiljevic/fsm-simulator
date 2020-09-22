@@ -1,4 +1,3 @@
-
 const pages = [
     "/",
     "/lessons/1.html",
@@ -10,6 +9,7 @@ const pages = [
 
 function previousPage() {
     let current_page = window.location.pathname.replace(home_folder, "");
+    if(current_page === "/index.html") current_page = "/";
     let index = pages.indexOf(current_page);
 
     if(index != 0)
@@ -18,6 +18,7 @@ function previousPage() {
 
 function nextPage() {
     let current_page = window.location.pathname.replace(home_folder, "");
+    if(current_page === "/index.html") current_page = "/";
     let index = pages.indexOf(current_page);
 
     if(index != pages.length - 1)

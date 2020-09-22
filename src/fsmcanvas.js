@@ -212,7 +212,7 @@ class FSMCanvas {
         this.fake_fsm_string.innerText = this.fsm_string.value;
         this.fake_fsm_string.title = this.fsm_string.value;
         this.fsm_string.onkeydown = e => {
-            if(e.key === "Enter" || e.keyCode === 13)
+            if(e.key === "Escape" || e.keyCode === 27 || e.key === "Enter" || e.keyCode === 13)
                 this.fsm_string.blur();
         }
         this.fsm_string.onblur = () => {
@@ -342,7 +342,7 @@ class FSMCanvas {
                 state.y + (this.canvas.clientHeight - state_element.clientHeight)/2);
 
             state_text.onkeydown = e => {
-                if(e.key === "Enter" || e.keyCode === 13)
+                if(e.key === "Escape" || e.keyCode === 27 || e.key === "Enter" || e.keyCode === 13)
                     state_text.blur();
             }
             state_text.onblur = () => {
@@ -425,7 +425,7 @@ class FSMCanvas {
 
                 // transition text edit
                 transition_text.onkeydown = e => {
-                    if(e.key === "Enter" || e.keyCode === 13)
+                    if(e.key === "Escape" || e.keyCode === 27 || e.key === "Enter" || e.keyCode === 13)
                         transition_text.blur();
                 }
                 transition_text.onblur = () => {

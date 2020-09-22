@@ -37,21 +37,18 @@ window.addEventListener('load', () => {
         }, 120);
     }
 
+    load_menu.innerHTML = "";
+    for(let fsm_name in TutorialFSMS) {
+        let li = document.createElement("li");
+        li.innerText = fsm_name;
+        li.onmousedown = e => {
+            e.stopPropagation();
+            setFSM(new FSM(JSON.parse(JSON.stringify(TutorialFSMS[fsm_name]))));
+        }
+        load_menu.appendChild(li);
+    }
     document.getElementById("examples").onmousedown = e => {
         e.stopPropagation();
-        
-        load_menu.innerHTML = "";
-        
-        for(let fsm in TutorialFSMS) {
-            let li = document.createElement("li");
-            li.innerText = fsm;
-            li.onmousedown = () => {
-                options_menu.parentElement.onmousedown();
-                setFSM(new FSM(JSON.parse(JSON.stringify(TutorialFSMS[fsm]))));
-            }
-            load_menu.appendChild(li);
-        }
-
         load_menu.classList.add("menu_show");
     }
     document.getElementById("new").onmousedown = e => {
@@ -59,10 +56,13 @@ window.addEventListener('load', () => {
         options_menu.parentElement.onmousedown();
         setFSM(new FSM());
     }
-    // document.getElementById("load").onmousedown = e => {
-    //     e.stopPropagation();
-    //     load_menu.classList.add("menu_show");
-    // }
+    document.getElementById("load").onmousedown = e => {
+        e.stopPropagation();
+        try {
+            setFSM(new FSM(JSON.parse(Data.get("fsm"))));
+            fsm_canvas.setString(Data.get("string"));
+        } catch(err) { console.log(err); }
+    }
     document.getElementById("upload").parentElement.onmousedown = e => {
         e.stopPropagation();
     }
@@ -82,7 +82,6 @@ window.addEventListener('load', () => {
     }
     document.getElementById("save").onmousedown = e => {
         e.stopPropagation();
-        options_menu.parentElement.onmousedown();
 
         Data.set("fsm", JSON.stringify(fsm_canvas.fsm));
         Data.set("string", fsm_canvas.fsm_string.value);

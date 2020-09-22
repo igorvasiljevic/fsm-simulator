@@ -15,7 +15,7 @@
     <link rel="shortcut icon" type="image/png" href="res/icon.png">
     <link rel="apple-touch-icon" href="res/appleicon.png">
 
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/styles.css">
     
     <noscript>This site can't function without JavaScript</noscript>
     <script src="src/constants.js"></script>
@@ -29,13 +29,13 @@
     <script src="src/simulator.js"></script>
 </head>
 <body>
-    <img class="home" title="Home" onmousedown="window.location.href = home_folder" src="res/step.svg">
+    <img class="home" title="Home" onmousedown="window.location.href = `${home_folder}/`" src="res/step.svg">
     <img class="toggle_options_menu" title="Options" src="res/more.svg">
     <div class="options disabled">
         <ul class="options_menu">
             <li id="examples">Examples</li>
             <li id="new">New</li>
-            <!-- <li id="load">Load</li> -->
+            <li id="load">Load</li>
             <li style="padding: 0;">
                 <label>
                     <input id="upload" type="file" accept="application/json, .fsm">
@@ -53,7 +53,7 @@
         <div class="fsm_canvas" style="width: 200%; height: 200%;"></div>
         <div class="bottom_bar">
             <div class="fsm_string_container">
-                <input type="text" autocomplete="off" spellcheck="false" class="fsm_string">
+                <input type="text" autocomplete="off" spellcheck="false" class="fsm_string" label="String input">
                 <div class="fsm_string"></div>
             </div>
             <div class="fsm_runstep">
