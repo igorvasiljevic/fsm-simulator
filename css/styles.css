@@ -21,35 +21,41 @@
     --state_not_accepted: rgb(124, 6, 6);
     --state_selected: rgb(99, 178, 243);
 
+    --transition_color: rgb(0,0,0);
+
     --tool_selected: rgb(172, 0, 0);
 
     --invert: 0;
+    --brightness: 1;
 }
 
 .light {
-    --bg_color: rgb(221, 221, 221); 
+    --bg_color: rgb(250, 250, 250);
 
     --border_top: rgb(209, 209, 209);
     --border_bottom:  rgb(199, 199, 199);
     --border_left: rgb(199, 199, 199);
     --border_right:rgb(209, 209, 209);
 
-    --text_color: rgb(55, 55, 55);
+    --text_color: rgb(20, 20, 20);
     --faded_text_color: rgb(105, 105, 105);
     --disabled_text_color: rgb(175, 175, 175);
 
-    --item_color: rgb(134, 134, 134);
-    --item_hover: rgb(146, 146, 146);
-    --item_active: rgb(155, 155, 155);
+    --item_color: rgb(77, 77, 77);
+    --item_hover: rgb(43, 43, 43);
+    --item_active: rgb(27, 27, 27);
 
     --state_current: rgb(228, 225, 43);
     --state_accepted: rgb(6, 124, 6);
     --state_not_accepted: rgb(124, 6, 6);
     --state_selected: rgb(99, 178, 243);
 
+    --transition_color: rgb(180, 180, 180);
+
     --tool_selected: rgb(172, 0, 0);    
 
     --invert: 1;
+    --brightness: 6.5;
 }
 
 
@@ -266,7 +272,8 @@ footer span {
     height: 100%;
     background-position: center center;
     background-image: url("../res/grid.svg");
-    filter: invert(var(--invert));
+    
+    filter: brightness(var(--brightness));
 }
 
 .not_selectable {
@@ -325,10 +332,14 @@ footer span {
     z-index: 0;
 }
 
+.transition line, .transition ellipse {
+    stroke: var(--transition_color);
+}
+
 .transition_text {
     position: absolute;
     width: 100%;
-    top: -4px;
+    top: -5px;
     text-align: center;
     vertical-align: middle;
     background-color: rgba(0, 0, 0, 0);
@@ -465,12 +476,12 @@ img svg {
     margin-left: 2px;
 }
 .tool_selected {
-    background-color: var(--bg_color);
+    background-color: var(--item_active);
     border: 2px solid var(--tool_selected);
 }
 
 .home {
-    background-color: var(--bg_color);
+    background-color: rgba(0,0,0,0);
     position: absolute;
     z-index: 100;
     transform: rotate(180deg);

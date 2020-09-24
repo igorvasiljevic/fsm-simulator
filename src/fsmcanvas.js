@@ -451,7 +451,7 @@ class FSMCanvas {
             if(!from){
                 // initial
                 move(transition_element,
-                    to.x - 50 + (this.canvas.clientWidth - transition_element.clientWidth)/2,
+                    to.x - 57.5 + (this.canvas.clientWidth - transition_element.clientWidth)/2,
                     to.y + (this.canvas.clientHeight - transition_element.clientHeight)/2);
             } else if(from.id === to.id) {
                 // loop
@@ -486,16 +486,20 @@ class FSMCanvas {
 
     drawArrowInto(state) {
         let transition_element = this.transition_element_template.cloneNode(true);
+        let transition_text = transition_element.getElementsByClassName("transition_text")[0];
         let svg = transition_element.getElementsByClassName("svg")[0];
         this.canvas.appendChild(transition_element);
 
         transition_element.to_id = state.id;
 
-        svg.style.width = 100 - this.getState(state.id).clientWidth;
+        svg.style.width = 115 - this.getState(state.id).clientWidth;
         move(transition_element,
-            state.x - 50 + (this.canvas.clientWidth - transition_element.clientWidth)/2,
+            state.x - 57.5 + (this.canvas.clientWidth - transition_element.clientWidth)/2,
             state.y + (this.canvas.clientHeight - transition_element.clientHeight)/2);
         svg.style.transform = `rotate(${Math.PI}rad)`;
+
+        transition_text.value = " Start";
+        transition_text.style.textAlign = "left";
 
         svg.onmousedown = e => { e.stopPropagation() }
     }
