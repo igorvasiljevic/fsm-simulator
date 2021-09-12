@@ -1,0 +1,42 @@
+
+.fsm-footer nav {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    user-select: none;
+}
+
+.fsm-footer nav button {
+    background-color: transparent;
+    color: var(--text-color-faded);
+    padding: 28px 20px;
+    font-size: 1.3em;
+    font-family: var(--font-serif);
+    cursor: pointer;
+
+    border: var(--focus-border);
+    border-color: transparent;
+}
+.fsm-footer nav button:hover,
+.fsm-footer nav button:focus-visible {
+    background-color: var(--button-hover);
+    color: var(--text-color);
+}
+.fsm-footer nav button:active {
+    background-color: var(--button-active);
+    color: var(--text-color);
+}
+
+.fsm-footer nav span {
+    padding: 0 10px;
+    align-self: center;
+    color: var(--text-color-dark);
+}
+
+.fsm-footer .rp {
+    padding: 0 20px 0 0;
+}
+
+.fsm-footer .lp {
+    padding: 0 0 0 20px;
+}

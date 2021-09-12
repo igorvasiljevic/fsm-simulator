@@ -1,0 +1,232 @@
+:root {
+	/* fonts */
+	--font-sans-serif: Arial, Helvetica, sans-serif;
+	--font-serif: Georgia, 'Times New Roman', Times, serif;
+	--font-mono: monospace, monospace;
+
+	/* main */
+	--background-color: rgb(34, 34, 34);
+
+	--text-color: rgb(200, 200, 200);
+	--text-color-faded: rgba(150, 150, 150);
+	--text-color-dark: rgba(80, 80, 80);
+
+	--focus-border: 2px dashed red;
+
+	/* buttons */
+	--button-hover: rgb(25, 25, 25);
+	--button-active: rgb(20, 20, 20);
+
+	/* menus */
+	--menu-border: 1px solid rgb(53, 53, 53);
+
+	/* fsm */
+	--state-bg-color: rgb(240, 240, 240);
+	--state-bg-color-current: rgb(226, 226, 0);
+	--state-bg-color-accepted: rgb(24, 223, 24);
+	--state-bg-color-refused: rgb(233, 10, 10);
+    --state-border: 4px solid black;
+    --final-state-border: 3px solid black;
+    --state-text-color: var(--state-border);
+	--grid-img: url('../res/grid-dark.base64.svg');
+	--highligh-color: red;
+	--transition-color: black;
+
+	/* svg */
+	--svg-color: rgb(130, 130, 130);
+	
+	/* tools */
+	--selected-border: 2px solid rgb(60, 60, 255);
+}
+
+.light {
+	/* fonts */
+	/* --font-sans-serif: Arial, Helvetica, sans-serif;
+	--font-serif: Georgia, 'Times New Roman', Times, serif;
+	--font-mono: 'Courier New', Courier, monospace; */
+
+	/* main */
+	--background-color: rgb(248, 248, 248);
+
+	--text-color: rgb(29, 29, 29);
+	--text-color-faded: rgb(49, 49, 49);
+	--text-color-dark: rgb(160, 160, 160);
+
+	--focus-border: 2px dashed red;
+
+	/* buttons */
+	--button-hover: rgb(209, 209, 209);
+	--button-active: rgb(187, 187, 187);
+
+	/* menus */
+	--menu-border: 1px solid rgb(175, 175, 175);
+
+	/* fsm */
+	--state-bg-color: rgb(252, 252, 252);
+	--state-bg-color-current: rgb(226, 226, 0);
+	--state-bg-color-accepted: rgb(24, 223, 24);
+	--state-bg-color-refused: rgb(233, 10, 10);
+    --state-border: 3px solid black;
+    --final-state-border: 3px solid black;
+    --state-text-color: var(--state-border);
+	--grid-img: url('../res/grid-light.base64.svg');
+	--highligh-color: red;
+	--transition-color: rgb(145, 145, 145);
+
+	/* svg */
+	--svg-color: rgb(100, 100, 100);
+
+	/* tools */
+	--selected-border: 2px solid rgb(55, 55, 241);
+}
+
+* {
+	margin: 0px;
+	padding: 0px;
+	box-sizing: border-box;
+	border: 0;
+	-webkit-tap-highlight-color: transparent;
+
+	transition:
+		background-color 0.15s linear,
+		color 0.03s linear,
+		background-image 0.15s linear;
+
+	outline: none;
+}
+
+* :not(input):focus-visible {
+	border: var(--focus-border) !important;
+}
+
+html {
+	background-color: var(--background-color);
+	color: var(--text-color);
+	
+	width: 100%;
+	height: 100%;
+	line-height: 1.15;
+	-webkit-text-size-adjust: 100%;
+}
+
+body {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	min-height: 100%;
+}
+
+body > * {
+	flex-grow: 0;
+	flex-shrink: 0;
+}
+
+hr {
+	border-bottom: 1px solid var(--text-color);
+	max-width: 850px;
+	margin: 0 auto 0;
+}
+
+h3 {
+	font-size: 1.5em;
+	font-weight: initial;
+	text-decoration: underline dotted var(--text-color-dark);
+	margin-bottom: 5px !important;
+	font-style: italic;
+}
+
+main {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	flex-grow: 1;
+	max-width: 850px;
+	margin: 15px auto 15px;
+	font-family: var(--font-sans-serif);
+}
+main > * {
+	margin: 2em 25px;
+}
+main p, h3 {
+	line-height: 1.5;
+}
+
+.list {
+	margin: 2em 60px;
+}
+.subject_list {
+	display: block;
+	list-style: disc;
+	color: var(--text-color-faded);
+}
+.subject_list li {
+	padding: 0.5em;
+	margin-bottom: 1em;
+}
+.subject_list a {
+	border: var(--focus-border);
+	border-color: transparent;
+	color: var(--text-color);
+}
+.subject_list a:visited {
+	color: var(--text-color-faded); 
+}
+.subject_list a:hover {
+	opacity: 0.6;
+}
+.lesson_list {
+	margin-left: 30px;
+	margin-top: 5px;
+	display: block;
+	list-style: circle;
+}
+.lesson_list li {
+	padding: 0.5em;
+	margin-bottom: 0;
+
+}
+
+.noevents {
+	user-select: none;
+	pointer-events:none;
+}
+
+button {
+	user-select: none;
+	cursor: pointer;
+}
+
+button > * {
+    pointer-events: none;
+}
+
+button.img-btn {
+	height: 48px;
+	background-color: var(--background-color);
+	color: var(--text-color-faded);
+}
+button.img-btn span {
+	align-self: center;
+	padding: 0 10px;
+}
+button.img-btn:hover, button.img-btn:focus-visible {
+	background-color: var(--button-hover);
+	color: var(--text-color);
+}
+button.img-btn:hover svg, button.img-btn:focus-visible svg {
+	--svg-color: var(--text-color);
+}
+button.img-btn:active {
+	--svg-color: var(--text-color);
+}
+
+svg {
+	height: 100%;
+	width: auto;
+	padding: 8px;
+	display: block;
+}
+
+.hidden {
+	display: none;
+}

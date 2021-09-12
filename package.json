@@ -1,0 +1,37 @@
+{
+  "name": "fsm-simulator",
+  "version": "2.0.0",
+  "author": "17112",
+  "license": "ISC",
+  "private": true,
+  "main": "src/index.js",
+  "scripts": {
+    "dist": "npm run svgo && npm run img && node esbuild.config.js --minify && npm run terser && npm run postcss",
+    "dist:srv": "python -m http.server --directory dist",
+    
+    "dev": "node esbuild.config.js --out=dev/ --watch --serve",
+    "dev:min": "npm run dev -- --minify",
+    
+    "terser": "terser dist/bundle.js -o dist/bundle.js --compress --mangle",
+    "postcss": "postcss dist/bundle.css --replace --no-map",
+
+    "svgo": "svgo -f ./src/res/original -o ./src/res",
+    "png": "svgexport ./src/res/original/icon.svg ./src/res/icon.png 512: && svgexport ./src/res/original/icon-maskable.svg ./src/res/icon-maskable.png 512:",
+    "ico": "icon-gen -i ./src/res/original/icon.svg -o ./src/ --ico --ico-name favicon --ico-sizes 32 -r",
+    "img": "npm run svgo && npm run png && npm run ico"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.3.4",
+    "chokidar": "^3.5.1",
+    "cssnano": "^5.0.8",
+    "cssnano-preset-advanced": "^5.1.4",
+    "esbuild": "^0.11.20",
+    "fs-extra": "^10.0.0",
+    "icon-gen": "^1.0.5",
+    "live-server": "^1.1.0",
+    "postcss-cli": "^8.3.1",
+    "svgexport": "^0.4.2",
+    "svgo": "^2.3.0",
+    "terser": "^5.7.0"
+  }
+}

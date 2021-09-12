@@ -1,0 +1,284 @@
+
+.fsm-container {
+    position: relative;
+    width: 80%;
+    height: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: hidden;
+
+    touch-action: none;
+
+    scroll-padding: 60px;
+}
+
+.fsm-container::before {
+    content: '';
+    position: absolute;
+    z-index: 30;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    box-shadow: inset 0px 0px 5px 5px rgba(0,0,0,0.2);
+}
+
+.fsm-container .fsm-canvas {
+    z-index: 1;
+    /* background-color: var(--button-hover); */
+    background-color: gray;
+    background-image: var(--grid-img);
+    background-position: center;
+    position: relative;
+    min-width: 100%;
+    min-height: 100%;
+    width: 200%;
+    height: 200%;
+
+    padding: 20px;
+    padding-bottom: 70px;
+}
+
+.fsm-container .state {
+    user-select: none;
+    position: absolute;
+    z-index: 5;
+
+    padding: 1px;
+
+    cursor: grab;
+    width: 54px;
+    height: 54px;
+    background-color: var(--state-bg-color);
+    color: var(--state-text-color);
+    border: var(--state-border);
+    border-radius: 50%;
+    overflow: hidden;
+
+    transition: none;
+}
+
+.fsm-container .state:hover {
+    z-index: 20;
+}
+.fsm-container .state:active,
+.fsm-container .state.held,
+.fsm-container .state:focus,
+.fsm-container .state:focus-within {
+    cursor: grabbing;
+    z-index: 25;
+}
+
+.fsm-container .state.current {
+    background-color: var(--state-bg-color-current);
+}
+
+.fsm-container .state.current.accepted {
+    background-color: var(--state-bg-color-accepted);
+}
+
+.fsm-container .state .input {
+    width: 100%;
+    height: 100%;
+    
+    background-color: transparent;
+    text-align: center;
+    font-family: var(--font-sans-serif);
+    font-size: 16px;
+    font-weight: bold;
+    outline: none;
+    border-radius: 50%;
+    overflow: hidden;
+
+    transition: none;
+}
+.fsm-container .state.final .input {
+    border: var(--final-state-border)
+}
+/* .fsm-container .state.initial {
+    background-color: rgb(243, 196, 77);
+} */
+.fsm-container .state.selected {
+    background-color: rgb(61, 162, 245);
+}
+
+.fsm-container .transition {
+    position: absolute;
+    width: fit-content;
+    cursor: pointer;
+}
+
+.fsm-container .transition svg {
+    padding: 0;
+}
+
+.fsm-container .transition .input {
+    position: absolute;
+    
+    width: 150px;
+    left: calc(-150px/2 + 50%);
+
+    top: -8px;
+    text-align: center;
+    vertical-align: middle;
+    background-color: rgba(0, 0, 0, 0);
+    color: var(--text_color);
+    border: 0px;
+    outline: 0px;
+    text-decoration: none;
+    font-family: var(--font-sans-serif);
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.fsm-container .transition.initial {
+    cursor: initial;
+}
+
+.fsm-container .transition.initial .input {
+    width: 100%;
+    left: -5px;
+}
+
+
+
+
+.fsm-container .pill-container {
+    z-index: 3;
+    user-select: none;
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    display: flex;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.fsm-container .pill {
+    position: initial;
+    background-color: transparent;
+    color: var(--text-color);
+    width: 65px;
+    height: 30px;
+    text-align: center;
+    font-family: var(--font-sans-serif);
+    font-size: 15px;
+    margin-left: 7px;
+
+    cursor: pointer;
+
+    border-radius: 9999999px;
+    border: 1px solid var(--svg-color);
+}
+.fsm-container .pill:hover {
+    opacity: 80%;
+}
+.fsm-container .pill:active {
+    opacity: 60%;
+}
+.fsm-container .pill svg {
+    --svg-color: var(--text-color);
+    height: 100%;
+    width: auto;
+    padding: 4px;
+}
+.fsm-container .pill:last-child {
+    width: initial;
+    padding: 0 5px;
+}
+
+
+.fsm-container .bottombar {
+    z-index: 3;
+    position: absolute;
+    bottom: 3px;
+    width: 100%;
+    height: 48px;
+    display: flex;
+}
+
+.fsm-container .bottombar > * {
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+.fsm-container .bottombar :first-child {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.fsm-container .bottombar .control-menu {
+    display: flex;
+    width: calc((48px + 3px) * 2);
+    transition: width 0.3s ease-in-out;
+}
+
+.fsm-container .bottombar button {
+    position: initial;
+    width: 48px;
+    border: var(--menu-border);
+    border-radius: 50%;
+    padding: 0;
+    margin-right: 3px;
+    font-family: var(--font-sans-serif);
+    box-shadow: 0px 0px 4px 1px rgba(0,0,0,0.4);
+}
+
+.fsm-container .bottombar button svg {
+    width: 100%;
+    padding: 10px;
+}
+
+.fsm-container .control-menu .controls {
+    display: flex;
+}
+
+.fsm-container.fsm-edit .control-menu {
+    width: 0;
+}
+
+
+
+.fsm-container .bottombar .edit-menu {
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    width: 0;
+    transition: width 0.3s ease-in-out;
+}
+
+.fsm-container .bottombar .edit-menu .tools {
+    display: flex;
+    flex-direction: column-reverse;
+    width: 54px;
+    padding-left: 3px;
+}
+
+.fsm-container .bottombar .edit-menu button {
+    margin-bottom: 3px;
+}
+
+.fsm-container.fsm-edit .edit-menu {
+    width: 54px;
+}
+
+.fsm-container .tool-selected {
+    border: var(--selected-border) !important;
+    background-color: var(--button-hover);
+    --svg-color: var(--text-color);
+}
+
+
+.fsm-container:fullscreen .fsm-container,
+.fsm-container:fullscreen .fsm-canvas {
+    display: block;
+}
+.fsm-container:fullscreen .fsm-container {
+    width: 100%;
+    height: 100%;
+}
+.fsm-container:fullscreen::before,
+.fsm-container:fullscreen .pill-container,
+.fsm-container:fullscreen .bottombar {
+    position: fixed;
+}

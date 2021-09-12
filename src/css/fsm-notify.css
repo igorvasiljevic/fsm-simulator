@@ -1,0 +1,26 @@
+
+
+.fsm-notify {
+    pointer-events: none;
+    user-select: none;
+    z-index: 1000;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 70px;
+
+    background-color: var(--background-color);
+    border: var(--menu-border);
+    border-radius: 999999px;
+
+    text-align: center;
+    padding: 15px 20px;
+
+    font-family: var(--font-sans-serif);
+
+    transition: opacity 0.3s;
+}
+
+.hide {
+    opacity: 0;
+}

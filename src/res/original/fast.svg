@@ -1,0 +1,13 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <path fill="none" stroke="var(--svg-color)" stroke-width="8" d="
+        M  24  28
+        l  28  22
+        l -28  22
+        z
+
+        M  58  28
+        l  28  22
+        l -28  22
+        z
+    "/>
+</svg>

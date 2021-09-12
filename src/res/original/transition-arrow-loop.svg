@@ -1,0 +1,8 @@
+<svg width="45" height="50" xmlns="http://www.w3.org/2000/svg">
+    <g class="noevents" fill="none" stroke="var(--transition-color)" stroke-width="2">
+        <circle r="18.2" cx="50%" cy="28"/>
+        <!-- <path d="M 34 43 A 18.5 18.5 0 1 0 10 43"/> -->
+        <line x1="36" y1="31" x2="35" y2="43"/>
+        <line x1="44" y1="36" x2="34.5" y2="43"/>
+    </g>
+</svg>

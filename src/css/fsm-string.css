@@ -1,0 +1,45 @@
+
+
+.fsm-string {
+	background-color: var(--background-color);
+	border: var(--menu-border);
+	margin: 0 3px;
+
+	padding-left: 10px;
+	padding-right: 10px;
+	box-shadow: 0px 0px 4px 1px rgba(0,0,0,0.4);
+}
+
+.fsm-string, .fsm-string-input, .fsm-pseudo-input {
+	border-radius: 999999px;
+	position: relative;
+	background-color: var(--background-color);
+	height: 48px;
+	outline: none;
+	white-space: nowrap;
+
+	color: var(--text-color);
+	font-family: var(--font-mono);
+	font-size: 18px;
+
+	overflow: hidden;
+}
+
+.fsm-string-input, .fsm-pseudo-input {
+	user-select: none;
+	overflow: hidden;
+	position: absolute;
+	width: calc(100% - 16px);
+}
+
+.fsm-pseudo-input {
+	line-height: 48px;
+}
+
+.highlight {
+	color: var(--highligh-color);
+	margin: 0 3px;
+	padding: 0 3px;
+	font-size: 20px;
+	border: var(--menu-border);
+}

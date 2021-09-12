@@ -1,0 +1,75 @@
+
+.fsm-header .topbar {
+    display: flex;
+    align-items: stretch;
+    height: 48px;
+    
+    color: var(--text-color-dark);
+    user-select: none;
+}
+
+.fsm-header .topbar > * {
+    background-color: transparent;
+    font-size: 16px;
+    font-family: var(--font-serif);
+
+    padding: 0 6px;
+}
+
+.fsm-header .topbar span {
+    align-self: center;
+}
+
+.fsm-header .topbar button {
+    color: var(--text-color-faded);
+    cursor: pointer;
+    
+    border: var(--focus-border);
+    border-color: transparent;
+}
+.fsm-header .topbar button:hover {
+    opacity: 0.6;
+}
+.fsm-header .topbar button:active {
+    opacity: 0.4;
+}
+
+.fsm-header .topbar svg {
+    height: 28px;
+    width: auto;
+    margin: auto;
+    pointer-events: none;
+}
+
+.fsm-header .mla {
+    margin-left: auto;
+}
+
+
+
+
+.fsm-header h1, h2, h4 {
+    text-align: center;
+    font-family: var(--font-serif);
+    font-weight: 100;
+    font-style: italic;
+}
+
+.fsm-header h1 {
+    margin: 25px 40px 10px;
+    font-size: 3.2em;
+}
+
+.fsm-header h2 {
+    margin: 18px 40px 0;
+    font-size: 2em;
+}
+
+.fsm-header h4 {
+    color: var(--text-color-faded);
+    font-family: var(--font-sans-serif);
+}
+
+.fsm-header hr {
+    margin-top: 40px;
+}

@@ -1,0 +1,16 @@
+<svg viewBox="-50 -50 100 100" stroke="var(--svg-color)" stroke-width="4" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg">
+    <path fill="var(--svg-color)" d="
+        M   0  20 A 1 1 0 0 0 0 -20
+    "/>
+    <path fill="none" stroke-width="4.5" d="
+        M   0 -20 A 1 1 0 0 0 0 20
+        M   0  33 V  46
+        M   0 -33 V -46
+        M -33   0 H -46
+        M  33   0 H  46
+        M -25 -25 L -33 -33
+        M -25  25 L -33  33
+        M  25  25 L  33  33
+        M  25 -25 L  33 -33
+    "/>
+</svg>

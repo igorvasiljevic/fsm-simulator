@@ -1,0 +1,19 @@
+<svg viewBox="-50 -50 100 100" xmlns="http://www.w3.org/2000/svg">
+    <path fill="none" stroke="var(--svg-color)" stroke-width="10" d="
+        M -28 -8
+        v -20
+        h 20
+
+        m 16 0
+        h 20
+        v 20
+
+        m 0 16
+        v 20
+        h -20
+
+        m -16 0
+        h -20
+        v -20
+    "/>
+</svg>
