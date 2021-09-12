@@ -8,9 +8,9 @@ export default class FSMMenu extends HTMLElement {
     connectedCallback() {
         
         const element = (
-            <div class="menu-container">
-                <button type="button" id="menu-btn" class="img-btn"><svgl svg={more}/></button>
-                <div class="menu menu-hidden">
+            <div class='menu-container'>
+                <button type='button' id='menu-btn' class='img-btn'><svgl svg={more}/></button>
+                <div class='menu menu-hidden'>
                     {[...this.children]}
                 </div>
             </div>

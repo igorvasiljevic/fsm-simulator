@@ -3,8 +3,8 @@ import { home_folder, pages } from './constants.js';
 const Navigate = (() => {
     
     const currentPageIndex = () => {
-        let current_page = window.location.pathname.replace(home_folder, "");
-        if(current_page === "/index.html") current_page = "/";
+        let current_page = window.location.pathname.replace(home_folder, '');
+        if(current_page === '/index.html') current_page = '/';
         return pages.indexOf(current_page);
     };
     

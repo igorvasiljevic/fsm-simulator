@@ -8,9 +8,9 @@ export default class FSMString extends HTMLElement {
         this.value = this.value ?? '';
 
         const element = (
-            <div class="fsm-string">
-                <input type="text" placeholder="test string" class="fsm-string-input" value={this.value} enterKeyHint="done" spellcheck={false} autocomplete={false}/>
-                <div class="fsm-pseudo-input">{this.value}</div>
+            <div class='fsm-string'>
+                <input type='text' placeholder='test string' class='fsm-string-input' value={this.value} enterKeyHint='done' spellcheck={false} autocomplete={false}/>
+                <div class='fsm-pseudo-input'>{this.value}</div>
             </div>
         );
         this.replaceWith(element);

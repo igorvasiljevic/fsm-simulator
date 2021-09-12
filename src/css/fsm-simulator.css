@@ -20,7 +20,7 @@
 .simulator button {
     position: absolute;
 
-    font-size: 16px;
+    font-size: 1em;
     font-family: var(--font-serif);
 
     padding: 0 6px;

@@ -8,9 +8,9 @@ const Examples = {
         transitions   : {},
         type          : 0,
         state_info    : {
-            0: { name:"q0", x:0, y:0 }
+            0: { name:'q0', x:0, y:0 }
         },
-        string        : "first"
+        string        : 'first'
     },
     Second: {
         states        : [0, 1],
@@ -19,10 +19,10 @@ const Examples = {
         transitions   : {},
         type          : 1,
         state_info    : {
-            0: { name:"q0", x:-50, y:-50 },
-            1: { name:"q1", x: 50, y: 50 }
+            0: { name:'q0', x:-50, y:-50 },
+            1: { name:'q1', x: 50, y: 50 }
         },
-        string        : "second"
+        string        : 'second'
     },
     Third: {
         states        : [1, 2, 3],
@@ -31,11 +31,11 @@ const Examples = {
         transitions   : {},
         type          : 2,
         state_info    : {
-            1: { name:"q1", x:-50, y:-50 },
-            2: { name:"q2", x: 50, y:-50 },
-            3: { name:"q3", x: 50, y: 50 }
+            1: { name:'q1', x:-50, y:-50 },
+            2: { name:'q2', x: 50, y:-50 },
+            3: { name:'q3', x: 50, y: 50 }
         },
-        string        : "third"
+        string        : 'third'
     },
     Fourth: {
         states        : [0, 1, 2, 3],
@@ -63,12 +63,12 @@ const Examples = {
         },
         type          : 1,
         state_info    : {
-            0: { name:"q0", x:-110,  y:   0 },
-            1: { name:"q1", x:   0,  y:-110 },
-            2: { name:"q2", x: 110,  y:   0 },
-            3: { name:"q3", x:   0,  y: 110 }
+            0: { name:'q0', x:-110,  y:   0 },
+            1: { name:'q1', x:   0,  y:-110 },
+            2: { name:'q2', x: 110,  y:   0 },
+            3: { name:'q3', x:   0,  y: 110 }
         },
-        string        : "ccaccaccbccbcc"
+        string        : 'ccaccaccbccbcc'
     }
 }
 

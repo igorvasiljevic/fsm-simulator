@@ -75,6 +75,9 @@
 .fsm-container .state.current.accepted {
     background-color: var(--state-bg-color-accepted);
 }
+.fsm-container .state.current.rejected {
+    background-color: var(--state-bg-color-rejected);
+}
 
 .fsm-container .state .input {
     width: 100%;
@@ -83,7 +86,7 @@
     background-color: transparent;
     text-align: center;
     font-family: var(--font-sans-serif);
-    font-size: 16px;
+    font-size: 1em;
     font-weight: bold;
     outline: none;
     border-radius: 50%;
@@ -126,7 +129,7 @@
     outline: 0px;
     text-decoration: none;
     font-family: var(--font-sans-serif);
-    font-size: 16px;
+    font-size: 1em;
     font-weight: bold;
 }
 
@@ -162,7 +165,7 @@
     height: 30px;
     text-align: center;
     font-family: var(--font-sans-serif);
-    font-size: 15px;
+    font-size: 0.94em;
     margin-left: 7px;
 
     cursor: pointer;

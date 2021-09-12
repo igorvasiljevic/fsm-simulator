@@ -10,7 +10,7 @@ export default class Footer extends HTMLElement {
         const txt_next = !back && next ? 'Start' : 'Next';
 
         this.replaceWith(
-            <footer class="fsm-footer">
+            <footer class='fsm-footer'>
                 <hr/>
                 <nav>
                     {back ? <button type='button' onclick={Navigate.previous}><span class='rp'>&lt;</span>Previous</button> : ''}

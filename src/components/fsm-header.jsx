@@ -10,20 +10,20 @@ import '../css/fsm-header.css';
 
 export default class Header extends HTMLElement {
     connectedCallback() {
-        const fullsize = this?.hasAttribute("fullsize");
+        const fullsize = this?.hasAttribute('fullsize');
 
         this.replaceWith(
-            <header class="fsm-header">
-                <div class="topbar">
+            <header class='fsm-header'>
+                <div class='topbar'>
                     {fullsize ? '' :
-                        <button type="button" class="topbar mra" onclick={() => location.href = home_folder + '/'}>
+                        <button type='button' class='topbar mra' onclick={() => location.href = home_folder + '/'}>
                             <svgl svg={home}/>
                             <span>Home</span>
                         </button>}
-                    <button type="button" onclick={() => setLanguage('bs')} class="mla">Bosanski</button>
+                    <button type='button' onclick={() => setLanguage('bs')} class='mla'>Bosanski</button>
                     <span>•</span>
-                    <button type="button" onclick={() => setLanguage('en')}>English</button>
-                    <button type="button" class="topbar" onclick={switchTheme}>
+                    <button type='button' onclick={() => setLanguage('en')}>English</button>
+                    <button type='button' class='topbar' onclick={switchTheme}>
                         <svgl svg={theme}/>
                     </button>
                 </div>

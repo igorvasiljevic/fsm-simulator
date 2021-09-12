@@ -21,8 +21,8 @@ export default class Simulator extends HTMLElement {
         const canvas = <fsm-canvas scale={2} load/>;
         const menu = (
             <sim-menu>
-                <button type='button' submenu="menu-examples">Examples</button>
-                <div id="menu-examples" class="menu submenu menu-hidden">
+                <button type='button' submenu='menu-examples'>Examples</button>
+                <div id='menu-examples' class='menu submenu menu-hidden'>
                     { Object.keys(Examples).map(example => (
                         <button type='button' onclick={() => {
                             canvas.setFSMdata(new FSM(Examples[example]));
@@ -39,7 +39,7 @@ export default class Simulator extends HTMLElement {
                     if(fsm_data)
                         canvas.setFSMdata(new FSM(JSON.parse(fsm_data)));
                     else
-                        notify("No saved data");
+                        notify('No saved data');
 
                 }}>Load</button>
 
@@ -52,16 +52,16 @@ export default class Simulator extends HTMLElement {
                 <button type='button' onclick={() => {
                     canvas.fsm.string = canvas._get_string();
                     Data.set('fsm', JSON.stringify(canvas.getFSMdata()));
-                    notify("Data saved");
+                    notify('Data saved');
                 }}>Save</button>
 
                 <button type='button' onclick={() => {
-                    const filename = prompt("Enter file name", "fsm.json");
+                    const filename = prompt('Enter file name', 'fsm.json');
                     if(filename)
                         File.download(filename, JSON.stringify(canvas.getFSMdata()));
                 }}>Download</button>
 
-                <button type='button' onclick={ switchTheme } class="theme img-btn">
+                <button type='button' onclick={ switchTheme } class='theme img-btn'>
                     <svgl svg={theme}/>
                 </button>
             </sim-menu>
@@ -69,7 +69,7 @@ export default class Simulator extends HTMLElement {
 
         this.replaceWith(
             <>
-                <button type="button" class="img-btn home" onclick={() => location.href = home_folder + '/'}>
+                <button type='button' class='img-btn home' onclick={() => location.href = home_folder + '/'}>
                     <svgl svg={home}/>
                 </button>
                 {menu}

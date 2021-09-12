@@ -5,7 +5,7 @@ import '../css/fsm-notify.css';
 class Notify extends HTMLElement {
     connectedCallback() {
 
-        const element = <div class="fsm-notify hide"/>;
+        const element = <div class='fsm-notify hide'/>;
 
         this.replaceWith(element);
 
