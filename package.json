@@ -2,7 +2,7 @@
   "name": "fsm-simulator",
   "version": "2.0.0",
   "author": "17112",
-  "license": "ISC",
+  "license": "MIT",
   "private": true,
   "main": "src/index.js",
   "scripts": {

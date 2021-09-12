@@ -11,4 +11,4 @@ import './components/fsm-simulator.jsx';
 
 loadTheme();
 
-// window.onload = register_sw;
+window.onload = register_sw;
