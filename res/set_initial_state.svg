@@ -1,4 +1,0 @@
-<svg class="tool_img" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
-    <ellipse ry="110" rx="110" cy="150"  cx="150" fill="none" stroke="#c8c8c8" stroke-width="10px"/>
-    <text x="150" y="160" fill="#c8c8c8" style="text-anchor:middle; alignment-baseline:middle; font-family:Arial; font-size:100;">P</text>
-</svg>

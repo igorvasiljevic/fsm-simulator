@@ -1,1 +1,0 @@
-window.addEventListener("load",()=>{for(let e of document.getElementsByClassName("fsm_frame")){let t=new FSMCanvas(e),a=new FSM(JSON.parse(JSON.stringify(TutorialFSMS[e.dataset.fsm])));t.setString(e.dataset.string),t.setFSM(a),t.draw()}});

@@ -1,9 +1,0 @@
-<svg class="tool_img" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
-    <path fill="#909090" stroke="#909090" stroke-width="8" d="
-        m 100 60 a 1 1 0 0 1 0 80
-    "/>
-    <path fill="none" stroke="#909090" stroke-width="8" d="
-    m 100 60 a 1 1 0 0 0 0 80
-    m 0 25 v 25 m 0 -155 v -25 m -65 90 h -25 m 155 0 h 25 m -136 -46 l -18 -18 m 0 128 l 18 -18 m 92 0 l 18 18 m 0 -128 l -18 18
-    "/>
-</svg>

@@ -1,119 +1,34 @@
 <!doctype html>
-
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <title>Finite-State Machines</title>
-    <meta name="description" content="Finite-State Machine lessons and simulator">
+    <title>Lesson 2</title>
+    <meta name="description" content="Finite State Machine lessons and simulator">
     <meta name="author" content="17112">
 
     <link rel="manifest" href="../manifest.webmanifest">
-    <meta name="theme-color" content="#282828">
-    <link rel="shortcut icon" type="image/png" href="../res/icon.png">
-    <link rel="apple-touch-icon" href="../res/appleicon.png">
+    <meta name="theme-color" content="#222222">
+    <link rel="icon" href="../res/icon.svg">
+    <link rel="mask-icon" href="../res/icon-maskable.png" color="#fff">
+    <link rel="apple-touch-icon" href="../res/icon-maskable.png">
 
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../bundle.css">
 
-    <noscript>This site can't function without JavaScript</noscript>
-    <script src="../src/core.js"></script>
-    <script src="../src/fsm.js"></script>
-    <script src="../index.js"></script>
+    <script src="../bundle.js"></script>
 </head>
 <body>
-    <img class="home" title="Home" onmousedown="window.location.href = `${home_folder}/`" src="../res/step.svg">
-    <header>
-        <p class="not_selectable">
-            <a onclick="setLanguage('bs')">Bosanski</a>
-            •
-            <a onclick="setLanguage('en')">English</a>
-            <img id="theme" title="Change theme" src="../res/theme.svg">
-        </p>
-        <h2 id="txt_finite_state_machines" class="lang">Finite-State Machines</h2>
-    </header>
-    <hr>
+    <noscript>This site can't function without JavaScript</noscript>
+
+    <fsm-header></fsm-header>
+
     <main>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-            magna aliqua. Vestibulum mattis ullamcorper velit sed. Mauris commodo quis imperdiet massa tincidunt nunc.
-            Turpis massa sed elementum tempus egestas sed sed risus. Faucibus a pellentesque sit amet porttitor. Velit
-            scelerisque in dictum non consectetur a. Quis eleifend quam adipiscing vitae. In dictum non consectetur a
-            erat nam at. Dictumst vestibulum rhoncus est pellentesque elit ullamcorper dignissim cras tincidunt. Pretium
-            aenean pharetra magna ac placerat vestibulum lectus. Nunc scelerisque viverra mauris in aliquam sem
-            fringilla ut. Semper viverra nam libero justo laoreet sit amet cursus sit.</p>
-
-        <div class="fsm_frame" data-fsm="First" data-string="">
-            <div class="shadow"></div>
-            <div class="fsm_canvas" ></div>
-            <div class="bottom_bar">
-                <div class="fsm_string_container">
-                    <input type="text" autocomplete="off" spellcheck="false" class="fsm_string">
-                    <div class="fsm_string"></div>
-                </div>
-                <div class="fsm_runstep">
-                    <img class="step" title="Step" src="../res/step.svg">
-                    <img class="run" title="Run" src="../res/run.svg">
-                </div>
-                <img class="toggle_toolbar" title="Toolbar" src="../res/more.svg">
-                <div class="toolbar">
-                    <img id="delete" class="delete" title="Delete" src="../res/delete.svg">
-                    <img id="initial" class="set_initial_state" title="Set initial state" src="../res/set_initial_state.svg">
-                    <img id="final" class="set_final_state" title="Set final states" src="../res/set_final_state.svg">
-                    <img id="transition" class="add_transition" title="Add transitions" src="../res/add_transition.svg">
-                </div>
-            </div>
-        </div>
-
-        <p>Risus quis varius quam quisque id. Elit sed vulputate mi sit amet. Ut tortor pretium viverra suspendisse
-            potenti nullam. Arcu risus quis varius quam quisque. In ante metus dictum at tempor commodo ullamcorper a.
-            Enim nulla aliquet porttitor lacus luctus accumsan tortor. Mattis nunc sed blandit libero volutpat sed.
-            Imperdiet proin fermentum leo vel orci porta non. Semper eget duis at tellus at urna condimentum mattis
-            pellentesque. Cursus mattis molestie a iaculis at erat pellentesque adipiscing. Volutpat lacus laoreet non
-            curabitur gravida arcu ac tortor. Est lorem ipsum dolor sit amet. Nisi vitae suscipit tellus mauris a diam
-            maecenas sed.</p>
-
-        <div class="fsm_frame" data-fsm="Second" data-string="a">
-            <div class="shadow"></div>
-            <div class="fsm_canvas"></div>
-            <div class="bottom_bar">
-                <div class="fsm_string_container">
-                    <input type="text" autocomplete="off" spellcheck="false" class="fsm_string">
-                    <div class="fsm_string"></div>
-                </div>
-                <div class="fsm_runstep">
-                    <img class="step" title="Step" src="../res/step.svg">
-                    <img class="run" title="Run" src="../res/run.svg">
-                </div>
-                <img class="toggle_toolbar" title="Toolbar" src="../res/more.svg">
-                <div class="toolbar">
-                    <img id="delete" class="delete" title="Delete" src="../res/delete.svg">
-                    <img id="initial" class="set_initial_state" title="Set initial state" src="../res/set_initial_state.svg">
-                    <img id="final" class="set_final_state" title="Set final states" src="../res/set_final_state.svg">
-                    <img id="transition" class="add_transition" title="Add transitions" src="../res/add_transition.svg">
-                </div>
-            </div>
-        </div>
-
-        <p>Facilisis magna etiam tempor orci. Sapien eget mi proin sed libero enim sed faucibus. Varius duis at
-            consectetur lorem donec massa sapien faucibus. Gravida neque convallis a cras semper auctor neque vitae
-            tempus. Integer eget aliquet nibh praesent. Tortor pretium viverra suspendisse potenti nullam ac tortor
-            vitae. Mauris cursus mattis molestie a iaculis at erat pellentesque. Condimentum lacinia quis vel eros donec
-            ac. In fermentum et sollicitudin ac orci phasellus egestas tellus rutrum. Blandit volutpat maecenas volutpat
-            blandit aliquam etiam. Tortor at risus viverra adipiscing at. Ultricies leo integer malesuada nunc.
-            Consectetur lorem donec massa sapien faucibus et molestie ac. Tortor consequat id porta nibh venenatis. At
-            auctor urna nunc id cursus metus aliquam eleifend. Augue interdum velit euismod in pellentesque massa
-            placerat duis ultricies. Nec nam aliquam sem et tortor consequat id porta. Massa massa ultricies mi quis
-            hendrerit dolor magna eget est. Id interdum velit laoreet id donec ultrices tincidunt. Et molestie ac
-            feugiat sed lectus vestibulum.</p>
+        <p>Lesson 2</p>
     </main>
-    <hr>
-    <footer>
-        <ul class="bottom_navigation">
-            <li class="not_selectable" onclick="previousPage()">←&nbsp;&nbsp;&nbsp;<span id="txt_previous_page" class="lang">Previous</span></li>
-            <li class="not_selectable no_events">•</li>
-            <li class="not_selectable" onclick="nextPage()"><span id="txt_next_page" class="lang">Next</span>&nbsp;&nbsp;&nbsp;→</li>
-        </ul>
-    </footer>
+
+    <fsm-footer></fsm-footer>
+    
 </body>
 </html>
