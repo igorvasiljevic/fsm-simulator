@@ -1,0 +1,42 @@
+.transition {
+    position: absolute;
+    width: fit-content;
+    height: 0;
+}
+
+.transition svg {
+    padding: 0;
+    cursor: pointer;
+}
+
+.transition .input {
+    position: absolute;
+    
+    width: 150px;
+    left: calc(-150px/2 + 50%);
+
+    top: -8px;
+    text-align: center;
+    vertical-align: middle;
+    background-color: rgba(0, 0, 0, 0);
+    color: var(--text_color);
+    border: 0px;
+    outline: 0px;
+    text-decoration: none;
+    font-family: var(--font-sans-serif);
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.transition.initial {
+    cursor: initial;
+}
+
+.transition.initial .input {
+    width: 100%;
+    left: -5px;
+}
+
+.transition.loop {
+    height: initial;
+}

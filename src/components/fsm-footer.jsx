@@ -5,8 +5,8 @@ import '../css/fsm-footer.css';
 
 export default class Footer extends HTMLElement {
     connectedCallback() {
-        const back = Navigate.getPreviousPage() !== undefined;
-        const next = Navigate.getNextPage() !== undefined;
+        const back = Navigate.get_previous_page() !== undefined;
+        const next = Navigate.get_next_page() !== undefined;
         const txt_next = !back && next ? 'Start' : 'Next';
 
         this.replaceWith(

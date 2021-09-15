@@ -27,6 +27,4 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(notify_element);
 }, { once: true });
 
-export const notify = message => {
-    notify_element._show(message);
-}
+export const notify = message => notify_element._show(message);

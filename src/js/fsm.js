@@ -62,6 +62,9 @@ export class FSM {
     }
 
     add_transition(from_state, to_state, symbol) {
+        if(symbol === epsilon && this.type !== FSMType.eNFA)
+            return;
+
         if(!this.transitions[from_state])
             this.transitions[from_state] = {};
 
@@ -73,6 +76,8 @@ export class FSM {
             this.transitions[from_state][symbol].clear();
 
         this.transitions[from_state][symbol].add(to_state);
+
+        // return this.transitions[from_state][symbol].size > 0
     }
 
     remove_transition(from_state, to_state) {
@@ -89,10 +94,10 @@ export class FSM {
         while(old_size !== new_size) {
             old_size = states.size;
             
-            let old_states = [...states];
+            let old_states = states;
             for(let state of old_states)
                 if(this.transitions[state] && this.transitions[state][epsilon])
-                    for(let new_state of [...this.transitions[state][epsilon]])
+                    for(let new_state of this.transitions[state][epsilon])
                         states.add(new_state);
 
             new_size = states.size;
@@ -109,7 +114,7 @@ export class FSM {
 
     transition(state, symbol) {
         let states = this.transitions?.[state]?.[symbol];
-
+        
         if(!states) return [];
 
         if(this.type === FSMType.eDFA)
@@ -117,6 +122,36 @@ export class FSM {
 
         return [...states];        
     }
+
+    transition_states(states, symbol) {
+        const new_states = new Set();
+
+        for(let state of states)
+            for(let new_state of this.transition(state, symbol))
+                new_states.add(new_state);
+        
+        return [...new_states];
+    }
+
+    // run(string) {
+    //     let states = this.start();
+
+    //     for(let symbol of string)
+    //         states = this.transition_states(states, symbol);
+
+    //     return states;
+    // }
+
+    // accepted(states) {
+    //     for(let state of states)
+    //         if(this.final_states.has(state))
+    //             return true;
+    //     return false;
+    // }
+
+    // test(string) {
+    //     return this.accepted(this.run(string));
+    // }
 
     toJSON() {
         let transitions = this.transitions;

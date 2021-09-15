@@ -1,7 +1,7 @@
 import { service_worker_path } from './constants.js';
 
 
-const register_sw = () => {
+export default () => {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register(service_worker_path);
 
@@ -13,5 +13,3 @@ const register_sw = () => {
         });
     }
 }
-
-export default register_sw;

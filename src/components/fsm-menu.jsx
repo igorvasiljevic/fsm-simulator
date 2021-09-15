@@ -25,7 +25,7 @@ export default class FSMMenu extends HTMLElement {
         submenus.forEach(hide_menu);
         
         // menu button on click open/close menu/submenu
-        element.querySelector('#menu-btn').onclick = e => {
+        element.querySelector('#menu-btn').onclick = () => {
             if(menu.classList.contains('menu-hidden')) {
                 document.addEventListener('pointerdown', mask, { capture: true });
                 show_menu(menu);
@@ -54,11 +54,7 @@ export default class FSMMenu extends HTMLElement {
             }
         });
 
-        submenus.forEach(submenu => {
-            submenu.onfocusout = e => {
-                hide_menu(submenu);
-            }
-        });
+        submenus.forEach(submenu => submenu.onfocusout = () => hide_menu(submenu));
 
         function mask(e) {
             if(e.target !== element && !element.contains(e.target)) {
@@ -69,10 +65,7 @@ export default class FSMMenu extends HTMLElement {
 
         
         function show_menu(menu_el) {
-            [...menu_el.children].forEach(child => {
-                if(child.tagName === 'BUTTON')
-                    child.tabIndex = 0;
-            });
+            menu_el.querySelectorAll('button').forEach(btn => btn.tabIndex = 0);
 
             if(document.activeElement.matches(':focus-visible'))
                 menu_el.firstElementChild.focus();
@@ -90,14 +83,12 @@ export default class FSMMenu extends HTMLElement {
             menu_el.classList.remove('menu-hidden');
         }
 
-        function hide_menu(menu_el  ) {
-            menu_el.querySelectorAll('button').forEach(btn => {
-                btn.tabIndex = -1;
-            });
+        function hide_menu(menu_el) {
+            menu_el.querySelectorAll('button').forEach(btn => btn.tabIndex = -1);
             menu_el.classList.add('menu-hidden');
         }
 
     }
 }
 
-customElements.define('sim-menu', FSMMenu);
+customElements.define('fsm-menu', FSMMenu);

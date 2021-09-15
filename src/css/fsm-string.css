@@ -26,7 +26,6 @@
 }
 
 .fsm-string-input, .fsm-pseudo-input {
-	user-select: none;
 	overflow: hidden;
 	position: absolute;
 	width: calc(100% - 16px);
@@ -34,6 +33,7 @@
 }
 
 .fsm-pseudo-input {
+	user-select: none;
 	line-height: 48px;
 }
 

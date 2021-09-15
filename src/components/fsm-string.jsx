@@ -5,12 +5,12 @@ import '../css/fsm-string.css';
 export default class FSMString extends HTMLElement {
     connectedCallback() {
 
-        this.value = this.value ?? '';
+        const value = this.value ?? '';
 
         const element = (
             <div class='fsm-string'>
-                <input type='text' placeholder='test string' class='fsm-string-input' value={this.value} enterKeyHint='done' spellcheck={false} autocomplete={false}/>
-                <div class='fsm-pseudo-input'>{this.value}</div>
+                <input type='text' placeholder='test string' class='fsm-string-input' value={value} enterKeyHint='done' spellcheck={false} autocomplete={false}/>
+                <div class='fsm-pseudo-input'>{value}</div>
             </div>
         );
         this.replaceWith(element);
@@ -18,23 +18,13 @@ export default class FSMString extends HTMLElement {
         const input  = element.querySelector('.fsm-string-input');
         const pseudo = element.querySelector('.fsm-pseudo-input');
 
+        element._get_value = () => input.value;
 
-        input.onblur = e => {
-            this.value = pseudo.innerText = input.value;
+        element._set_value = text => {
+            pseudo.innerText = input.value = text.replaceAll('$','');
         }
 
-        input.onkeydown = e => {
-			switch(e.key) {
-				case 'Escape':
-				case 'Enter' : input.blur();
-			}
-		}
-
-        this.set_value = text => {
-            this.value = pseudo.innerText = input.value = text;
-        }
-
-        this._highlight = index => {
+        element._highlight = index => {
             input.tabIndex = -1;
             pseudo.classList.remove('hidden');
 
@@ -58,11 +48,30 @@ export default class FSMString extends HTMLElement {
             
         }
 
-        this._reset = () => {
+        element._reset = () => {
             input.tabIndex = 0;
             pseudo.innerHTML = pseudo.innerText;
             pseudo.classList.add('hidden');
             this.edit?.();
+        }
+
+        input.onblur = e => {
+            pseudo.innerText = input.value;
+        }
+
+        input.onkeydown = e => {
+			switch(e.key) {
+				case 'Escape':
+				case 'Enter' : input.blur();
+			}
+		}
+
+        input.oninput = e => {
+            element._set_value(input.value);
+        }
+
+        input.onchange = e => {
+            console.log(e);
         }
 
     }

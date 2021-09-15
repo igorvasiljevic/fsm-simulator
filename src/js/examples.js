@@ -53,6 +53,39 @@ const Examples = {
             },
             2: {
                 c: [2],
+                b: [3]
+            },
+            3: {
+                b: [3],
+                c: [3]
+            }
+        },
+        type          : 1,
+        state_info    : {
+            0: { name:'q0', x:-110,  y:   0 },
+            1: { name:'q1', x:   0,  y:-110 },
+            2: { name:'q2', x: 110,  y:   0 },
+            3: { name:'q3', x:   0,  y: 110 }
+        },
+        string        : 'ccaccaccbccbcc'
+    },
+    Fifth: {
+        states        : [0, 1, 2, 3],
+        initial_state : 0,
+        final_states  : [3],
+        transitions   : {
+            0: {
+                c: [0],
+                a: [1],
+                b: [2]
+            },
+            1: {
+                a: [1,2],
+                c: [1]
+            },
+            2: {
+                a: [1],
+                c: [2],
                 b: [3],
                 $: [3]
             },
@@ -61,7 +94,7 @@ const Examples = {
                 c: [3]
             }
         },
-        type          : 1,
+        type          : 2,
         state_info    : {
             0: { name:'q0', x:-110,  y:   0 },
             1: { name:'q1', x:   0,  y:-110 },

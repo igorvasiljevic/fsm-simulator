@@ -1,6 +1,6 @@
 import { __jsx, __jsx_fragment } from '../js/jsx.js';
-import { setLanguage } from '../js/language.js';
-import { switchTheme } from '../js/theme.js';
+import { set_language } from '../js/language.js';
+import { switch_theme } from '../js/theme.js';
 import { home_folder } from '../js/constants.js';
 
 import theme from '../res/theme.svg';
@@ -20,10 +20,10 @@ export default class Header extends HTMLElement {
                             <svgl svg={home}/>
                             <span>Home</span>
                         </button>}
-                    <button type='button' onclick={() => setLanguage('bs')} class='mla'>Bosanski</button>
+                    <button type='button' onclick={() => set_language('bs')} class='mla'>Bosanski</button>
                     <span>•</span>
-                    <button type='button' onclick={() => setLanguage('en')}>English</button>
-                    <button type='button' class='topbar' onclick={switchTheme}>
+                    <button type='button' onclick={() => set_language('en')}>English</button>
+                    <button type='button' class='topbar' onclick={switch_theme}>
                         <svgl svg={theme}/>
                     </button>
                 </div>

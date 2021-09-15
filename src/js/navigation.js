@@ -2,29 +2,30 @@ import { home_folder, pages } from './constants.js';
 
 const Navigate = (() => {
     
-    const currentPageIndex = () => {
-        let current_page = window.location.pathname.replace(home_folder, '');
-        if(current_page === '/index.html') current_page = '/';
-        return pages.indexOf(current_page);
-    };
+    const current_page_index = () =>
+        pages.indexOf(
+            window.location.pathname
+                .replace(home_folder, '')
+                .replace('index.html', '')
+        );
     
-    const getPreviousPage = () => {
-        let index = currentPageIndex();
+    const get_previous_page = () => {
+        let index = current_page_index();
         if(index != 0)
-            return `${home_folder}${pages[--index]}`;
+            return home_folder + pages[--index];
     };
 
-    const getNextPage = () => {
-        let index = currentPageIndex();
+    const get_next_page = () => {
+        let index = current_page_index();
         if(index != pages.length - 1)
-            return `${home_folder}${pages[++index]}`;
+            return home_folder + pages[++index];
     };
 
     return {
-        getPreviousPage,
-        getNextPage,
-        previous: () => { window.location.href = getPreviousPage() },
-        next: () => { window.location.href = getNextPage() }
+        get_previous_page,
+        get_next_page,
+        previous: () => { window.location.href = get_previous_page() },
+        next: () => { window.location.href = get_next_page() }
     }
 })();
 

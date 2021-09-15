@@ -1,5 +1,5 @@
 
 
-export const setLanguage = language => {
+export const set_language = language => {
     console.log(language);
 }
