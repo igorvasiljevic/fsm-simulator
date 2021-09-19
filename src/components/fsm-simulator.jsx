@@ -1,5 +1,6 @@
 import { __jsx, __jsx_fragment } from '../js/jsx.js';
-import { home_folder } from '../js/constants.js';
+
+import Navigate from '../js/navigation.js';
 import { switch_theme } from '../js/theme.js';
 import File from '../js/file.jsx';
 import Data from '../js/data.js';
@@ -17,7 +18,7 @@ import theme from '../res/theme.svg';
 export default class Simulator extends HTMLElement {
     connectedCallback() {
 
-        const canvas = <fsm-canvas scale={2} load/>;
+        const canvas = <fsm-canvas load fullsize/>;
         const menu = (
             <fsm-menu>
                 <button type='button' submenu='menu-examples'>Examples</button>
@@ -63,7 +64,7 @@ export default class Simulator extends HTMLElement {
 
         this.replaceWith(
             <>
-                <button type='button' class='img-btn home' onclick={() => location.href = home_folder + '/'}>
+                <button type='button' class='img-btn home' onclick={Navigate.home}>
                     <svgl svg={home}/>
                 </button>
                 {menu}

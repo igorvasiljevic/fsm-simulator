@@ -13,6 +13,10 @@
 
 	--focus-border: 2px dashed red;
 
+	--scrollbar-thumb-color: rgb(45, 45, 45);
+	--scrollbar-thumb-hover: rgb(75, 75, 75);
+	--scrollbar-thumb-active: rgb(94, 94, 94);
+
 	/* buttons */
 	--button-hover: rgb(25, 25, 25);
 	--button-active: rgb(20, 20, 20);
@@ -48,6 +52,10 @@
 	--text-color-dark: rgb(160, 160, 160);
 
 	--focus-border: 2px dashed red;
+
+	--scrollbar-thumb-color: rgb(190, 190, 190);
+	--scrollbar-thumb-hover: rgb(165, 165, 165);
+	--scrollbar-thumb-active: rgb(134, 134, 134);
 
 	/* buttons */
 	--button-hover: rgb(209, 209, 209);
@@ -115,6 +123,22 @@ body {
 body > * {
 	flex-grow: 0;
 	flex-shrink: 0;
+}
+
+::-webkit-scrollbar {
+	width: 10px;
+}
+::-webkit-scrollbar-track {
+	background: var(--background-color);
+}
+::-webkit-scrollbar-thumb {
+	background: var(--scrollbar-thumb-color);
+}
+::-webkit-scrollbar-thumb:hover {
+	background: var(--scrollbar-thumb-hover);
+}
+::-webkit-scrollbar-thumb:active {
+	background: var(--scrollbar-thumb-active);
 }
 
 hr {

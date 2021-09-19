@@ -1,7 +1,7 @@
 import { __jsx, __jsx_fragment } from '../js/jsx.js';
 import { set_language } from '../js/language.js';
 import { switch_theme } from '../js/theme.js';
-import { home_folder } from '../js/constants.js';
+import Navigate from '../js/navigation.js';
 
 import theme from '../res/theme.svg';
 import home from '../res/home.svg';
@@ -10,20 +10,20 @@ import '../css/fsm-header.css';
 
 export default class Header extends HTMLElement {
     connectedCallback() {
-        const fullsize = this?.hasAttribute('fullsize');
+        const fullsize = this.hasAttribute('fullsize');
 
         this.replaceWith(
             <header class='fsm-header'>
                 <div class='topbar'>
                     {fullsize ? '' :
-                        <button type='button' class='topbar mra' onclick={() => location.href = home_folder + '/'}>
+                        <button type='button' class='topbar mra' onclick={Navigate.home}>
                             <svgl svg={home}/>
                             <span>Home</span>
                         </button>}
                     <button type='button' onclick={() => set_language('bs')} class='mla'>Bosanski</button>
                     <span>•</span>
                     <button type='button' onclick={() => set_language('en')}>English</button>
-                    <button type='button' class='topbar' onclick={switch_theme}>
+                    <button type='button' class='topbar' onclick={switch_theme} aria-label='Switch theme'>
                         <svgl svg={theme}/>
                     </button>
                 </div>

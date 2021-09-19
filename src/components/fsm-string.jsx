@@ -1,4 +1,5 @@
 import { __jsx, __jsx_fragment } from '../js/jsx.js';
+import { mobile } from '../js/util.js';
 
 import '../css/fsm-string.css';
 
@@ -25,7 +26,7 @@ export default class FSMString extends HTMLElement {
         }
 
         element._highlight = index => {
-            input.tabIndex = -1;
+            input.disabled = true;
             pseudo.classList.remove('hidden');
 
             if(index < pseudo.innerText.length)
@@ -49,10 +50,15 @@ export default class FSMString extends HTMLElement {
         }
 
         element._reset = () => {
-            input.tabIndex = 0;
+            input.disabled = false;
             pseudo.innerHTML = pseudo.innerText;
             pseudo.classList.add('hidden');
             this.edit?.();
+        }
+
+        input.onfocus = () => {
+            if(mobile)
+                input.scrollIntoView();
         }
 
         input.onblur = e => {
@@ -68,10 +74,6 @@ export default class FSMString extends HTMLElement {
 
         input.oninput = e => {
             element._set_value(input.value);
-        }
-
-        input.onchange = e => {
-            console.log(e);
         }
 
     }

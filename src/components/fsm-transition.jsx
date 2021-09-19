@@ -5,7 +5,8 @@ import '../css/fsm-transition.css';
 import svg_arrow from '../res/transition-arrow.svg';
 import svg_arrow_loop from '../res/transition-arrow-loop.svg';
 
-const TWO_WAY_ARROW_SEPARATION = -0.35;
+const TWO_WAY_ARROW_SEPARATION = -0.25;
+const TEXT_DISTANCE = 10;
 
 export class FSMTransition extends HTMLElement {
 	connectedCallback() {
@@ -20,7 +21,7 @@ export class FSMTransition extends HTMLElement {
 		const element = (
 			<div class={`transition${initial ? ' initial' : ''}${loop ? ' loop' : ''}`}>
 				{arrow}
-				<input type='text' class='input noevents' enterKeyHint='done' spellcheck={false} autocomplete={false} value={initial ? 'Start' : this.value || ''}/>
+				<input type='text' class='input noevents' value={initial ? 'Start' : this.value ?? ''} disabled={initial} enterKeyHint='done' spellcheck={false} autocomplete={false}/>
 			</div>
 		);
 		this.replaceWith(element);
@@ -29,9 +30,11 @@ export class FSMTransition extends HTMLElement {
 		element._to = this.to;
 
 		if(!initial && !loop)
-			element._opposite = document.getElementById(`transition_${element._to._id}_${element._from._id}`);
+			element._opposite = element.parentElement.querySelector(`#transition_${element._to._id}_${element._from._id}`);
 		if(element._opposite)
 			element._opposite._opposite = element;
+
+		const input = element.querySelector('.input');
 
 		element._reposition = (opposite_positioned = false) => {
 			if(initial) {
@@ -70,11 +73,15 @@ export class FSMTransition extends HTMLElement {
 				}
 				
 				arrow.style.width = `${length}px`;
+				
+				element._x = (x1 + x2 - element.offsetWidth)/2;
+				element._y = (y1 + y2 - arrow.clientHeight)/2;
+				element.style.transform = `translate(${element._x}px, ${element._y}px)`;
 
-				const x = (x1 + x2 - element.offsetWidth)/2;
-				const y = (y1 + y2 - arrow.clientHeight)/2;
-				element.style.transform = `translate(${x}px, ${y}px)`;
-					
+				const text_angle = angle + Math.PI/2;
+				const x = TEXT_DISTANCE * Math.cos(text_angle);
+				const y = TEXT_DISTANCE * Math.sin(text_angle);
+				input.style.transform = `translate(${x}px, ${y}px)`;
 			}
 		}
 		element._reposition();
@@ -84,18 +91,9 @@ export class FSMTransition extends HTMLElement {
 		if(initial) return;
 		
 		element._from._transitions.add(element);
-
-		const input = element.querySelector('.input');
 		
 		element.id = `transition_${element._from._id}_${element._to._id}`;
 		element._value = this.value || '';
-		
-		function mask(e) {
-            if(e.target !== element && !element.contains(e.target)) {
-				input.blur();
-                document.removeEventListener('pointerdown', mask, { capture: true });
-            }
-        }
 
 		element._delete = () => {
 			element._from._transitions.delete(element);
@@ -113,9 +111,11 @@ export class FSMTransition extends HTMLElement {
 			setTimeout(() => input.focus(), 1);
 		};
 
+		let old_value;
 		input.onfocus = e => {
+			old_value = input.value;
 			input.classList.remove('noevents');
-			document.addEventListener('pointerdown', mask, { capture: true });
+			this.onfocus?.(element);
 		}
 
 		input.ondblclick = e => {
@@ -147,8 +147,9 @@ export class FSMTransition extends HTMLElement {
 
 			if(!element._value)
 				element._delete();
-			else
-				this.change(values);			
+			else if(element._value !== old_value)
+				this.change?.(values);
+			old_value = element._value;
 		}
 
 

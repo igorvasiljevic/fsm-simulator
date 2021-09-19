@@ -1,5 +1,6 @@
-import { service_worker_path } from './constants.js';
+import { home_folder } from './navigation.js';
 
+export const service_worker_path = home_folder + '/sw.js';
 
 export default () => {
     if ('serviceWorker' in navigator) {

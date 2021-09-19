@@ -6,18 +6,19 @@
   "private": true,
   "main": "src/index.js",
   "scripts": {
-    "dist": "npm run svgo && npm run img && node esbuild.config.js --minify && npm run terser && npm run postcss",
+    "dist": "node esbuild.config.js --minify && npm run terser && npm run postcss",
+    "dist:full": "npm run img && npm run dist",
     "dist:srv": "python -m http.server --directory dist",
-    
+
     "dev": "node esbuild.config.js --out=dev/ --watch --serve",
     "dev:min": "npm run dev -- --minify",
-    
+
     "terser": "terser dist/bundle.js -o dist/bundle.js --compress --mangle",
     "postcss": "postcss dist/bundle.css --replace --no-map",
 
     "svgo": "svgo -f ./src/res/original -o ./src/res",
     "png": "svgexport ./src/res/original/icon.svg ./src/res/icon.png 512: && svgexport ./src/res/original/icon-maskable.svg ./src/res/icon-maskable.png 512:",
-    "ico": "icon-gen -i ./src/res/original/icon.svg -o ./src/ --ico --ico-name favicon --ico-sizes 32 -r",
+    "ico": "icon-gen -i ./src/res/original/icon.svg -o ./src --ico --ico-name favicon --ico-sizes 32 -r",
     "img": "npm run svgo && npm run png && npm run ico"
   },
   "devDependencies": {

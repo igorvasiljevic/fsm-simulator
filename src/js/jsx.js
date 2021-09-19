@@ -19,7 +19,13 @@ export function __jsx(tag, props = {}, ...children) {
 		else if(
 			!attribute.startsWith('on') &&
 			// attribute !== 'contentEditable' &&
-			(attribute in element || attribute === 'class' || attribute.startsWith('data-'))
+			attribute !== 'disabled' &&
+			(
+				   attribute in element
+				|| attribute === 'class'
+				|| attribute.startsWith('data-')
+				|| attribute.startsWith('aria-')
+			)
 		)
 			element.setAttributeNS(null, attribute, props[attribute]);
 		else

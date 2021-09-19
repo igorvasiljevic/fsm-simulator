@@ -1,6 +1,7 @@
 import { __jsx, __jsx_fragment } from '../js/jsx.js';
+
 import Data from '../js/data.js';
-import { window_center } from '../js/util.js';
+import { mobile, toggle_fullscreen, window_center } from '../js/util.js';
 import { panzoom } from '../js/events.js';
 
 import { FSM, FSMType } from '../js/fsm.js';
@@ -25,6 +26,9 @@ import svg_transition from '../res/transition.svg';
 import svg_fullscreen from '../res/fullscreen.svg';
 import svg_fullscreen_exit from '../res/fullscreen-exit.svg';
 
+const MAX_ZOOM = 2;
+const ZOOM_VELOCITY = 0.1;
+// let native_fullscreen_supported = false;
 
 export class FSMCanvas extends HTMLElement {
 	connectedCallback() {
@@ -38,24 +42,8 @@ export class FSMCanvas extends HTMLElement {
 
 		const canvas = <div class='fsm-canvas'/>;
 
-		const zoom = <button type='button' class='pill' onclick={() => this._reset()}/>;
-		const type = <button type='button' class='pill' onclick={() => this._cycle_type()}/>;
-
-		const run  = <svgl svg={svg_run}/>;
-		const stop = <svgl svg={svg_stop}/>;
-		const play = (
-			<button type='button' class='img-btn' onclick={() => this._toggle_play()}>
-				{run}
-			</button>
-		);
-
-		const fullscreen_enter = <svgl svg={svg_fullscreen}/>;
-		const fullscreen_exit = <svgl svg={svg_fullscreen_exit}/>;
-		const fullscreen = (
-			<button type='button' class='pill' onclick={() => this._toggle_fullscreen()}>
-				{fullscreen_enter}
-			</button>
-		);
+		const zoom = <button type='button' class='pill' onclick={() => this._reset()} aria-label='Reset zoom'/>;
+		const type = <button type='button' class='pill' onclick={() => this._cycle_type()} aria-label='Change FSM type'/>;
 
 		const element = (
 			<div class='fsm-container fsm-edit'>
@@ -67,28 +55,36 @@ export class FSMCanvas extends HTMLElement {
 						>Reset</button>
 					}
 					{ type }
-					{ fullscreen }
+					{ this.fullsize ? '' :
+						<button type='button' class='pill small' onclick={() => this._toggle_fullscreen()} aria-label='Fullscreen'>
+							<svgl class='svg_fullscreen' svg={svg_fullscreen}/>
+							<svgl class='svg_fullscreen_exit' svg={svg_fullscreen_exit}/>
+						</button>
+					}
 				</div>
 				<div class='bottombar'>
 					<fsm-string/>
-					{ play }
+					<button type='button' class='img-btn' onclick={() => this._toggle_play()} aria-label='Play'>
+						<svgl class='svg_run' svg={svg_run}/>
+						<svgl class='svg_stop' svg={svg_stop}/>
+					</button>
 					<div class='control-menu'>
 						<div class='controls'>
-							<button id='step' type='button' class='img-btn'
+							<button id='step' type='button' class='img-btn' aria-label='Step'
 								onpointerdown={step.bind(this)}
 								onpointerup={() => clearTimeout(step_timeout)}
 							><svgl svg={svg_step}/></button>
-							<button type='button' class='img-btn' onclick={fast.bind(this)}>
+							<button type='button' class='img-btn' onclick={fast.bind(this)} aria-label='Run'>
 								<svgl svg={svg_fast}/>
 							</button>
 						</div>
 					</div>
 					<div class='edit-menu'>
 						<div class='tools'>
-							<button type='button' initial    class='img-btn' onclick={select_tool}><svgl svg={svg_initial}/></button>
-							<button type='button' final      class='img-btn' onclick={select_tool}><svgl svg={svg_final}/></button>
-							<button type='button' transition class='img-btn' onclick={select_tool}><svgl svg={svg_transition}/></button>
-							<button type='button' delete     class='img-btn' onclick={select_tool}><svgl svg={svg_delete}/></button>
+							<button type='button' initial    class='img-btn' onclick={select_tool} aria-label='Set initial'><svgl svg={svg_initial}/></button>
+							<button type='button' final      class='img-btn' onclick={select_tool} aria-label='Toggle final'><svgl svg={svg_final}/></button>
+							<button type='button' transition class='img-btn' onclick={select_tool} aria-label='Create transition'><svgl svg={svg_transition}/></button>
+							<button type='button' delete     class='img-btn' onclick={select_tool} aria-label='Delete state'><svgl svg={svg_delete}/></button>
 						</div>
 					</div>
 				</div>
@@ -156,32 +152,40 @@ export class FSMCanvas extends HTMLElement {
 			controls.at(-1).style = 'transform: rotate(180deg)';
 		}
 
-		element.addEventListener('fullscreenchange', e => {
-			fullscreen.firstChild.replaceWith(document.fullscreenElement ? fullscreen_exit : fullscreen_enter);
-		});
-
 		this._toggle_fullscreen = () => {
-			if(document.fullscreenElement) {
-				document.exitFullscreen?.()
-						?.then?.(res => window_center(element));
-			} else {
-				(
-					!document.fullscreenEnabled     ? new Promise((resolve, reject) => reject('Fullscreen not allowed')) :
-					element.requestFullscreen       ? element.requestFullscreen() :
-					element.webkitRequestFullscreen ? element.webkitRequestFullscreen() :
-					element.msRequestFullScreen     ? element.msRequestFullScreen() :
-													  new Promise((resolve, reject) => reject('Fullscreen not available'))
-				)
-				.catch(console.log);
-			}
+			if(!toggle_fullscreen(element))
+				window_center(element);
 		}
 
+		// this._toggle_fullscreen = () => {
+		// 	if(native_fullscreen_supported) {
+		// 		if(document.fullscreenElement) {
+		// 			document.exitFullscreen?.()?.then?.(res => window_center(element));
+		// 		} else {
+		// 			(
+		// 				!document.fullscreenEnabled     ? new Promise((resolve, reject) => reject('Fullscreen not allowed')) :
+		// 				element.requestFullscreen       ? element.requestFullscreen() :
+		// 				element.webkitRequestFullscreen ? element.webkitRequestFullscreen() :
+		// 				element.msRequestFullScreen     ? element.msRequestFullScreen() :
+		// 												  new Promise((resolve, reject) => reject('Fullscreen not available'))
+		// 			)
+		// 			.catch(err => {
+		// 				console.log(err);
+		// 				native_fullscreen_supported = false;
+		// 				console.log("Falling back to custom fullscreen");
+		// 			});
+		// 		}
+		// 	}
+		// 	if(!native_fullscreen_supported)
+		// 		if(!toggle_fullscreen(element))
+		// 			window_center(element);
+		// }
+
 		this._edit_mode = () => {
-			controls.forEach(control => control.tabIndex = -1);
-			tools.forEach(tool => tool.tabIndex = 0);
+			controls.forEach(control => control.disabled = true);
+			tools.forEach(tool => tool.disabled = false);
 
 			canvas.ondblclick = dbl_click;
-			play.firstChild.replaceWith(run);
 			string._reset();
 			current_states = [];
 			highlight_current_states();
@@ -192,16 +196,13 @@ export class FSMCanvas extends HTMLElement {
 		this._play_mode = () => {
 			controls.at(-1).style = '';
 
-			controls.forEach(control => {
-				control.tabIndex = 0;
-			});
+			controls.forEach(control => control.disabled = false);
 			tools.forEach(tool => {
-				tool.tabIndex = -1;
+				tool.disabled = true;
 				tool.classList.remove('tool-selected');
 			});
 
 			canvas.ondblclick = undefined;
-			play.firstChild.replaceWith(stop);
 			string._highlight(highlight = 0);
 			current_states = this.fsm.start();
 			highlight_current_states();
@@ -237,7 +238,7 @@ export class FSMCanvas extends HTMLElement {
 				transition._delete();
 			}
 		}
-		
+
 		const state_clicked = e => {
 			const tool = element.querySelector('.tool-selected');
 			if(!tool) return;
@@ -295,6 +296,7 @@ export class FSMCanvas extends HTMLElement {
 							from={from}
 							to={to}
 							onclick={transition_clicked}
+							onfocus={mobile ? into_view : transition_focused}
 							input={values => {
 								values = new Set(values.replaceAll(',','').split(''));
 								if(this.fsm.type !== FSMType.eNFA) values.delete('$');
@@ -302,10 +304,10 @@ export class FSMCanvas extends HTMLElement {
 							}}
 							change={values => {
 								this.fsm.remove_transition(from._id, to._id);
-								values.forEach(value => {
-									this.fsm.add_transition(from._id, to._id, value);
-									this._reset_fsm();
-								});
+								values.forEach(value =>
+									this.fsm.add_transition(from._id, to._id, value)
+								);
+								this._reset_fsm();
 							}}
 						/>
 					);
@@ -314,12 +316,64 @@ export class FSMCanvas extends HTMLElement {
 			}
 		}
 
-		panzoom(canvas, 2, 0.1);
-		
-		window.addEventListener('resize', e => {
-			canvas._reset();
+		const into_view = element => {
+			element.scrollIntoViewIfNeeded();
+		}
+
+		canvas._styles = window.getComputedStyle(canvas, null);
+		const offset_left   = parseFloat(canvas._styles.paddingLeft);
+		const offset_right  = parseFloat(canvas._styles.paddingRight);
+		const offset_top    = parseFloat(canvas._styles.paddingTop);
+		const offset_bottom = parseFloat(canvas._styles.paddingBottom);
+		delete canvas._styles;
+
+		const transition_focused = transition => {
+			const x1 = (transition._to._offset_x + offset_left)*canvas._scale + canvas._x;
+			const y1 = (transition._to._offset_y + offset_top)*canvas._scale + canvas._y;
+			const x2 = (transition._from._offset_x + offset_left)*canvas._scale + canvas._x;
+			const y2 = (transition._from._offset_y + offset_top)*canvas._scale + canvas._y;
+
+			if(
+				x1 < offset_left || x1 > element.offsetWidth - transition._to.offsetWidth*canvas._scale - offset_right ||
+				y1 < offset_top || y1 > element.offsetHeight - transition._to.offsetHeight*canvas._scale - offset_bottom ||
+				x2 < offset_left || x2 > element.offsetWidth - transition._from.offsetWidth*canvas._scale - offset_right ||
+				y2 < offset_top || y2 > element.offsetHeight - transition._from.offsetHeight*canvas._scale - offset_bottom
+			) {
+				canvas._pan_to({
+					x: (transition._to._x + transition._from._x)/2,
+					y: (transition._to._y + transition._from._y)/2,
+				});
+			}
+
+		}
+
+		const state_focused = state => {
+			const x = (state._offset_x + offset_left)*canvas._scale + canvas._x;
+			const y = (state._offset_y + offset_top)*canvas._scale + canvas._y;
+			if(
+				x < offset_left || x > element.offsetWidth - state.offsetWidth*canvas._scale - offset_right ||
+				y < offset_top || y > element.offsetHeight - state.offsetHeight*canvas._scale - offset_bottom
+			) {
+				canvas._pan_to({x: state._x, y: state._y});
+			}
+		}
+
+		panzoom(canvas, MAX_ZOOM, ZOOM_VELOCITY);
+
+		new ResizeObserver(() => {	
+			canvas._center();
 			canvas.querySelectorAll('.state').forEach(state => state._move());
-		});
+
+			// on mobile the virtual keyboard popping up cometimes pushes
+			// the focused element out of view
+			if(mobile && document.activeElement?.classList.contains('input')) {
+				const parent = document.activeElement.parentElement;
+				if(parent.classList.contains('state'))
+					state_focused(parent, true);
+				else if(parent.classList.contains('transition'))
+					transition_focused(parent, true);
+			}
+		}).observe(element);
 
 		element.onscroll = e => {
 			e.preventDefault();
@@ -342,6 +396,7 @@ export class FSMCanvas extends HTMLElement {
 					x={e.offsetX - (canvas.offsetWidth + offset_x)/2}
 					y={e.offsetY - (canvas.offsetHeight + offset_y)/2}
 					onclick={state_clicked}
+					onfocus={mobile ? into_view : state_focused}
 				/>
 			);
 		}
@@ -356,13 +411,14 @@ export class FSMCanvas extends HTMLElement {
 			zoom.innerText = `${parseInt(canvas._scale*100)}%`;
 		}
 
-		this._reset = () => {
-			canvas._reset();
+		this._reset = (canvas_reset = true) => {
+			if(canvas_reset)
+				canvas._reset();
 			this._edit_mode();
 		}
 
 		this._reset_fsm = () => {
-			this._set_fsm(new FSM(this._get_fsm()));
+			this._set_fsm(new FSM(this._get_fsm()), false);
 		}
 
 		this._cycle_type = () => {
@@ -390,7 +446,7 @@ export class FSMCanvas extends HTMLElement {
 			return fsm;
 		}
 
-		this._set_fsm = fsm => {
+		this._set_fsm = (fsm, canvas_reset = true) => {
 			canvas.innerHTML = '';
 			this.fsm = fsm;
 
@@ -405,6 +461,7 @@ export class FSMCanvas extends HTMLElement {
 						initial={fsm.initial_state === state_id}
 						final={fsm.final_states.has(state_id)}
 						onclick={state_clicked}
+						onfocus={mobile ? into_view : state_focused}
 					/>
 				)
 			);
@@ -432,6 +489,7 @@ export class FSMCanvas extends HTMLElement {
 							to={to}
 							value={to_states[to_state].sort().join(',')}
 							onclick={transition_clicked}
+							onfocus={mobile ? into_view : transition_focused}
 							input={values => {
 								values = new Set(values.replaceAll(',','').split(''));
 								if(this.fsm.type !== FSMType.eNFA) values.delete('$');
@@ -439,10 +497,10 @@ export class FSMCanvas extends HTMLElement {
 							}}
 							change={values => {
 								this.fsm.remove_transition(from._id, to._id);
-								values.forEach(value => {
-									this.fsm.add_transition(from._id, to._id, value);
-									this._reset_fsm();
-								});
+								values.forEach(value =>
+									this.fsm.add_transition(from._id, to._id, value)
+								);
+								this._reset_fsm();
 							}}
 						/>
 					);
@@ -452,8 +510,8 @@ export class FSMCanvas extends HTMLElement {
 			canvas.appendChild(fragment);
 
 			type.innerText = ['DFA','NFA','ɛ-NFA'][this.fsm.type];
-			canvas._change();
-			this._reset();
+
+			this._reset(canvas_reset);
 		}
 
 		this._set_fsm(

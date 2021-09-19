@@ -7,7 +7,6 @@ export const move = (element, callback = {}) => {
 	let pointer_id = null;
 
 	let clicked = false;
-	let moved = false;
 
 	element._styles = window.getComputedStyle(element.parentElement, null);
 	element._styles._padding_left   = parseFloat(element._styles.paddingLeft);
@@ -64,16 +63,15 @@ export const move = (element, callback = {}) => {
 		if(clicked)
 			callback.click?.(e);
 
-		clicked = moved = false;
+		clicked = false;
 	}
 
 	function pointer_move(e) {
 		if(e.pointerId !== pointer_id)
 			return;
 
-		moved = true;
-
 		e.stopPropagation();
+		
 		const parent_scale = element.parentElement._scale ?? 1;
 		element._x += (e.clientX - old_x) / parent_scale;
 		element._y += (e.clientY - old_y) / parent_scale;
@@ -249,10 +247,10 @@ export const panzoom = (element, scale_max, scale_velocity) => {
 			0
 		);
 
-		let x = element._x + element.offsetWidth * (element._scale - 1)/2;
-		let y = element._y + element.offsetHeight * (element._scale - 1)/2;
+		element._offset_x = element._x + element.offsetWidth * (element._scale - 1)/2;
+		element._offset_y = element._y + element.offsetHeight * (element._scale - 1)/2;
 
-		element.style.transform = `translate(${x}px, ${y}px) scale(${element._scale})`;    
+		element.style.transform = `translate(${element._offset_x}px, ${element._offset_y}px) scale(${element._scale})`;    
 
 		element._change?.();
 	}
@@ -264,16 +262,16 @@ export const panzoom = (element, scale_max, scale_velocity) => {
 	}
 
 	function pan_to({x, y}) {
-		const center_x = (element.parentElement.offsetWidth - element.offsetWidth) / 2;
-		const center_y = (element.parentElement.offsetHeight - element.offsetHeight) / 2;
-		element._x = center_x - x;
-		element._y = center_y - y;
+		const center_x = (element.parentElement.offsetWidth - element.offsetWidth*element._scale) / 2;
+		const center_y = (element.parentElement.offsetHeight - element.offsetHeight*element._scale) / 2;
+		element._x = (center_x - x*element._scale) ?? element._x;
+		element._y = (center_y - y*element._scale) ?? element._y;
 		update();
 	}
 
 	function center() {
-		element._x = (element.parentElement.offsetWidth - element.offsetWidth) / 2;
-		element._y = (element.parentElement.offsetHeight - element.offsetHeight) / 2;
+		element._x = (element.parentElement.offsetWidth - element.offsetWidth*element._scale) / 2;
+		element._y = (element.parentElement.offsetHeight - element.offsetHeight*element._scale) / 2;
 		update();
 	}
 

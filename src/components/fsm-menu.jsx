@@ -65,7 +65,9 @@ export default class FSMMenu extends HTMLElement {
 
         
         function show_menu(menu_el) {
-            menu_el.querySelectorAll('button').forEach(btn => btn.tabIndex = 0);
+            menu_el.querySelectorAll(':scope > button').forEach(btn =>
+                btn.disabled = false
+            );
 
             if(document.activeElement.matches(':focus-visible'))
                 menu_el.firstElementChild.focus();
@@ -84,7 +86,7 @@ export default class FSMMenu extends HTMLElement {
         }
 
         function hide_menu(menu_el) {
-            menu_el.querySelectorAll('button').forEach(btn => btn.tabIndex = -1);
+            menu_el.querySelectorAll('button').forEach(btn => btn.disabled = true);
             menu_el.classList.add('menu-hidden');
         }
 

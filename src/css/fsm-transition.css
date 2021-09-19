@@ -14,8 +14,9 @@
     
     width: 150px;
     left: calc(-150px/2 + 50%);
+    height: 26px;
 
-    top: -8px;
+    top: 0;
     text-align: center;
     vertical-align: middle;
     background-color: rgba(0, 0, 0, 0);
@@ -34,9 +35,16 @@
 
 .transition.initial .input {
     width: 100%;
+    top: -10px;
     left: -5px;
+}
+.transition.initial svg {
+    cursor: initial;
 }
 
 .transition.loop {
     height: initial;
+}
+.transition.loop .input {
+    top: -11px;
 }

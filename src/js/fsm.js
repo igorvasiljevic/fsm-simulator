@@ -1,5 +1,5 @@
 
-import { epsilon } from './constants.js'
+export const epsilon = '$';
 
 export const FSMType = {
     DFA  : 0,

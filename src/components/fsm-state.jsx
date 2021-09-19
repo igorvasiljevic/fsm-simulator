@@ -21,14 +21,6 @@ export class FSMState extends HTMLElement {
 		element._x = this.x ?? 0;
 		element._y = this.y ?? 0;
 		element._transitions = new Set();
-		
-
-		function mask(e) {
-            if(e.target !== element && !element.contains(e.target)) {
-				input.blur();
-                document.removeEventListener('pointerdown', mask, { capture: true });
-            }
-        }
 
 		element.ondblclick = e => {
 			e.stopPropagation();
@@ -38,7 +30,7 @@ export class FSMState extends HTMLElement {
 		input.onfocus = e => {
 			element._movable(false);
 			input.classList.remove('noevents');
-			document.addEventListener('pointerdown', mask, { capture: true });
+			this.onfocus?.(element);
 		}
 
 		input.ondblclick = e => {
