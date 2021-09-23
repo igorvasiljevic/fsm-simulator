@@ -3,32 +3,33 @@ import { set_language } from '../js/language.js';
 import { switch_theme } from '../js/theme.js';
 import Navigate from '../js/navigation.js';
 
-import theme from '../res/theme.svg';
-import home from '../res/home.svg';
+import svg_theme from '../res/theme.svg';
+import svg_home from '../res/home.svg';
 
 import '../css/fsm-header.css';
 
 export default class Header extends HTMLElement {
     connectedCallback() {
-        const fullsize = this.hasAttribute('fullsize');
-
+        const home = this.hasAttribute('home');
+        const text = this.getAttribute('text') || 'Finite-State Machines';
+        
         this.replaceWith(
             <header class='fsm-header'>
                 <div class='topbar'>
-                    {fullsize ? '' :
+                    {home ? '' :
                         <button type='button' class='topbar mra' onclick={Navigate.home}>
-                            <svgl svg={home}/>
+                            <svgl svg={svg_home}/>
                             <span>Home</span>
                         </button>}
                     <button type='button' onclick={() => set_language('bs')} class='mla'>Bosanski</button>
                     <span>•</span>
                     <button type='button' onclick={() => set_language('en')}>English</button>
-                    <button type='button' class='topbar' onclick={switch_theme} aria-label='Switch theme'>
-                        <svgl svg={theme}/>
+                    <button type='button' class='topbar' onclick={switch_theme} title='Switch theme' aria-label='Switch theme'>
+                        <svgl svg={svg_theme}/>
                     </button>
                 </div>
-                {fullsize ? <h1>Finite-State Machines</h1> : <h2>Finite-State Machines</h2>}
-                {fullsize ? <h4>by Igor Vasiljević</h4> : ''}
+                {home ? <h1>{text}</h1> : <h2>{text}</h2>}
+                {home ? <h4>by Igor Vasiljević</h4> : ''}
                 <hr/>
             </header>
         );

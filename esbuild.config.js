@@ -14,8 +14,8 @@ const copy_list = [
 	'index.html',
 	'simulator.html',
 	'lessons',
+	'localization',
 
-	'favicon.ico',
 	'res/icon.svg',
 	'res/icon.png',
 	'res/icon-maskable.svg',

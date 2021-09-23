@@ -16,6 +16,7 @@ export class FSMState extends HTMLElement {
 
 		const input = element.firstElementChild;
 	
+		element.title = input.value;
 		element._id = parseInt(this.id);
 		element._name = input.value;
 		element._x = this.x ?? 0;
@@ -46,15 +47,18 @@ export class FSMState extends HTMLElement {
 
 		input.onblur = e => {
 			const name = input.value.trim();
-			input.value = element._name = (name) ? name : element._name;
+			element.title = input.value = element._name = (name) ? name : element._name;
 
 			input.classList.add('noevents');
 			element._movable(true);
 		}
 
 		move(element, {
-			move  : () => element._transitions.forEach(t => t._reposition()),
-			click : this.onclick
+			click : this.onclick,
+			move  : () => {
+				for(let transition of element._transitions)
+					transition._reposition();
+			}
 		});
 
 	}

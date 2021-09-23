@@ -12,8 +12,8 @@ import './fsm-menu.jsx';
 
 import '../css/fsm-simulator.css';
 
-import home from '../res/home.svg';
-import theme from '../res/theme.svg';
+import svg_home from '../res/home.svg';
+import svg_theme from '../res/theme.svg';
 
 export default class Simulator extends HTMLElement {
     connectedCallback() {
@@ -23,11 +23,13 @@ export default class Simulator extends HTMLElement {
             <fsm-menu>
                 <button type='button' submenu='menu-examples'>Examples</button>
                 <div id='menu-examples' class='menu submenu menu-hidden'>
-                    { Object.keys(Examples).map(example => (
-                        <button type='button' onclick={() => {
-                            canvas._set_fsm(new FSM(Examples[example]));
-                        }}>{example}</button>
-                    ))}
+                    {
+                        Object.keys(Examples).map(example => (
+                            <button type='button' onclick={() =>
+                                canvas._set_fsm(new FSM(Examples[example]))
+                            }>{example}</button>
+                        ))
+                    }
                 </div>
 
                 <button type='button' onclick={() => {
@@ -46,26 +48,26 @@ export default class Simulator extends HTMLElement {
                 }}>Upload</button>
 
                 <button type='button' onclick={() => {
-                    Data.set('fsm', JSON.stringify(canvas._get_fsm()));
+                    Data.set('fsm', canvas._get_fsm().toString());
                     notify('Data saved');
                 }}>Save</button>
 
                 <button type='button' onclick={() => {
-                    const filename = prompt('Enter file name', 'fsm.json');
+                    let filename = prompt('Enter file name', 'fsm.json');
                     if(filename)
-                        File.download(filename, JSON.stringify(canvas._get_fsm()));
+                        File.download(filename, canvas._get_fsm().toString());
                 }}>Download</button>
 
-                <button type='button' onclick={ switch_theme } class='theme img-btn'>
-                    <svgl svg={theme}/>
+                <button type='button' onclick={ switch_theme } class='theme img-btn' title='Switch theme' aria-label='Switch theme'>
+                    <svgl svg={svg_theme}/>
                 </button>
             </fsm-menu>
         );
 
         this.replaceWith(
             <>
-                <button type='button' class='img-btn home' onclick={Navigate.home}>
-                    <svgl svg={home}/>
+                <button type='button' class='img-btn home' onclick={Navigate.home} title='Home' aria-label='Home'>
+                    <svgl svg={svg_home}/>
                 </button>
                 {menu}
                 {canvas}

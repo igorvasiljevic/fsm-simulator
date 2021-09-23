@@ -9,11 +9,12 @@
     <meta name="description" content="Finite-State Machine lessons and simulator">
     <meta name="author" content="17112">
 
-    <link rel="manifest" href="../manifest.webmanifest">
+    <link rel="manifest" href="manifest.webmanifest">
     <meta name="theme-color" content="#222222">
-    <link rel="icon" href="../res/icon.svg">
-    <link rel="mask-icon" href="../res/icon-maskable.png" color="#222222">
-    <link rel="apple-touch-icon" href="../res/icon-maskable.png">
+    <link rel="icon" href="res/icon.svg" sizes="any">
+    <link rel="icon" href="res/icon.png" sizes="any">
+    <link rel="mask-icon" href="res/icon-maskable.svg" color="#222222">
+    <link rel="apple-touch-icon" href="res/icon-maskable.png">
 
     <link rel="stylesheet" href="../bundle.css">
 
@@ -25,7 +26,19 @@
     <fsm-header></fsm-header>
 
     <main>
-        <p>Lesson 3</p>
+        <h3>Nedeterministički konačni automat</h3>
+
+        <p>
+            U prošlom poglavlju smo spomenuli da funkcija prijelaza DKA za jedno stanje i simbol
+            definira prijelaz u jedinstveno stanje: &delta;(q,a) = p. Kod nedeterminističkog
+            konačnog automata (u nastavku NKA) funkcija prijelaza za jedno stanje i simbol
+            definira prijelaz u skup stanja: &delta;(q,a) = {p1, p2, ...}. Odnosno njegova
+            se funkcija prijelaza &delta; definira kao Q &times; &Epsilon; &rarr; 2<sup>Q</sup>
+            (skup svih podskupa Q).
+        </p>
+
+        <fsm-canvas example="Nondeterministic transition"></fsm-canvas>
+        
     </main>
 
     <fsm-footer></fsm-footer>

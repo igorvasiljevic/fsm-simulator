@@ -42,8 +42,8 @@ export class FSMCanvas extends HTMLElement {
 
 		const canvas = <div class='fsm-canvas'/>;
 
-		const zoom = <button type='button' class='pill' onclick={() => this._reset()} aria-label='Reset zoom'/>;
-		const type = <button type='button' class='pill' onclick={() => this._cycle_type()} aria-label='Change FSM type'/>;
+		const zoom = <button type='button' class='pill' onclick={() => this._reset()} title='Reset zoom' aria-label='Reset zoom'/>;
+		const type = <button type='button' class='pill' onclick={() => this._cycle_type()} title='Change FSM type' aria-label='Change FSM type'/>;
 
 		const element = (
 			<div class='fsm-container fsm-edit'>
@@ -56,7 +56,7 @@ export class FSMCanvas extends HTMLElement {
 					}
 					{ type }
 					{ this.fullsize ? '' :
-						<button type='button' class='pill small' onclick={() => this._toggle_fullscreen()} aria-label='Fullscreen'>
+						<button type='button' class='pill small' onclick={() => this._toggle_fullscreen()} title='Fullscreen' aria-label='Fullscreen'>
 							<svgl class='svg_fullscreen' svg={svg_fullscreen}/>
 							<svgl class='svg_fullscreen_exit' svg={svg_fullscreen_exit}/>
 						</button>
@@ -64,27 +64,35 @@ export class FSMCanvas extends HTMLElement {
 				</div>
 				<div class='bottombar'>
 					<fsm-string/>
-					<button type='button' class='img-btn' onclick={() => this._toggle_play()} aria-label='Play'>
+					<button type='button' class='img-btn' onclick={() => this._toggle_play()} title='Play/Stop' aria-label='Play/Stop'>
 						<svgl class='svg_run' svg={svg_run}/>
 						<svgl class='svg_stop' svg={svg_stop}/>
 					</button>
 					<div class='control-menu'>
 						<div class='controls'>
-							<button id='step' type='button' class='img-btn' aria-label='Step'
-								onpointerdown={step.bind(this)}
-								onpointerup={() => clearTimeout(step_timeout)}
+							<button type='button' class='img-btn' title='Step' aria-label='Step'
+								onpointerdown={e => {
+									e.target._held = true;
+									e.target.setPointerCapture(e.pointerId);
+									step.bind(this)(e);
+								}}
+								onpointerup={e => {
+									e.target._held = false;
+									e.target.releasePointerCapture(e.pointerId);
+									clearTimeout(step_timeout);
+								}}
 							><svgl svg={svg_step}/></button>
-							<button type='button' class='img-btn' onclick={fast.bind(this)} aria-label='Run'>
+							<button type='button' class='img-btn' onclick={fast.bind(this)} title='Run' aria-label='Run'>
 								<svgl svg={svg_fast}/>
 							</button>
 						</div>
 					</div>
 					<div class='edit-menu'>
 						<div class='tools'>
-							<button type='button' initial    class='img-btn' onclick={select_tool} aria-label='Set initial'><svgl svg={svg_initial}/></button>
-							<button type='button' final      class='img-btn' onclick={select_tool} aria-label='Toggle final'><svgl svg={svg_final}/></button>
-							<button type='button' transition class='img-btn' onclick={select_tool} aria-label='Create transition'><svgl svg={svg_transition}/></button>
-							<button type='button' delete     class='img-btn' onclick={select_tool} aria-label='Delete state'><svgl svg={svg_delete}/></button>
+							<button type='button' initial    class='img-btn' onclick={select_tool} title='Set initial'       aria-label='Set initial'><svgl svg={svg_initial}/></button>
+							<button type='button' final      class='img-btn' onclick={select_tool} title='Toggle final'      aria-label='Toggle final'><svgl svg={svg_final}/></button>
+							<button type='button' transition class='img-btn' onclick={select_tool} title='Create transition' aria-label='Create transition'><svgl svg={svg_transition}/></button>
+							<button type='button' delete     class='img-btn' onclick={select_tool} title='Delete state'      aria-label='Delete state'><svgl svg={svg_delete}/></button>
 						</div>
 					</div>
 				</div>
@@ -98,41 +106,67 @@ export class FSMCanvas extends HTMLElement {
 		const tools = [...element.querySelector('.tools').querySelectorAll('button')];
 		
 		function highlight_current_states() {
-			canvas.querySelectorAll('.state').forEach(state => {
+			for(let state of canvas.querySelectorAll('.state')) {
 				current_states.includes(state._id) ?
 					state.classList.add('current') :
 					state.classList.remove('current', 'accepted', 'rejected');
-			});
+			}
 		}
 
 		function highlight_accepted_states() {			
 			const current_final_states = canvas.querySelectorAll('.state.current.final');
 
 			if(current_final_states.length) {
-				current_final_states.forEach(state =>
-					state.classList.add('accepted')
-				);
+				for(let state of current_final_states)
+					state.classList.add('accepted');
 				notify('<span style="color:var(--state-bg-color-accepted)">String accepted</span>');
 			} else {
-				canvas.querySelectorAll('.state.current').forEach(state =>
-					state.classList.add('rejected')
-				);
+				for(let state of canvas.querySelectorAll('.state.current'))
+					state.classList.add('rejected');
 				notify('<span style="color:var(--state-bg-color-rejected)">String not accepted</span>');
 			}
 		}
 
-		function step(e) {
-			if(highlight >= string._get_value().length) return;
-
-			current_states = this.fsm.transition_states(current_states, string._get_value()[highlight]);
-			string._highlight(++highlight);
-			highlight_current_states();
-			if(highlight === string._get_value().length) {
-				highlight_accepted_states();
-				controls.at(-1).style = 'transform: rotate(180deg)';
-			}
+		function step(e, first_step = true) {
+			if(
+				(!first_step && !e.target._held) ||
+				highlight >= string._get_value().length
+			)
+				return;
 			
-			step_timeout = setTimeout(step.bind(this), e ? 300 : 35);
+			if(first_step)
+				for(let state of canvas.querySelectorAll('.state.current'))
+					state.classList.remove('current');
+
+			const symbol = string._get_value()[highlight];
+			const transitions = new Set();
+			const epsilon_transitions = new Set();
+
+			for(let state of current_states) {
+				for(let to of this.fsm.transition_states([state], symbol)) {
+					let transition = canvas.querySelector(`#transition_${state}_${to}`);
+					if(transition)
+						transitions.add(transition);
+					for(let e_to of this.fsm.transitions[to]?.['$'] ?? [])
+						epsilon_transitions.add(canvas.querySelector(`#transition_${to}_${e_to}`));
+				}
+			}
+
+			Promise
+				.all([...transitions].map(t => t._animate()))
+				.then(() => Promise.all([...epsilon_transitions].map(t => t._animate(true))))
+				.then(() => {
+					current_states = this.fsm.transition_states(current_states, symbol); // TODO: Issue is here
+					string._highlight(++highlight);
+					highlight_current_states();
+					if(highlight === string._get_value().length) {
+						highlight_accepted_states();
+						controls.at(-1).style = 'transform: rotate(180deg)';
+					}
+					step_timeout = setTimeout(() => step.bind(this)(e, false), first_step ? 200 : 0);
+				})
+				.catch(err => {});
+
 		}
 
 		function fast(e) {
@@ -163,16 +197,15 @@ export class FSMCanvas extends HTMLElement {
 		// 			document.exitFullscreen?.()?.then?.(res => window_center(element));
 		// 		} else {
 		// 			(
-		// 				!document.fullscreenEnabled     ? new Promise((resolve, reject) => reject('Fullscreen not allowed')) :
+		// 				!document.fullscreenEnabled     ? new Promise((resolve, reject) => reject('Fullscreen not allowed!')) :
 		// 				element.requestFullscreen       ? element.requestFullscreen() :
 		// 				element.webkitRequestFullscreen ? element.webkitRequestFullscreen() :
 		// 				element.msRequestFullScreen     ? element.msRequestFullScreen() :
-		// 												  new Promise((resolve, reject) => reject('Fullscreen not available'))
+		// 												  new Promise((resolve, reject) => reject('Fullscreen not available!'))
 		// 			)
 		// 			.catch(err => {
-		// 				console.log(err);
 		// 				native_fullscreen_supported = false;
-		// 				console.log("Falling back to custom fullscreen");
+		// 				console.log(err + ' Falling back to custom fullscreen');
 		// 			});
 		// 		}
 		// 	}
@@ -182,8 +215,10 @@ export class FSMCanvas extends HTMLElement {
 		// }
 
 		this._edit_mode = () => {
-			controls.forEach(control => control.disabled = true);
-			tools.forEach(tool => tool.disabled = false);
+			for(let control of controls)
+				control.disabled = true;
+			for(let tool of tools)
+				tool.disabled = false;
 
 			canvas.ondblclick = dbl_click;
 			string._reset();
@@ -196,11 +231,12 @@ export class FSMCanvas extends HTMLElement {
 		this._play_mode = () => {
 			controls.at(-1).style = '';
 
-			controls.forEach(control => control.disabled = false);
-			tools.forEach(tool => {
+			for(let control of controls)
+				control.disabled = false;
+			for(let tool of tools) {
 				tool.disabled = true;
 				tool.classList.remove('tool-selected');
-			});
+			}
 
 			canvas.ondblclick = undefined;
 			string._highlight(highlight = 0);
@@ -221,10 +257,11 @@ export class FSMCanvas extends HTMLElement {
 		function select_tool(e) {
 			transition_from_state?.classList.remove('selected');
 			transition_from_state = null;
-			tools.forEach(tool => tool === e?.target ?
-				tool.classList.toggle('tool-selected') :
-				tool.classList.remove('tool-selected')
-			);
+			for(let tool of tools) {
+				tool === e?.target ?
+					tool.classList.toggle('tool-selected') :
+					tool.classList.remove('tool-selected')
+			}
 		}
 
 		const transition_clicked = e => {
@@ -247,7 +284,8 @@ export class FSMCanvas extends HTMLElement {
 				if(this.fsm.remove_state(e.target._id)) {
 					let state = e.target;
 					this.fsm.remove_state(e.target._id);
-					state._transitions.forEach(t => t.remove());
+					for(let transition of state._transitions)
+						transition.remove();
 					state.remove();
 				}
 			} else if(tool.initial) {
@@ -304,9 +342,8 @@ export class FSMCanvas extends HTMLElement {
 							}}
 							change={values => {
 								this.fsm.remove_transition(from._id, to._id);
-								values.forEach(value =>
+								for(let value of values)
 									this.fsm.add_transition(from._id, to._id, value)
-								);
 								this._reset_fsm();
 							}}
 						/>
@@ -361,8 +398,9 @@ export class FSMCanvas extends HTMLElement {
 		panzoom(canvas, MAX_ZOOM, ZOOM_VELOCITY);
 
 		new ResizeObserver(() => {	
-			canvas._center();
-			canvas.querySelectorAll('.state').forEach(state => state._move());
+			canvas._center?.();
+			for(let state of canvas.querySelectorAll('.state'))
+				state._move()
 
 			// on mobile the virtual keyboard popping up cometimes pushes
 			// the focused element out of view
@@ -413,7 +451,7 @@ export class FSMCanvas extends HTMLElement {
 
 		this._reset = (canvas_reset = true) => {
 			if(canvas_reset)
-				canvas._reset();
+				canvas._reset?.();
 			this._edit_mode();
 		}
 
@@ -426,7 +464,7 @@ export class FSMCanvas extends HTMLElement {
 				return;
 
 			this.fsm.type = (this.fsm.type + 1) % 3;
-			type.innerText = ['DFA','NFA','ɛ-NFA'][this.fsm.type];
+			type.innerText = ['DFA','NFA','ɛ-NFA'][this.fsm.type]; // TODO: localization
 
 			this._reset_fsm();
 		};
@@ -435,14 +473,14 @@ export class FSMCanvas extends HTMLElement {
 			const fsm = this.fsm;
 			fsm.state_info = {};
 			this.fsm.string = string._get_value();
-			this.fsm.states.forEach(state_id => {
+			for(let state_id of this.fsm.states) {
 				const state_element = canvas.querySelector(`#state_${state_id}`);
 				fsm.state_info[state_id] = {
 					name: state_element._name,
 					x: state_element._x,
 					y: state_element._y
 				};
-			});
+			}
 			return fsm;
 		}
 
@@ -451,7 +489,7 @@ export class FSMCanvas extends HTMLElement {
 			this.fsm = fsm;
 
 			const fragment = document.createDocumentFragment();
-			fsm.states.forEach(state_id =>
+			for(let state_id of fsm.states) {
 				fragment.appendChild(
 					<fsm-state
 						id={state_id}
@@ -463,12 +501,12 @@ export class FSMCanvas extends HTMLElement {
 						onclick={state_clicked}
 						onfocus={mobile ? into_view : state_focused}
 					/>
-				)
-			);
+				);
+			}
 			canvas.appendChild(fragment);
 
 			fragment.innerHTML = '';
-			canvas.querySelectorAll('.state').forEach(state => {
+			for(let state of canvas.querySelectorAll('.state')) {
 				if(state.classList.contains('initial'))
 					fragment.appendChild(<fsm-transition to={state}/>);
 
@@ -497,16 +535,15 @@ export class FSMCanvas extends HTMLElement {
 							}}
 							change={values => {
 								this.fsm.remove_transition(from._id, to._id);
-								values.forEach(value =>
+								for(let value of values)
 									this.fsm.add_transition(from._id, to._id, value)
-								);
 								this._reset_fsm();
 							}}
 						/>
 					);
 				}
 				
-			});
+			}
 			canvas.appendChild(fragment);
 
 			type.innerText = ['DFA','NFA','ɛ-NFA'][this.fsm.type];

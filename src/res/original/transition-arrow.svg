@@ -1,7 +1,12 @@
 <svg style="width: 60px; height: 26px;" xmlns="http://www.w3.org/2000/svg">
+    <title></title>
     <g class="noevents" stroke="var(--transition-color)" stroke-width="2">
         <line x1="0" y1="13" x2="100%" y2="13"/>
         <line x1="0" y1="13" x2="10" y2="8"/>
         <line x1="0" y1="13" x2="10" y2="18"/>
+
+        <circle style="display: none" r="2.5" cx="100%" cy="50%" fill="var(--state-bg-color-current)" stroke-width="0">
+            <animate attributeName="cx" from="100%" to="0" dur="0.2s" begin="indefinite" fill="freeze"/>
+        </circle>
     </g>
 </svg>

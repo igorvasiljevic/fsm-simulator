@@ -48,3 +48,29 @@
 .transition.loop .input {
     top: -11px;
 }
+
+
+.transition .dot {
+    display: none;
+}
+.transition.animate .dot {
+    display: initial;
+    /* animation: dash_straight 0.2s ease-in-out; */
+}
+/* .transition.animate.fast .dot {
+    animation: dash_straight 0.05s linear;
+}
+@keyframes dash_straight {
+    from { cx: 100% }
+    to   { cx:   0% }
+} */
+/* .transition.loop.animate .dot {
+    animation: dash_loop 0.2s ease-in-out;
+}
+.transition.loop.animate.fast .dot {
+    animation: dash_loop 0.05s linear;
+}
+@keyframes dash_loop {
+    from { offset-distance: 100% }
+    to   { offset-distance:   0% }
+} */

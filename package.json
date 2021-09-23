@@ -15,10 +15,9 @@
 
     "terser": "terser dist/bundle.js -o dist/bundle.js --compress --mangle",
     "postcss": "postcss dist/bundle.css --replace --no-map",
-
+    
     "svgo": "svgo -f ./src/res/original -o ./src/res",
     "png": "svgexport ./src/res/original/icon.svg ./src/res/icon.png 512: && svgexport ./src/res/original/icon-maskable.svg ./src/res/icon-maskable.png 512:",
-    "ico": "icon-gen -i ./src/res/original/icon.svg -o ./src --ico --ico-name favicon --ico-sizes 32 -r",
     "img": "npm run svgo && npm run png && npm run ico"
   },
   "devDependencies": {
@@ -28,7 +27,6 @@
     "cssnano-preset-advanced": "^5.1.4",
     "esbuild": "^0.11.20",
     "fs-extra": "^10.0.0",
-    "icon-gen": "^1.0.5",
     "live-server": "^1.1.0",
     "postcss-cli": "^8.3.1",
     "svgexport": "^0.4.2",

@@ -1,15 +1,18 @@
 import { __jsx, __jsx_fragment } from '../js/jsx.js';
 
+import { mask, unmask } from '../js/util.js';
+
 import '../css/fsm-menu.css';
 
-import more from '../res/more.svg';
+import svg_more from '../res/more.svg';
 
 export default class FSMMenu extends HTMLElement {
-    connectedCallback() {
-        
+    connectedCallback() {        
         const element = (
             <div class='menu-container'>
-                <button type='button' id='menu-btn' class='img-btn'><svgl svg={more}/></button>
+                <button type='button' id='menu-btn' class='img-btn' title='Menu' aria-label='Menu'>
+                    <svgl svg={svg_more}/>
+                </button>
                 <div class='menu menu-hidden'>
                     {[...this.children]}
                 </div>
@@ -18,77 +21,57 @@ export default class FSMMenu extends HTMLElement {
         this.replaceWith(element);
         
         const menu = element.querySelector('.menu');
-        const submenus = menu.querySelectorAll('.submenu');
+        const open_menus = [];
 
-        // hide all menus and disable tab navigation for their children
+        const hide_menu = menu => {
+            for(let btn of menu.querySelectorAll('button'))
+                btn.disabled = true;
+            menu.classList.add('menu-hidden');
+        }
         hide_menu(menu);
-        submenus.forEach(hide_menu);
-        
-        // menu button on click open/close menu/submenu
-        element.querySelector('#menu-btn').onclick = () => {
-            if(menu.classList.contains('menu-hidden')) {
-                document.addEventListener('pointerdown', mask, { capture: true });
-                show_menu(menu);
-            } else {
-                let submenu_open = false;
-                submenus.forEach(submenu => {
-                    if(!submenu.classList.contains('menu-hidden')) {
-                        hide_menu(submenu);
-                        submenu_open = true;
-                    }
-                });
 
-                if(!submenu_open) {
-                    hide_menu(menu);
-                    document.removeEventListener('pointerdown', mask, { capture: true });
-                }
-
-            }
+        const hide_all = () => {
+            while(open_menus.length)
+                open_menus.pop().classList.add('menu-hidden');
+            hide_menu(menu);
         }
 
-        // submenu buttons on click open submenu
-        [...menu.children].forEach(btn => {
-            if(btn.submenu !== undefined) {
-                const submenu_el = menu.querySelector('#' + btn.submenu);
-                btn.onclick = () => show_menu(submenu_el);
-            }
-        });
-
-        submenus.forEach(submenu => submenu.onfocusout = () => hide_menu(submenu));
-
-        function mask(e) {
-            if(e.target !== element && !element.contains(e.target)) {
-                [...submenus, menu].forEach(menu => menu.classList.add('menu-hidden'));
-                document.removeEventListener('pointerdown', mask, { capture: true });
-            }
-        }
-
-        
-        function show_menu(menu_el) {
-            menu_el.querySelectorAll(':scope > button').forEach(btn =>
-                btn.disabled = false
-            );
+        const show_menu = menu => {
+            open_menus.push(menu);
+            for(let btn of menu.querySelectorAll(':scope > button'))
+                btn.disabled = false;
 
             if(document.activeElement.matches(':focus-visible'))
-                menu_el.firstElementChild.focus();
+                menu.firstElementChild.focus();
 
-            menu_el.onkeydown = e => {
+            menu.onkeydown = e => {
                 if(e.key === 'Tab' && (
-                    (!e.shiftKey && document.activeElement === menu_el.lastElementChild) ||
-                    (e.shiftKey && document.activeElement === menu_el.firstElementChild)
+                    (!e.shiftKey && document.activeElement === menu.lastElementChild) ||
+                    (e.shiftKey && document.activeElement === menu.firstElementChild)
                 )) {
-                    hide_menu(menu_el);
-                    menu_el.onkeydown = undefined;
+                    menu.onkeydown = undefined;
+                    hide_menu(open_menus.pop());
                 }
             }
 
-            menu_el.classList.remove('menu-hidden');
+            menu.classList.remove('menu-hidden');
         }
 
-        function hide_menu(menu_el) {
-            menu_el.querySelectorAll('button').forEach(btn => btn.disabled = true);
-            menu_el.classList.add('menu-hidden');
+        element.onclick = e => {
+            if(e.target.id === 'menu-btn') {
+                if(open_menus.length === 0) {
+                    mask(element, hide_all);
+                    show_menu(menu);
+                } else {
+                    hide_menu(open_menus.pop());
+                    if(open_menus.length === 0)
+                        unmask();
+                }
+            } else if(e.target.submenu) {
+                show_menu(menu.querySelector('#' + e.target.submenu));
+            }
         }
+
 
     }
 }

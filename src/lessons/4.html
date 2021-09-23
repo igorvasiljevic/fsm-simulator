@@ -9,11 +9,12 @@
     <meta name="description" content="Finite-State Machine lessons and simulator">
     <meta name="author" content="17112">
 
-    <link rel="manifest" href="../manifest.webmanifest">
+    <link rel="manifest" href="manifest.webmanifest">
     <meta name="theme-color" content="#222222">
-    <link rel="icon" href="../res/icon.svg">
-    <link rel="mask-icon" href="../res/icon-maskable.png" color="#222222">
-    <link rel="apple-touch-icon" href="../res/icon-maskable.png">
+    <link rel="icon" href="res/icon.svg" sizes="any">
+    <link rel="icon" href="res/icon.png" sizes="any">
+    <link rel="mask-icon" href="res/icon-maskable.svg" color="#222222">
+    <link rel="apple-touch-icon" href="res/icon-maskable.png">
 
     <link rel="stylesheet" href="../bundle.css">
 
@@ -25,7 +26,20 @@
     <fsm-header></fsm-header>
 
     <main>
-        <p>Lesson 4</p>
+        <h3>Nedeterministički konačni automat sa &epsilon;-prijelazima</h3>
+
+        <p>
+            Definicija NKA iz prošlog poglavlja se može proširiti uključivanjem
+            prijelaza iz jednog u drugo koji ne ovise niti o jednom simbolu.
+            Takvi prijelazi se nazivaju <i>&epsilon;-prijelazi</i>. Funkcija prijelaza
+            za nedeterminističke konačne automate sa &epsilon;-prijelazima 
+            (u nastavku &epsilon;-NKA), definira se kao: Q &times; (&Epsilon; &cup; {&epsilon;}) &rarr; 2<sup>Q</sup>
+        </p>
+
+        <p>&epsilon;-prelazi su ovdje označeni sa simbolom $.</p>
+
+        <fsm-canvas example="Epsilon transition"></fsm-canvas>
+
     </main>
 
     <fsm-footer></fsm-footer>

@@ -1,16 +1,16 @@
-import { home_folder } from './navigation.js';
+import { app_root } from './navigation.js';
 
-export const service_worker_path = home_folder + '/sw.js';
+export const service_worker_path = app_root + '/sw.js';
 
 export default () => {
-    if ('serviceWorker' in navigator) {
+    if(navigator.serviceWorker) {
         navigator.serviceWorker.register(service_worker_path);
 
         let refreshing;
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
+        navigator.serviceWorker.oncontrollerchange = () => {
             if(refreshing) return;
             refreshing = true;
             window.location.reload();
-        });
+        };
     }
 }

@@ -2,6 +2,8 @@ import { __jsx, __jsx_fragment } from '../js/jsx.js';
 
 import '../css/fsm-notify.css';
 
+const DISPLAY_TIME = 1500;
+
 class Notify extends HTMLElement {
     connectedCallback() {
 
@@ -14,7 +16,7 @@ class Notify extends HTMLElement {
             clearTimeout(timeout);
             element.innerHTML = message;
             element.classList.remove('hide');
-            timeout = setTimeout(() => element.classList.add('hide'), 1500);
+            timeout = setTimeout(() => element.classList.add('hide'), DISPLAY_TIME);
         }
 
     }

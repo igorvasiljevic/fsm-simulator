@@ -214,10 +214,10 @@ export const panzoom = (element, scale_max, scale_velocity) => {
 
 		let avg_x = 0;
 		let avg_y = 0;
-		events.forEach(({clientX, clientY}) => {
+		for(let { clientX, clientY } of events) {
 			avg_x += clientX;
 			avg_y += clientY;
-		});
+		}
 		avg_x /= events.length;
 		avg_y /= events.length;
 

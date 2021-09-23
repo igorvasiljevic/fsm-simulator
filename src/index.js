@@ -1,8 +1,11 @@
-import { load_theme } from './js/theme.js';
 import register_sw from './js/register_sw.js';
+import { load_theme } from './js/theme.js';
+// import { load_language } from './js/language.js';
 
 import './css/index.css';
+
 load_theme();
+// load_language();
 
 import './components/fsm-header.jsx';
 import './components/fsm-footer.jsx';

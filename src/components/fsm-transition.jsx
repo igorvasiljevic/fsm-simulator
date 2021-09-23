@@ -92,6 +92,8 @@ export class FSMTransition extends HTMLElement {
 		
 		element._from._transitions.add(element);
 		
+		const title = arrow.querySelector('title');
+		title.textContent  = input.value;
 		element.id = `transition_${element._from._id}_${element._to._id}`;
 		element._value = this.value || '';
 
@@ -104,7 +106,31 @@ export class FSMTransition extends HTMLElement {
 			}
 		}
 
-		arrow.onclick = this._click;
+		// // Solution with offset-path, not supported in Firefox and others yet
+		// element._animate = (fast = false) => new Promise((resolve, reject) => {
+		// 	element.addEventListener('animationend', () => {
+		// 		fast ?
+		// 			element.classList.remove('animate', 'fast') :
+		// 			element.classList.remove('animate');
+		// 		resolve();
+		// 	}, { once:true });
+		// 	fast ?
+		// 		element.classList.add('animate', 'fast') :
+		// 		element.classList.add('animate');
+		// });
+
+		const dot = arrow.querySelector('circle');
+		element._animate = (fast = false) => new Promise((resolve, reject) => {
+			dot.firstElementChild.setAttributeNS(null, 'dur', fast ? '0.08s' : '0.2s');
+			dot.firstElementChild.addEventListener('endEvent', () => {
+				dot.style.display = 'none';
+				resolve();
+			}, { once:true });
+			dot.style.display = 'initial';
+			dot.firstElementChild.beginElement();
+		});
+
+		arrow.onclick = this.onclick;
 
 		arrow.ondblclick = e => {
 			e?.stopPropagation?.();
@@ -143,7 +169,7 @@ export class FSMTransition extends HTMLElement {
 					.split('')
 			)];
 			let value = values.sort().join(',');
-			input.value = element._value = value ? value : element._value;
+			title.textContent = input.value = element._value = value ? value : element._value;
 
 			if(!element._value)
 				element._delete();
