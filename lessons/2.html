@@ -9,11 +9,12 @@
     <meta name="description" content="Finite-State Machine lessons and simulator">
     <meta name="author" content="17112">
 
-    <link rel="manifest" href="../manifest.webmanifest">
+    <link rel="manifest" href="manifest.webmanifest">
     <meta name="theme-color" content="#222222">
-    <link rel="icon" href="../res/icon.svg">
-    <link rel="mask-icon" href="../res/icon-maskable.png" color="#222222">
-    <link rel="apple-touch-icon" href="../res/icon-maskable.png">
+    <link rel="icon" href="res/icon.svg" sizes="any">
+    <link rel="icon" href="res/icon.png" sizes="any">
+    <link rel="mask-icon" href="res/icon-maskable.svg" color="#222222">
+    <link rel="apple-touch-icon" href="res/icon-maskable.png">
 
     <link rel="stylesheet" href="../bundle.css">
 
@@ -25,7 +26,41 @@
     <fsm-header></fsm-header>
 
     <main>
-        <p>Lesson 2</p>
+        <h3>Konačni automat</h3>
+        <p>
+            Konačnim automatom se formalno definira uređena petorka
+            M = (Q, &Sigma;, &delta;, q<sub>0</sub>, F) gdje: <br>
+            <br>- <b>Q</b> - predstavlja konačan skup stanja automata
+            <br>- <b>&Sigma;</b> - predstavlja ulazni alfabet
+            <br>- <b>&delta;</b> - jer funkcija prelaza Q &times; &Sigma; &rarr; Q koja
+            jednoznačno određuje prijelaz u iduće stanje
+            <br>- q<sub>0</sub> - početno stanje (q<sub>0</sub> &isin; Q)
+            <br>- F je skup terminalnih (završnih, finalnih) stanja (F &sube; Q)
+        </p>
+        <p>
+            Često korišteni način prikaza konačnih automata je pomoću njihovog <i>grafa stanja</i>,
+            koji se definira kao konačan usmjeren graf kod kojeg svaki čvor odgovara jednom
+            elementu skupa Q, a veze predstavljaju odgovarajuće prelaze definirane funkcijom
+            prelaza. Početno stanje se označava oznakom "Start", a završna sa dva kruga.
+        </p>
+
+        <fsm-canvas example="Initial and final"></fsm-canvas>
+
+        <p>
+            Za riječ w se kaže da je prihvaćena ili prepoznata od strane konačnog automata ako
+            nakon primjene funkcije prijelaza redom na svaki simbol riječi w, počevši od početnog
+            stanja, trenutno stanje automata pripada skupu F.
+            <br><br>
+            Konačni automat koji jedino prihvata stringove koji završavaju na simbol b
+        </p>
+        
+        <fsm-canvas example="Ends in b"></fsm-canvas>
+
+        <p>
+            Ranije pomenuta definicija odgovara tzv. <i>determinističkom konačnom automatu</i> (u nastavku DKA),
+            jer njegova funkcija prelaza &delta; za jedno stanje i simbol definira prelaz u jedinstveno
+            stanje: &delta;(q,a) = p.
+        </p>
     </main>
 
     <fsm-footer></fsm-footer>

@@ -9,11 +9,12 @@
     <meta name="description" content="Finite-State Machine lessons and simulator">
     <meta name="author" content="17112">
 
-    <link rel="manifest" href="../manifest.webmanifest">
+    <link rel="manifest" href="manifest.webmanifest">
     <meta name="theme-color" content="#222222">
-    <link rel="icon" href="../res/icon.svg">
-    <link rel="mask-icon" href="../res/icon-maskable.png" color="#222222">
-    <link rel="apple-touch-icon" href="../res/icon-maskable.png">
+    <link rel="icon" href="res/icon.svg" sizes="any">
+    <link rel="icon" href="res/icon.png" sizes="any">
+    <link rel="mask-icon" href="res/icon-maskable.svg" color="#222222">
+    <link rel="apple-touch-icon" href="res/icon-maskable.png">
 
     <link rel="stylesheet" href="../bundle.css">
 
@@ -22,15 +23,50 @@
 <body>
     <noscript>This site can't function without JavaScript</noscript>
 
-    <fsm-header></fsm-header>
+    <fsm-header text="Osnovni pojmovi"></fsm-header>
 
     <main>
-        <h2></h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vestibulum mattis ullamcorper velit sed. Mauris commodo quis imperdiet massa tincidunt nunc. Turpis massa sed elementum tempus egestas sed sed risus. Faucibus a pellentesque sit amet porttitor. Velit scelerisque in dictum non consectetur a. Quis eleifend quam adipiscing vitae. In dictum non consectetur a erat nam at. Dictumst vestibulum rhoncus est pellentesque elit ullamcorper dignissim cras tincidunt. Pretium aenean pharetra magna ac placerat vestibulum lectus. Nunc scelerisque viverra mauris in aliquam sem fringilla ut. Semper viverra nam libero justo laoreet sit amet cursus sit.</p>
-        <fsm-canvas example="Second"></fsm-canvas>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vestibulum mattis ullamcorper velit sed. Mauris commodo quis imperdiet massa tincidunt nunc. Turpis massa sed elementum tempus egestas sed sed risus. Faucibus a pellentesque sit amet porttitor. Velit scelerisque in dictum non consectetur a. Quis eleifend quam adipiscing vitae. In dictum non consectetur a erat nam at. Dictumst vestibulum rhoncus est pellentesque elit ullamcorper dignissim cras tincidunt. Pretium aenean pharetra magna ac placerat vestibulum lectus. Nunc scelerisque viverra mauris in aliquam sem fringilla ut. Semper viverra nam libero justo laoreet sit amet cursus sit.</p>
-        <fsm-canvas example="Third"></fsm-canvas>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vestibulum mattis ullamcorper velit sed. Mauris commodo quis imperdiet massa tincidunt nunc. Turpis massa sed elementum tempus egestas sed sed risus. Faucibus a pellentesque sit amet porttitor. Velit scelerisque in dictum non consectetur a. Quis eleifend quam adipiscing vitae. In dictum non consectetur a erat nam at. Dictumst vestibulum rhoncus est pellentesque elit ullamcorper dignissim cras tincidunt. Pretium aenean pharetra magna ac placerat vestibulum lectus. Nunc scelerisque viverra mauris in aliquam sem fringilla ut. Semper viverra nam libero justo laoreet sit amet cursus sit.</p>
+        <h3>Simbol, alfabet i riječ</h3>
+        <p>Simboli ili znakovi su jedinstveni, nedjeljivi elementi, poput: a, B, 0, +, ...</p>
+        <p>Alfabetom nazivamo svaki konačan skup simbola, poput &Sigma; = {a, b}</p>
+        <p>
+            Riječ (eng. string) nekog alfabeta predstavlja bilo koji konačan skup simbola iz tog alfabeta.
+            Na primjer, za alfabet &Sigma; možemo reći da sadrži riječi: aa, bb, ab, aab... Dužina riječi
+            u tom slučaju predstavlja broj simbola sadržanih u toj riječi.. Na primjer, riječ w = ab koju
+            smo ranije definirali nad alfabetom &Sigma; ima dužinu |w| = 2.
+            Prazna riječ, koja se inače označava znakom &epsilon;, je riječ sa sa dužinom 0 (|&epsilon;| = 0).
+            <br><br>
+            Operacije koje možemo definirati nad riječima su: <br>
+                <br>- <b>Jednakost</b> - za dvije riječi x i y možemo reći da su jednake ako imaju istu dužinu i iste
+                simbole ako na svakom odgovarajućem mjestu
+                <br>- <b>Spajanje</b> - riječ koja se dobije spajanjem riječi x i y označava se sa x*y ili xy
+                <br>- <b>Stepenovanje</b> - spajanje riječi sa samom sobom onoliko puta koliko odgovara stepenu
+                operacije. npr. w<sup>2</sup> = abab, w<sup>0</sup> = &epsilon;, w<sup>3</sup> = ababab
+                <br>- <b>Prefiks</b> - riječ x je prefiks riječi w ako postoji riječ y takva da vrijedi w = xy
+                <br>- <b>Podriječ</b> - za riječ z možemo reći da je podriječ riječi w ako postoje riječi x i y
+                takve da vrijedi w = xzy
+                <br>- Reverzna riječ - w<sup>R</sup> se definira kao riječ čiji simboli imaju obrnut redoslijed od
+                početne riječi w.
+        </p>
+        <p>
+            A<sup>*</sup> predstavlja beskonačan skup svih riječi koji se mogu napraviti nad alfabetom A, uključujući
+            i praznu riječ.
+            A<sup>+</sup> predstavlja skup A<sup>*</sup> \ {&epsilon;}
+        </p>
+
+        <h3>Formalni jezik i gramatika</h3>
+        <p>
+            Formalni jezik L(A) se definira kao bilo koji podskup od A<sup>*</sup> definiran nad alfabetom A.
+            Operacije koje smo definirali nad riječimamožemo definirati i nad jezicima: <br>
+            <br>- <b>Spajanje</b> - spajanje jezika A(&Sigma;<sub>1</sub>) i B(&Sigma;<sub>2</sub>) se vrši tako
+            što se svaka riječ iz jezika A spoji sa svakom riječi iz jezika B, čime dobijemo jezik
+            C(&Sigma;<sub>1</sub> &cup; &Sigma;<sub>2</sub>) = AB. U slučaju da su jezici definirani nad različitim
+            alfabetima jezik C (//TODO what was supposed to go here)
+            <br>- <b>Stepenovanje</b> - spajanje jezika sa samim sobom onoliko puta koliko odgovara stepenu operacije.
+            <br>- <b>Unija</b> i <b>presjek</b> se definiraju kao i nad drugim skupovima
+        </p>
+        <p>Formalna gramatika se definira kao skup pravila pomoću kojih se mogu generirati sve riječi nekog alfabeta.</p>
+
     </main>
 
     <fsm-footer></fsm-footer>
