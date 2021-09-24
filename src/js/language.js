@@ -3,27 +3,25 @@ import Data from './data.js';
 import { app_root } from './navigation.js';
 
 export const languages = ['bs', 'en'];
-let current = languages[0];
+const default_language = 'bs';
+let current = default_language;
 
 // const fields = document.querySelectorAll('[dict-text]');
 
 export const set_language = language => {
-    console.log(`Switch language from ${current} to ${language}`);
-
     if(!language || language === current) return;
 
-    caches
-        .open('fsm-simulator-cache')
+    caches.keys()
+        .then(cache_names => caches.open(cache_names[0]))
         .then(cache => cache.delete(`${app_root}/localization/${current}.json`))
         .then(() => {
             Data.set('language', language);
             current = language;
-            return fetch(`${app_root}/localization/${current}.json`)
+            return fetch(`${app_root}/localization/${current}.json`);
         })
         .then(response => response.json())
         .then(data => console.log(data))
         .catch(console.log);
-
 }
 
 export const load_language = () => {

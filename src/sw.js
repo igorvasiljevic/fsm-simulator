@@ -1,5 +1,5 @@
-const version = '2.5';
-const cache_name = 'fsm-simulator-cache';
+const version = '2.6';
+const cache_name = 'fsm-simulator-cache-' + version;
 
 const urls_to_cache = [
     './manifest.webmanifest',
@@ -14,39 +14,41 @@ const urls_to_cache = [
     './lessons/3.html',
     './lessons/4.html',
 
-    /* RESOURCES */
-    // './res/icon.svg',
-    // './res/icon.png',
-    // './res/icon-maskable.svg',
-    // './res/icon-maskable.png',
+     /* RESOURCES */
+     './res/icon.svg',
+    //  './res/icon.png',
+    //  './res/icon-maskable.svg',
+    //  './res/icon-maskable.png',
 ];
 
 self.addEventListener('install', event => {
-    // self.skipWaiting();
+    self.skipWaiting();
+
     event.waitUntil(
-        caches
-            .delete(cache_name)
-            .then(() => caches.open(cache_name))
-            .then(cache => cache.addAll(urls_to_cache))
+        caches.open(cache_name)
+            .then(cache => cache.addAll(urls_to_cache)) // then skip waiting maybe
     );
-});
+    
+}, { once:true });
 
-// self.addEventListener('activate', event =>
-//     event.waitUntil(caches.keys().then(cache_names =>
-//         Promise.all(cache_names
-//             .filter(cache_name => cache_name != cache_name)
-//             .map(cache_name => caches.delete(cache_name))
-//         )
-//     ))
-// );
+self.addEventListener('activate', event => {
+    self.clients.claim();
+    
+    event.waitUntil(caches.keys().then(keys =>
+        Promise.all(
+            keys.filter(key => key !== cache_name)
+                .map(key => caches.delete(key))
+        )
+    ));
+}, { once:true });
 
-self.addEventListener('fetch', event =>
-    event.respondWith(caches
-        .match(event.request)
-        .then(response => {
+self.addEventListener('fetch', event => {
+    // fallback to standard fetch for POST, PATCH and DELETE
+    if(event.request.method !== 'GET') return;
+
+    event.respondWith(caches.match(event.request).then(response => {
             // Cache hit - return response
             if(response) return response;
-
 
             return fetch(event.request).then(response => {
                 if(!response || response.status !== 200 || response.type !== 'basic')
@@ -61,4 +63,5 @@ self.addEventListener('fetch', event =>
             });
         })
         .catch(err => {})
-));
+    );
+});
