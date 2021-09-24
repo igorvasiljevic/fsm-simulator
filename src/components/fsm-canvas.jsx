@@ -32,7 +32,7 @@ const ZOOM_VELOCITY = 0.1;
 
 export class FSMCanvas extends HTMLElement {
 	connectedCallback() {
-
+		
 		let current_states = [];
 		let highlight = 0;
 		let transition_from_state = null;
