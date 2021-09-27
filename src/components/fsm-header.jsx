@@ -29,7 +29,7 @@ export default class Header extends HTMLElement {
                     </button>
                 </div>
                 {home ? <h1>{text}</h1> : <h2>{text}</h2>}
-                {home ? <h4>by Igor Vasiljević</h4> : ''}
+                {home ? <h4>Igor Vasiljević</h4> : ''}
                 <hr/>
             </header>
         );
