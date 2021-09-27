@@ -1,12 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="bs">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <title>Lesson 3</title>
-    <meta name="description" content="Finite-State Machine lessons and simulator">
+    <title>DKA | Konačni Automati</title>
+    <meta name="application-name" content="Konačni Automati">
+    <meta name="description" content="Simulator i lekcije o konačnim automatima">
     <meta name="author" content="17112">
 
     <link rel="manifest" href="../manifest.webmanifest">
@@ -15,29 +16,178 @@
     <link rel="icon" href="../res/icon.png" sizes="any">
     <link rel="mask-icon" href="../res/icon-maskable.svg" color="#222222">
     <link rel="apple-touch-icon" href="../res/icon-maskable.png">
-
+    
     <link rel="stylesheet" href="../bundle.css">
 
     <script src="../bundle.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@300&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <noscript>This site can't function without JavaScript</noscript>
+    <noscript>Stranica ne može funkcionirati bez JavaScripta</noscript>
 
-    <fsm-header></fsm-header>
+    <fsm-header text="Deterministički Konačni Automat"></fsm-header>
 
     <main>
-        <h3>Nedeterministički konačni automat</h3>
 
         <p>
-            U prošlom poglavlju smo spomenuli da funkcija prijelaza DKA za jedno stanje i simbol
-            definira prijelaz u jedinstveno stanje: &delta;(q,a) = p. Kod nedeterminističkog
-            konačnog automata (u nastavku NKA) funkcija prijelaza za jedno stanje i simbol
-            definira prijelaz u skup stanja: &delta;(q,a) = {p1, p2, ...}. Odnosno njegova
-            se funkcija prijelaza &delta; definira kao Q &times; &Epsilon; &rarr; 2<sup>Q</sup>
-            (skup svih podskupa Q).
+            Osnovni model konačnog automata je deterministički konačni automat
+            (<span class="pop">DKA</span>). U svakom koraku konačni automat je u jednom
+            od stanja, pri čemu je broj mogućih stanja konačan.
         </p>
 
-        <fsm-canvas example="Nondeterministic transition"></fsm-canvas>
+        <p>
+            Deterministički konačni automat <i>M</i> formalno je definiran petorkom:
+        </p>
+        <p class="equation">
+            M = (Q, &Sigma;, &delta;, q<sub>0</sub>, F)
+        </p>
+        <p style="margin-top: 15px;">
+            gdje je:
+        </p>
+        <table class="legend">
+            <tr><td><span class="equation pop">Q            </span></td><td>-</td><td>konačan skup stanja automata</td></tr>
+            <tr><td><span class="equation pop">&Sigma;      </span></td><td>-</td><td>ulazni alfabet</td></tr>
+            <tr><td><span class="equation pop">&delta;      </span></td><td>-</td><td>funkcija prijelaza <span class="equation">Q &times; &Sigma; &rarr; Q</span> koja jednoznačno određuje prijelaz u iduće stanje</td></tr>
+            <tr><td><span class="equation pop">q<sub>0</sub></span></td><td>-</td><td>početno stanje (<span class="equation">q<sub>0</sub> &isin; Q</span>)</td></tr>
+            <tr><td><span class="equation pop">F            </span></td><td>-</td><td>skup terminalnih (završnih, finalnih) stanja (<span class="equation">F &sube; Q</span>)</td></tr>
+        </table>
+
+        <h3>Primjer 1</h3>
+        <p>
+            U sljedećem primjeru prikazan je konačni automat <span class="equation">M</span>
+            koji prihvaća jezik <span class="equation">L<sub>1</sub></span>:
+        </p>
+        <p class="equation">
+            L<sub>1</sub> = {w &isin; {a,b}<sup>*</sup> | w <span class="normal">završava simbolima</span> bb}
+        </p>
+        <p>
+            Dakle, jezik L<sub>1</sub> se sastoji od riječi koje na kraju sadrže podriječ
+            <span class="equation">bb</span>. Konačni automat
+            <span class="equation">M</span> je definiran na sljedeći način:
+        </p>
+        <p class="equation">
+            M = ({q<sub>0</sub>,q<sub>1</sub>,q<sub>2</sub>}, {a,b}, &delta;, q<sub>0</sub>, {q<sub>2</sub>})
+        </p>
+        <p>
+            gdje je funkcija prijelaza <span class="equation">&delta;</span> definirana sljedećom tabelom:
+        </p>
+        <table class="table-transition">
+            <tr><th>&delta;</th><th>a</th><th>b</th></tr>
+            <tr><td>q<sub>0</sub></td><td>q<sub>0</sub></td><td>q<sub>1</sub></td></tr>
+            <tr><td>q<sub>1</sub></td><td>q<sub>0</sub></td><td>q<sub>2</sub></td></tr>
+            <tr><td>q<sub>2</sub></td><td>q<sub>0</sub></td><td>q<sub>2</sub></td></tr>
+        </table>
+        
+        <fsm-canvas example="Ends in bb"></fsm-canvas>
+
+        <h3 id="prosirena-funkcija-prijelaza">Proširena funkcija prijelaza</h3>
+        <p>
+            Da bismo za neki DKA mogli koristiti i odgovarajući izraz oblika:
+        </p>
+        <p class="equation">
+            q = &delta;<sup>*</sup>(p, w)
+        </p>
+        <p>
+            koji će predstavljati neko krajnje stanje <span class="equation">q &isin; Q</span>,
+            u koje automat prelazi nakon što u početnom stanju <span class="equation">p &isin; Q</span>
+            primi niz simbola <span class="equation">w &isin; &Sigma;<sup>*</sup></span>, definirati
+            ćemo pojam <span class="pop">proširene funkcije prijelaza</span>
+            <span class="equation">&delta;<sup>*</sup>.
+        </p>
+        <p>
+            Za neki konačni automat <span class="equation">M = (Q, &Sigma;, &delta; q<sub>0</sub>, F)</span>.
+            Definiramo proširenu funkciju prijelaza <span class="equation">&delta;<sup>*</sup></span>
+        </p>
+        <p class="equation">
+            &delta;<sup>*</sup> : Q &times; &Sigma;<sup>*</sup> &rarr; Q
+        </p>
+        <p>na sljedeći način
+            <br>&nbsp;&nbsp;&nbsp; 1. <span class="equation">&delta;<sup>*</sup>(q, &epsilon;) = q, za svaki q &isin; Q;</span>
+            <br>&nbsp;&nbsp;&nbsp; 2. za bilo koje stanje q &isin; Q, za koje bilo koji niz ulaznih simbola
+            &nbsp;&nbsp;&nbsp; <span class="equation">a &isin; &Sigma;</span>, vrijedi:
+        </p>
+        <p class="equation">
+            &delta;<sup>*</sup>(q, wa) = &delta;(&delta;<sup>*</sup>(q, w), a)
+        </p>
+        <p>
+            Rekurzivni dio definicije određuje na koji način se računa stanje u koje prijelazi
+            DKA čitanjem niza simbola <span class="equation">wa</span>. Nakon što se pročita niz
+            simbola <span class="equation">w</span>, određuje se stanje
+            <span class="equation">p = &delta;<sup>*</sup>(q, w)</span>, a nekon toga se računa
+            <span class="equation">&delta;(p, a)</span>.
+        </p>
+        <p>Primjer</p>
+        <table class="equation">
+            <tr><td>&delta;<sup>*</sup>(q<sub>0</sub>, babb)</td><td>=</td><td>&delta;(&delta;<sup>*</sup>(q<sub>0</sub>, bab), b)</td></tr>
+            <tr><td></td><td>=</td><td>&delta;(&delta;(&delta;<sup>*</sup>(q<sub>0</sub>, ba), b), b)</td></tr>
+            <tr><td></td><td>=</td><td>&delta;(&delta;(&delta;(&delta;<sup>*</sup>(q<sub>0</sub>, b), a), b), b)</td></tr>
+            <tr><td></td><td>=</td><td>&delta;(&delta;(&delta;(&delta;<sup>*</sup>(q<sub>0</sub>, &epsilon;b), a), b), b)</td></tr>
+            <tr><td></td><td>=</td><td>&delta;(&delta;(&delta;(&delta;(&delta;<sup>*</sup>(q<sub>0</sub>, &epsilon;), b), a), b), b)</td></tr>
+            <tr><td></td><td>=</td><td>&delta;(&delta;(&delta;(&delta;(q<sub>0</sub>, b), a), b), b)</td></tr>
+            <tr><td></td><td>=</td><td>&delta;(&delta;(&delta;(q<sub>1</sub>, a), b), b)</td></tr>
+            <tr><td></td><td>=</td><td>&delta;(&delta;(q<sub>0</sub>, b), b)</td></tr>
+            <tr><td></td><td>=</td><td>&delta;(q<sub>1</sub>, b)</td></tr>
+            <tr><td></td><td>=</td><td>q<sub>2</sub>
+        </table>
+        <p>
+            Dakle, rad automata se završava u stanju <span class="equation">q<sub>2</sub></span>.
+            Budući da stanje <span class="equation">q<sub>2</sub></span> pripada skupu prihvatljivih
+            stanja F, kažemo da automat M prihvaća priječ babb.
+        </p>
+
+        <p>
+            Definicija proširene funkcije prijelaza <span class="equation">&delta;<sup>*</sup></span>
+            nam omogućava da formalno definiramo pojmove prihvaćanja i neprihvaćanja ulaznih nizova
+            simbola (riječi).
+        </p>
+
+        <p class="definition">
+            Neka je zadan deterministički konačni automat <span class="equation">M = (Q, &Sigma;, &delta; q<sub>0</sub>, F)</span>,
+            kao i ulazi niz simbola <span class="equation">w &isin; &Sigma;<sup>*</sup></span>. Kažemo da automat
+            <span class="equation">M</span> <span class="pop">prihvaća</span> ulazni niz simbola <span class="equation">w</span>,
+            ako vrijedi:
+        </p>
+        <p class="equation">
+            &delta;(q<sub>0</sub>, w) &isin; F
+        </p>
+        <p>
+            U suprotnom, ako vrijedi:
+        </p>
+        <p class="equation">
+            &delta;(q<sub>0</sub>, w) &notin; F
+        </p>
+        <p>
+            tada kažemo da automat <span class="equation">M</span> <span class="pop">ne prihvaća</span> riječ
+            <span class="equation">w</span>. Jezik kojeg prihvaća automat M je sljedeći skup:
+        </p>
+        <p class="equation">
+            L(M) = { w &isin; &Sigma;<sup>*</sup> | &delta;<sup>*</sup>(q<sub>0</sub>, w) &isin; F }
+        </p>
+        <p>
+            Ako je <span class="equation">L</span> jezik nad alfabetom &Sigma;, automat <span class="equation">M</span>
+            prihvaća jezik <span class="equation">L</span> ako i samo ako je <span class="equation">L = L(M)</span>
+        </p>
+        <p>
+            Primijetimo da gornja definicija ne znači da automat <span class="equation">M</span> prihvaća neki jezik
+            <span class="equation">L</span> ako automat <span class="equation">M</span> prihvaća svaku riječ iz
+            <span class="equation">L</span>. Gornja definicija zapravo specificira da automat <span class="equation">M</span>
+            koji prihvaća jezik <span class="equation">L</span> prihvaća sve riječi iz <span class="equation">L</span>, ali
+            istovremeno i ne prihvaća sve ostale riječi iz &Sigma;<sup>*</sup>, koje ne pripadaju jeziku
+            <span class="equation">L</span>.
+        </p>
+
+        <h3 id="prihvacanje-unije-presjeka-i-razlike-dva-jezika">Prihvaćanje unije, presjeka i razlike dva jezika</h3>
+
+        <h3 id="razlucivost-rijeci">Razlučivost riječi</h3>
+
+        <h3 id="ekvivalentne-klase">Ekvivalentne klase</h3>
+
+        <h3 id="minimizacija-broja-stanja-dka">Minimizacija broja stanja DKA</h3>
+
+
         
     </main>
 

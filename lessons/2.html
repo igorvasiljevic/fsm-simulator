@@ -1,12 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="bs">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <title>Lesson 2</title>
-    <meta name="description" content="Finite-State Machine lessons and simulator">
+    <title>Uvod | Konačni Automati</title>
+    <meta name="application-name" content="Konačni Automati">
+    <meta name="description" content="Simulator i lekcije o konačnim automatima">
     <meta name="author" content="17112">
 
     <link rel="manifest" href="../manifest.webmanifest">
@@ -15,52 +16,75 @@
     <link rel="icon" href="../res/icon.png" sizes="any">
     <link rel="mask-icon" href="../res/icon-maskable.svg" color="#222222">
     <link rel="apple-touch-icon" href="../res/icon-maskable.png">
-
+    
     <link rel="stylesheet" href="../bundle.css">
 
     <script src="../bundle.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@300&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <noscript>This site can't function without JavaScript</noscript>
+    <noscript>Stranica ne može funkcionirati bez JavaScripta</noscript>
 
-    <fsm-header></fsm-header>
+    <fsm-header text="Uvod u Konačne Automate"></fsm-header>
 
     <main>
-        <h3>Konačni automat</h3>
         <p>
-            Konačnim automatom se formalno definira uređena petorka
-            M = (Q, &Sigma;, &delta;, q<sub>0</sub>, F) gdje: <br>
-            <br>- <b>Q</b> - predstavlja konačan skup stanja automata
-            <br>- <b>&Sigma;</b> - predstavlja ulazni alfabet
-            <br>- <b>&delta;</b> - jer funkcija prelaza Q &times; &Sigma; &rarr; Q koja
-            jednoznačno određuje prijelaz u iduće stanje
-            <br>- q<sub>0</sub> - početno stanje (q<sub>0</sub> &isin; Q)
-            <br>- F je skup terminalnih (završnih, finalnih) stanja (F &sube; Q)
+            Konačni automat je apstraktni matematički model mašine koja obavlja izračunavanje
+            na temelju nekog ulaza. Mašina se može nalaziti u jednom od konačno mnogo mogućih
+            stanja pri čemu se izračunavanje obavlja koristeći niz prijelaza iz jednog u neko
+            drugo ili ponekad isto stanje.
         </p>
         <p>
-            Često korišteni način prikaza konačnih automata je pomoću njihovog <i>grafa stanja</i>,
-            koji se definira kao konačan usmjeren graf kod kojeg svaki čvor odgovara jednom
-            elementu skupa Q, a veze predstavljaju odgovarajuće prelaze definirane funkcijom
-            prelaza. Početno stanje se označava oznakom "Start", a završna sa dva kruga.
+            Prije nego konačni automat primi neki ulaz, on se nalazi u tzv.
+            <span class="pop">početnom stanju</span>. Na ulazu u automat se nalazi traka
+            sa nizom simbola iz nekog alfabeta <span class="equation">&Sigma;</span>.
+            Čitanjem simbola sa ulazne trake glava za čitanje se pomjera udesno i konačni
+            automat, na osnovu pročitanog simbola, prelazi u novo stanje. Glava za čitanje
+            može samo čitati simbole sa ulazne trake, ali ih ne može pisati.
+        </p>
+
+        <p>
+            Često korišteni način prikaza konačnih automata je pomoću njihovog
+            <span class="pop">grafa stanja</span> (prikazan ispod), koji se definira
+            kao konačan usmjeren graf kod kojeg svaki čvor odgovara jednom elementu
+            skupa <span class="equation">Q</span>, a veze predstavljaju odgovarajuće
+            prelaze definirane funkcijom prelaza. Početno stanje se označava oznakom
+            "Start", a završna sa dva kruga. Na sljedećem grafu stanja prikazan je
+            prijelaz iz stanja <span class="equation">q0</span> u završno stanje
+            <span class="equation">q1</span> za pročitani ulazni simbol
+            <span class="equation">a</span>.
+        </p>
+
+        <p class="hint">
+            Pritisni dugme s upitnikom na vrhu grafa u bilo kojem
+            trenutku za pomoć o korištenju
         </p>
 
         <fsm-canvas example="Initial and final"></fsm-canvas>
 
         <p>
+            Kada je konačni automat u nekom stanju <span class="equation">q</span> i
+            glava za čitanje pročita ulazni simbol <span class="equation">a</span>,
+            tada promijeni trenutno stanje u novo stanje
+            <span class="equation">&delta;(q, a)</span> i pomjeri glavu za čitanje
+            jedno mjesto udesno. Ako je novo stanje <span class="pop">prihvatljivo</span>,
+            konačni automat prihvaća do tada pročitani podniz simbola, ne uključujući simbol
+            na kojem je postavljena glava za čitanje. U suprotnom, ako novo stanje nije
+            prihvatljivo, konačni automat ne prihvaća do tada pročitani podniz simbola.
+            Kada se glava za čitanje pomjeri iza krajnjeg desnog simbola, niz simbola koji
+            se nalazi na traci se prihvaća ili ne prihvaća. Drugim riječima, model konačnog
+            automata predstavlja model računarskog sistema koji kao rezultat može generirati
+            samo dva izlaza: "da" ili "ne".
+        </p>
+
+        <!-- <p>
             Za riječ w se kaže da je prihvaćena ili prepoznata od strane konačnog automata ako
             nakon primjene funkcije prijelaza redom na svaki simbol riječi w, počevši od početnog
             stanja, trenutno stanje automata pripada skupu F.
-            <br><br>
-            Konačni automat koji jedino prihvata stringove koji završavaju na simbol b
-        </p>
-        
-        <fsm-canvas example="Ends in b"></fsm-canvas>
-
-        <p>
-            Ranije pomenuta definicija odgovara tzv. <i>determinističkom konačnom automatu</i> (u nastavku DKA),
-            jer njegova funkcija prelaza &delta; za jedno stanje i simbol definira prelaz u jedinstveno
-            stanje: &delta;(q,a) = p.
-        </p>
+        </p> -->
     </main>
 
     <fsm-footer></fsm-footer>
