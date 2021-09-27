@@ -21,6 +21,11 @@
     transition: opacity 0.3s;
 }
 
+.fsm-notify,
+.fsm-notify * {
+    visibility: visible;
+}
+
 .hide {
     opacity: 0;
 }

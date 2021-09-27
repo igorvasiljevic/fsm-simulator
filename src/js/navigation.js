@@ -14,7 +14,8 @@ export const pages = [
     '/lessons/1.html',
     '/lessons/2.html',
     '/lessons/3.html',
-    '/lessons/4.html'
+    '/lessons/4.html',
+    '/lessons/5.html'
 ];
 
 const Navigate = (() => {

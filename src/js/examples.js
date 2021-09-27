@@ -5,17 +5,22 @@ const Examples = {
         states        : [0, 1],
         initial_state : 0,
         final_states  : [1],
-        transitions   : {},
+        transitions   : {
+            0: {
+                a: [1]
+            }
+        },
         type          : 0,
         state_info    : {
-            0: { name:'q0', x:-65, y:0 },
-            1: { name:'q1', x: 65, y:0 },
-        }
+            0: { name:'q0', x:-60, y:0 },
+            1: { name:'q1', x: 60, y:0 },
+        },
+        string        : 'a'
     },
-    'Ends in b': {
-        states        : [0, 1],
+    'Ends in bb': {
+        states        : [0, 1, 2],
         initial_state : 0,
-        final_states  : [1],
+        final_states  : [2],
         transitions   : {
             0: {
                 a: [0],
@@ -23,15 +28,20 @@ const Examples = {
             },
             1: {
                 a: [0],
-                b: [1]
+                b: [2]
+            },
+            2: {
+                a: [0],
+                b: [2]
             }
         },
-        type          : 1,
+        type          : 0,
         state_info    : {
-            0: { name:'q0', x:-65, y:0 },
-            1: { name:'q1', x: 65, y:0 }
+            0: { name:'q0', x:-65, y:-20 },
+            1: { name:'q1', x:  0, y: 70 },
+            2: { name:'q2', x: 65, y:-20 }
         },
-        string        : 'aabbaabb'
+        string        : 'aababaabb'
     },
     'Nondeterministic transition': {
         states        : [0, 1, 2],
@@ -42,7 +52,7 @@ const Examples = {
                 a: [1, 2]
             }
         },
-        type          : 2,
+        type          : 1,
         state_info    : {
             0: { name:'q0', x:-65, y:  0 },
             1: { name:'q1', x: 65, y:-50 },
@@ -68,11 +78,11 @@ const Examples = {
         },
         type          : 2,
         state_info    : {
-            0: { name:'q0', x:-95,  y:-20 },
-            1: { name:'q1', x:  0,  y:-20 },
-            2: { name:'q2', x:  0,  y: 80 },
-            3: { name:'q3', x: 95,  y:-20 },
-            4: { name:'q4', x: 95,  y: 80 },
+            0: { name:'q0', x:-95,  y:-30 },
+            1: { name:'q1', x:  0,  y:-30 },
+            2: { name:'q2', x:  0,  y: 70 },
+            3: { name:'q3', x: 95,  y:-30 },
+            4: { name:'q4', x: 95,  y: 70 },
         },
         string        : 'ad'
     },

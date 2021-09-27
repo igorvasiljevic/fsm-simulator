@@ -4,18 +4,19 @@ const { copy: fscopy } = require('fs-extra');
 const args = process.argv.slice(2);
 
 const has_arg = name => args.includes(name);
-const get_arg = name => {
+const get_arg = (name, ending) => {
 	const index = args.indexOf(name);
 	if(index < 0) return;
 	if (index >= args.length || args[index + 1].startsWith('-')) {
 		process.stdout.write(`\n> Error reading argument \x1b[31m${name}\x1b[0m\n`);
 		process.exit(1);
 	}
-	return args[index + 1];
+	let value = args[index + 1];
+	return !ending || value.endsWith(ending) ? value : value + '/';
 };
 
-const src_dir = get_arg('-i') || 'src/';
-const out_dir = get_arg('-o') || 'dist/';
+const src_dir = get_arg('-i', '/') || 'src/';
+const out_dir = get_arg('-o', '/') || 'dist/';
 const sw_path = src_dir + 'sw.js';
 const minify  = has_arg('--minify');
 const watch   = has_arg('--watch');
@@ -72,25 +73,28 @@ const build_sw = () => esbuild({
 	let bs = (watch || serve) ? require("browser-sync").create() : null;
 
 	if (watch) {
-		const { resolve } = require('path');
+		process.stdout.write(`\n[\x1b[94mwatch\x1b[0m] Started watching: \x1b[35m${src_dir}\x1b[0m\n`);
 
+		const { resolve } = require('path');
 		const copy_list_paths = copy_list.map(path => resolve(src_dir + path));
 
 		bs.watch(src_dir).on('change', async (path, stats) => {
-			process.stdout.write(`[watch] change in \x1b[33m${path}\x1b[0m... `);
+			process.stdout.write(`[\x1b[94mwatch\x1b[0m] Change in \x1b[33m${path}\x1b[0m... `);
 
 			const clean_path = path.replaceAll('\\', '/');
 			const full_path = resolve(clean_path);
-			if (clean_path === sw_path) {
+			if (clean_path === sw_path)
 				time(build_sw)
-					.then(t => process.stdout.write(`built sw in \x1b[32m${t}\x1b[0m ms\n`));
-			} else if (copy_list_paths.find(path => full_path.startsWith(path))) {
+					.then(async t => process.stdout.write(`built sw in \x1b[32m${t}\x1b[0m ms\n`))
+					.then(() => bs.reload(path))
+			else if (copy_list_paths.find(path => full_path.startsWith(path)))
 				time(() => copy(clean_path.replace(src_dir, '')))
-					.then(t => process.stdout.write(`copied in \x1b[32m${t}\x1b[0m ms\n`));
-			} else {
+					.then(async t => process.stdout.write(`copied in \x1b[32m${t}\x1b[0m ms\n`))
+					.then(() => bs.reload(path))
+			else
 				time(build_main)
-					.then(t => process.stdout.write(`built main in \x1b[32m${t}\x1b[0m ms\n`));
-			}
+					.then(async t => process.stdout.write(`built main in \x1b[32m${t}\x1b[0m ms\n`))
+					.then(() => bs.reload())
 		});
 	}
 
@@ -107,14 +111,16 @@ const build_sw = () => esbuild({
 			},
 			logFileChanges: false,
 			logSnippet: false,
-			snippet: false,
+			snippet: true,
 			// online: false,
-			reloadDelay: 100,
-			reloadDebounce: 200,
+			// reloadDelay: 100,
+			// reloadDebounce: 200,
 			minify: false,
 			ui: false,
 			timestamps: false,
+			notify: false,
 		});
+
 	}
 
 })();

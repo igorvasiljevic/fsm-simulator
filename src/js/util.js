@@ -43,22 +43,8 @@ export const mobile = navigator?.userAgentData ?
 
 
 
-let el, el_previous_sibling, body_children;
+let el, tmp;
 export const toggle_fullscreen = element => {
-    if(el) {
-        document.body.replaceChildren(...body_children);
-        el.classList.remove('fullscreen');
-        el_previous_sibling.after(el);
-
-        el = el_previous_sibling = body_children = undefined;
-        return false;
-    }
-
-    el = element;
-    el_previous_sibling = el.previousSibling;
-    body_children = [...document.body.children];
-
-    el.classList.add('fullscreen');
-    document.body.replaceChildren(el);
-    return true;
+    document.documentElement.classList.toggle('fullscreen');
+    return (([tmp, el] = [el, undefined])[0] ?? (el = element)).classList.toggle('fullscreen');
 }

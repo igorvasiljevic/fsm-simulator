@@ -10,7 +10,7 @@ export default class FSMMenu extends HTMLElement {
     connectedCallback() {        
         const element = (
             <div class='menu-container'>
-                <button type='button' id='menu-btn' class='img-btn' title='Menu' aria-label='Menu'>
+                <button type='button' id='menu-btn' class='img-btn' title='Meni' aria-label='Meni'>
                     <svgl svg={svg_more}/>
                 </button>
                 <div class='menu menu-hidden'>

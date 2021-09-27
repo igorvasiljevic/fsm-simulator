@@ -12,7 +12,7 @@
 }
 
 .simulator .fsm-canvas {
-    padding: 60px 10px 60px;
+    padding-top: 60px;
     width: 300%;
     height: 300%;
 }

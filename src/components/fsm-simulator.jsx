@@ -40,7 +40,7 @@ export default class Simulator extends HTMLElement {
                     const fsm_data = Data.get('fsm');
                     fsm_data ?
                         canvas._set_fsm(new FSM(JSON.parse(fsm_data))) :
-                        notify('No saved data');
+                        notify('Nema spašenih podataka');
                 }}>Load</button>
 
                 <button type='button' onclick={() => {
@@ -49,16 +49,16 @@ export default class Simulator extends HTMLElement {
 
                 <button type='button' onclick={() => {
                     Data.set('fsm', canvas._get_fsm().toString());
-                    notify('Data saved');
+                    notify('Podaci spašeni');
                 }}>Save</button>
 
                 <button type='button' onclick={() => {
-                    let filename = prompt('Enter file name', 'fsm.json');
+                    let filename = prompt('Unesi ime fajla', 'ka.json');
                     if(filename)
                         File.download(filename, canvas._get_fsm().toString());
                 }}>Download</button>
 
-                <button type='button' onclick={ switch_theme } class='theme img-btn' title='Switch theme' aria-label='Switch theme'>
+                <button type='button' onclick={ switch_theme } class='theme img-btn' title='Promijeni temu' aria-label='Promijeni temu'>
                     <svgl svg={svg_theme}/>
                 </button>
             </fsm-menu>
@@ -66,7 +66,7 @@ export default class Simulator extends HTMLElement {
 
         this.replaceWith(
             <>
-                <button type='button' class='img-btn home' onclick={Navigate.home} title='Home' aria-label='Home'>
+                <button type='button' class='img-btn home' onclick={Navigate.home} title='Početna' aria-label='Početna'>
                     <svgl svg={svg_home}/>
                 </button>
                 {menu}

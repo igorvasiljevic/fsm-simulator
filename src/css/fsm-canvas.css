@@ -1,4 +1,9 @@
 
+:root {
+    --arrow-left: 130px;
+    --arrow-top: 30px;
+}
+
 .fsm-container {
     position: relative;
     width: 80%;
@@ -34,10 +39,16 @@
     width: 200%;
     height: 200%;
 
-    padding: 20px;
-    padding-bottom: 70px;
+    padding: 60px;
+    padding-left: 20px;
+    padding-top: 40px;
 }
 
+
+
+.fsm-container .fsm-notify {
+    position: absolute;
+}
 
 
 
@@ -49,16 +60,17 @@
     right: 7px;
     display: flex;
 
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
 }
 
 .fsm-container .pill {
     position: initial;
     background-color: transparent;
     color: var(--text-color);
-    width: 65px;
     height: 30px;
+    min-width: 30px;
+    width: 65px;
     text-align: center;
     font-family: var(--font-sans-serif);
     font-size: 0.94em;
@@ -84,6 +96,10 @@
 .fsm-container .pill.small {
     width: initial;
     padding: 0 5px;
+}
+.fsm-container #pill-tutorial.tutorial-open {
+    background-color: var(--text-color);
+    color: var(--background-color);
 }
 
 
@@ -175,6 +191,86 @@
 }
 
 
+#fsm-tutorials {
+    z-index: 10000;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+
+    font-family: var(--font-sans-serif);
+    user-select: none;
+}
+#fsm-tutorials > * {
+    position: absolute;
+    z-index: 900;
+    pointer-events: auto;
+
+    cursor: pointer;
+    width: 14em;
+    max-width: 80%;
+    padding: 20px;
+    background-color: var(--background-color);
+    border: 1px solid var(--svg-color);
+    border-radius: 10px;
+}
+
+#fsm-tutorials > *::after,
+#fsm-tutorials > *::before {
+    content: '';
+    position: absolute;
+    display: block;
+    border-style: solid;
+    width: 0;
+}
+#fsm-tutorials > *::after {
+    z-index: 1;
+    border-color: var(--background-color) transparent;
+}
+#fsm-tutorials > *::before {
+    z-index: 0;
+    border-color: var(--svg-color) transparent;
+}
+#fsm-tutorials .arrow-top::after,
+#fsm-tutorials .arrow-top::before { left: var(--arrow-left); border-width: 0 10px 16px; }
+#fsm-tutorials .arrow-top::after  { top: -15px; }
+#fsm-tutorials .arrow-top::before { top: -17px; }
+
+#fsm-tutorials .arrow-bottom::after,
+#fsm-tutorials .arrow-bottom::before { left: var(--arrow-left); border-width: 16px 10px 0; }
+#fsm-tutorials .arrow-bottom::after  { bottom: -15px; }
+#fsm-tutorials .arrow-bottom::before { bottom: -17px; }
+
+#fsm-tutorials .arrow-left::after,
+#fsm-tutorials .arrow-left::before { top: var(--arrow-top); border-width: 10px 16px 10px 0; }
+#fsm-tutorials .arrow-left::after  { left: -15px; border-color: transparent var(--background-color); }
+#fsm-tutorials .arrow-left::before { left: -17px; border-color: transparent var(--svg-color); }
+
+#fsm-tutorials .arrow-right::after,
+#fsm-tutorials .arrow-right::before { top: var(--arrow-top); border-width: 10px 0 10px 16px; }
+#fsm-tutorials .arrow-right::after  { right: -15px; border-color: transparent var(--background-color); }
+#fsm-tutorials .arrow-right::before { right: -17px; border-color: transparent var(--svg-color); }
+
+#fsm-tutorials > * * {
+    pointer-events: none;
+}
+#fsm-tutorials .tutorial-num {
+    position: absolute;
+    bottom: 15px;
+    left: 20px;
+}
+#fsm-tutorials .tutorial-next {
+    position: absolute;
+    bottom: 15px;
+    right: 20px;
+}
+#fsm-tutorials .tutorial-content {
+    margin-bottom: 35px;
+}
+
+
 /* Native fullscreen */
 /* .fsm-container:fullscreen,
 .fsm-container:fullscreen .fsm-canvas {
@@ -191,15 +287,31 @@
 } */
 
 /* Custom fullscreen */
+
+html.fullscreen {
+    overflow: hidden;
+}
+html.fullscreen body {
+    visibility: hidden;
+}
+
 .fsm-container.fullscreen,
 .fsm-container.fullscreen .fsm-canvas {
     display: block;
 }
 .fsm-container.fullscreen {
-    position: absolute;
+    position: fixed;
     width: 100%;
     height: 100%;
     margin: 0;
+    top: 0;
+    left: 0;
+}
+.fsm-container.fullscreen,
+.fsm-container.fullscreen *,
+#fsm-tutorials,
+#fsm-tutorials * {
+	visibility: visible;
 }
 .fsm-container.fullscreen::before,
 .fsm-container.fullscreen .pill-container,

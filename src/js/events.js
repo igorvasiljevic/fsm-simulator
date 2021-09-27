@@ -88,7 +88,7 @@ export const move = (element, callback = {}) => {
 		element._x = clamp(element._x, min_x - phw, phw - max_x);
 		element._y = clamp(element._y, min_y - phh, phh - max_y);
 		
-		element._offset_x = element._x - min_x + phw;
+		element._offset_x = element._x - min_x + element.offsetLeft + phw;
 		element._offset_y = element._y - min_y + phh;
 		element.style.transform = `translate(${element._offset_x}px, ${element._offset_y}px)`;
 	
@@ -250,7 +250,7 @@ export const panzoom = (element, scale_max, scale_velocity) => {
 		element._offset_x = element._x + element.offsetWidth * (element._scale - 1)/2;
 		element._offset_y = element._y + element.offsetHeight * (element._scale - 1)/2;
 
-		element.style.transform = `translate(${element._offset_x}px, ${element._offset_y}px) scale(${element._scale})`;    
+		element.style.transform = `translate(${element._offset_x}px, ${element._offset_y}px) scale(${element._scale})`;
 
 		element._change?.();
 	}

@@ -5,8 +5,10 @@ import '../css/fsm-transition.css';
 import svg_arrow from '../res/transition-arrow.svg';
 import svg_arrow_loop from '../res/transition-arrow-loop.svg';
 
-const TWO_WAY_ARROW_SEPARATION = -0.25;
-const TEXT_DISTANCE = 10;
+const two_way_arrow_separation = -0.25;
+const text_distance = 10;
+const slow_anim = '0.25s';
+const fast_anim = '0.15s';
 
 export class FSMTransition extends HTMLElement {
 	connectedCallback() {
@@ -62,10 +64,10 @@ export class FSMTransition extends HTMLElement {
 					if(!opposite_positioned)
 						element._opposite._reposition(true);
 
-					x1 += state_radius * Math.cos(angle + TWO_WAY_ARROW_SEPARATION + Math.PI);
-					y1 += state_radius * Math.sin(angle + TWO_WAY_ARROW_SEPARATION + Math.PI);
-					x2 += state_radius * Math.cos(angle - TWO_WAY_ARROW_SEPARATION);
-					y2 += state_radius * Math.sin(angle - TWO_WAY_ARROW_SEPARATION);
+					x1 += state_radius * Math.cos(angle + two_way_arrow_separation + Math.PI);
+					y1 += state_radius * Math.sin(angle + two_way_arrow_separation + Math.PI);
+					x2 += state_radius * Math.cos(angle - two_way_arrow_separation);
+					y2 += state_radius * Math.sin(angle - two_way_arrow_separation);
 
 					length = Math.hypot(x1 - x2, y1 - y2);
 				} else {
@@ -79,8 +81,8 @@ export class FSMTransition extends HTMLElement {
 				element.style.transform = `translate(${element._x}px, ${element._y}px)`;
 
 				const text_angle = angle + Math.PI/2;
-				const x = TEXT_DISTANCE * Math.cos(text_angle);
-				const y = TEXT_DISTANCE * Math.sin(text_angle);
+				const x = text_distance * Math.cos(text_angle);
+				const y = text_distance * Math.sin(text_angle);
 				input.style.transform = `translate(${x}px, ${y}px)`;
 			}
 		}
@@ -121,7 +123,7 @@ export class FSMTransition extends HTMLElement {
 
 		const dot = arrow.querySelector('circle');
 		element._animate = (fast = false) => new Promise((resolve, reject) => {
-			dot.firstElementChild.setAttributeNS(null, 'dur', fast ? '0.08s' : '0.2s');
+			dot.firstElementChild.setAttributeNS(null, 'dur', fast ? fast_anim : slow_anim);
 			dot.firstElementChild.addEventListener('endEvent', () => {
 				dot.style.display = 'none';
 				resolve();

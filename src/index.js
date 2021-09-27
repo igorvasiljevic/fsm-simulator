@@ -11,7 +11,5 @@ load_theme();
 
 import './components/fsm-header.jsx';
 import './components/fsm-footer.jsx';
-import './components/fsm-state.jsx';
-import './components/fsm-transition.jsx';
 import './components/fsm-canvas.jsx';
 import './components/fsm-simulator.jsx';

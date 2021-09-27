@@ -11,7 +11,7 @@ import '../css/fsm-header.css';
 export default class Header extends HTMLElement {
     connectedCallback() {
         const home = this.hasAttribute('home');
-        const text = this.getAttribute('text') || 'Finite-State Machines';
+        const text = this.getAttribute('text') || 'Konačni Automati';
         
         this.replaceWith(
             <header class='fsm-header'>
@@ -19,12 +19,12 @@ export default class Header extends HTMLElement {
                     {home ? '' :
                         <button type='button' class='topbar mra' onclick={Navigate.home}>
                             <svgl svg={svg_home}/>
-                            <span>Home</span>
+                            <span>Početna</span>
                         </button>}
-                    <button type='button' onclick={() => set_language('bs')} class='mla'>Bosanski</button>
+                    {/* <button type='button' onclick={() => set_language('bs')} class='mla'>Bosanski</button>
                     <span>•</span>
-                    <button type='button' onclick={() => set_language('en')}>English</button>
-                    <button type='button' class='topbar' onclick={switch_theme} title='Switch theme' aria-label='Switch theme'>
+                    <button type='button' onclick={() => set_language('en')}>English</button> */}
+                    <button type='button' class='topbar mla' onclick={switch_theme} title='Promijeni temu' aria-label='Promijeni temu'>
                         <svgl svg={svg_theme}/>
                     </button>
                 </div>

@@ -46,8 +46,8 @@
     background-color: transparent;
     text-align: center;
     font-family: var(--font-sans-serif);
-    font-size: 1em;
-    font-weight: bold;
+    font-size: 0.98em;
+    font-weight: 700;
     outline: none;
     border-radius: 50%;
     overflow: hidden;

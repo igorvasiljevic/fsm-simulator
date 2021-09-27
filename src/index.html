@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="bs">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <title>Finite-State Machines</title>
-    <meta name="application-name" content="Finite-State Machines">
-    <meta name="description" content="Finite-State Machine lessons and simulator">
+    <title>Konačni Automati</title>
+    <meta name="application-name" content="Konačni Automati">
+    <meta name="description" content="Simulator i lekcije o konačnim automatima">
     <meta name="author" content="17112">
 
     <link rel="manifest" href="manifest.webmanifest">
@@ -20,9 +20,13 @@
     <link rel="stylesheet" href="bundle.css">
 
     <script src="bundle.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@300&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <noscript>This site can't function without JavaScript</noscript>
+    <noscript>Stranica ne može funkcionirati bez JavaScripta</noscript>
 
     <fsm-header home></fsm-header>
 
@@ -31,39 +35,44 @@
             potenti nullam. Arcu risus quis varius quam quisque. In ante metus dictum at tempor commodo ullamcorper a.
             Enim nulla aliquet porttitor lacus luctus accumsan tortor.</p>
         
-        <div class="list">
+        <div class="link_list">
             <ul class="subject_list">
                 <li><a href="simulator.html">Simulator</a></li>
-                <li><a href="#getting_started_el">Getting started</a></li>
+                <!-- <li><a href="#getting_started_el">Getting started</a></li> -->
 
                 <li>
-                    <span>Deterministic finite-state machines</span>
-                    <ul class="lesson_list">
+                    <a href="lessons/1.html">Osnovni pojmovi</a></li>
+                    <!-- <ul class="lesson_list">
                         <li><a href="lessons/1.html">Definition</a></li>
                         <li><a href="lessons/2.html">Initial state</a></li>
                         <li><a href="lessons/3.html">Final state</a></li>
                         <li><a href="lessons/4.html">Transitions</a></li>
-                    </ul>
+                    </ul> -->
                 </li>
                 
                 <li>
-                    <span>Nondeterministic finite-state machines</span>
+                    <a href="lessons/2.html">Uvod u konačne automate</a></li>
+                    <!-- <span>Nondeterministic finite-state machines</span> -->
                     <ul class="lesson_list">
-                        <li><a href="#">Definition</a></li>
+                        <li><a href="lessons/3.html">Matematska definicija</a></li>
+                        <li><a href="lessons/3.html#prosirena-funkcija-prijelaza">Proširena funkcija prijelaza</a></li>
+                        <li><a href="lessons/3.html#prihvacanje-unije-presjeka-i-razlike-dva-jezika">Prihvaćanje unije, presjeka i razlike dva jezika</a></li>
+                        <li><a href="lessons/3.html#razlucivost-rijeci">Razlučivost riječi</a></li>
+                        <li><a href="lessons/3.html#ekvivalentne-klase">Ekvivalentne klase</a></li>
+                        <li><a href="lessons/3.html#minimizacija-broja-stanja-dka">Minimizacija broja stanja DKA</a></li>
                     </ul>
                 </li>
-
                 <li>
-                    <span>Nondeterministic finite-state machines with ε-transitions</span>
-                    <ul class="lesson_list">
-                        <li><a href="#">Definition</a></li>
-                    </ul>
+                    <span><a href="lessons/4.html">Nedeterministički konačni automat</a></span>
+                </li>
+                <li>
+                    <span><a href="lessons/5.html">Nondeterministic finite-state machines with ε-transitions</a></span>
                 </li>
                 
             </ul>
         </div>
 
-        <h3 id="getting_started_el">Getting started</h3>
+        <!-- <h3 id="getting_started_el">Getting started</h3>
         <p>Donec pretium vulputate sapien nec sagittis aliquam malesuada bibendum. Magna etiam tempor orci eu lobortis
             elementum nibh tellus molestie. Diam vulputate ut pharetra sit.Risus quis varius quam quisque id. Elit sed vulputate mi sit amet. Ut tortor pretium viverra suspendisse
             potenti nullam. Arcu risus quis varius quam quisque. In ante metus dictum at tempor commodo ullamcorper a.
@@ -74,7 +83,7 @@
             potenti nullam. Arcu risus quis varius quam quisque. In ante metus dictum at tempor commodo ullamcorper a.
             Enim nulla aliquet porttitor lacus luctus accumsan tortor.Risus quis varius quam quisque id. Elit sed vulputate mi sit amet. Ut tortor pretium viverra suspendisse
             potenti nullam. Arcu risus quis varius quam quisque. In ante metus dictum at tempor commodo ullamcorper a.
-            Enim nulla aliquet porttitor lacus luctus accumsan tortor.</p>
+            Enim nulla aliquet porttitor lacus luctus accumsan tortor.</p> -->
     </main>
     
 

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <title>NKA | Konačni Automati</title>
+    <title>&epsilon;-NKA | Konačni Automati</title>
     <meta name="application-name" content="Konačni Automati">
     <meta name="description" content="Simulator i lekcije o konačnim automatima">
     <meta name="author" content="17112">
@@ -28,20 +28,23 @@
 <body>
     <noscript>Stranica ne može funkcionirati bez JavaScripta</noscript>
 
-    <fsm-header text="Nedeterministički Konačni Automat"></fsm-header>
+    <fsm-header text="Nedeterministički konačni automat sa &epsilon;-prijelazima"></fsm-header>
 
     <main>
 
         <p>
-            U prošlom poglavlju smo spomenuli da funkcija prijelaza DKA za jedno stanje i simbol
-            definira prijelaz u jedinstveno stanje: &delta;(q,a) = p. Kod nedeterminističkog
-            konačnog automata (u nastavku NKA) funkcija prijelaza za jedno stanje i simbol
-            definira prijelaz u skup stanja: &delta;(q,a) = {p1, p2, ...}. Odnosno njegova
-            se funkcija prijelaza &delta; definira kao Q &times; &Epsilon; &rarr; 2<sup>Q</sup>
-            (skup svih podskupa Q).
+            Definicija NKA iz prošlog poglavlja se može proširiti uključivanjem
+            prijelaza iz jednog u drugo koji ne ovise niti o jednom simbolu.
+            Takvi prijelazi se nazivaju <i>&epsilon;-prijelazi</i>. Funkcija prijelaza
+            za nedeterminističke konačne automate sa &epsilon;-prijelazima 
+            (u nastavku &epsilon;-NKA), definira se kao: Q &times; (&Epsilon; &cup; {&epsilon;}) &rarr; 2<sup>Q</sup>
         </p>
 
-        <fsm-canvas example="Nondeterministic transition"></fsm-canvas>        
+        <p>&epsilon;-prelazi su ovdje označeni sa simbolom $.</p>
+
+        <fsm-canvas example="Epsilon transition"></fsm-canvas>
+
+        
 
     </main>
 

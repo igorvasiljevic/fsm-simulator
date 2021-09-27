@@ -27,6 +27,7 @@ export class FSM {
         this.transitions = {};
 
         this.states.add(this.initial_state);
+
         for(let from_state in transitions ?? {})
             for(let symbol in transitions[from_state] ?? {})
                 for(let to_state of transitions[from_state][symbol] ?? [])
@@ -36,7 +37,7 @@ export class FSM {
         this.string = string;
     }
 
-    get_next_id() {
+    get next_id() {
         let id = 0;
         while(this.states.has(id))
             ++id;
@@ -84,19 +85,17 @@ export class FSM {
 
     epsilon_transition(states) {
         let new_states = new Set([...states]);
-        let old_size = new_states.size;
-        let new_size;
-        while(old_size !== new_size) {
+        
+        let old_size;
+        do {
             old_size = new_states.size;
-            
-            let tmp_states = new_states;
-            for(let state of tmp_states)
-                if(this.transitions[state] && this.transitions[state][epsilon])
+
+            for(let state of new_states)
+                if(this.transitions[state]?.[epsilon])
                     for(let new_state of this.transitions[state][epsilon])
                         new_states.add(new_state);
 
-            new_size = new_states.size;
-        }
+        } while(new_states.size !== old_size);
 
         return new_states;
     }
@@ -108,7 +107,7 @@ export class FSM {
     }
 
     transition(state, symbol) {
-        let states = this.transitions?.[state]?.[symbol];
+        let states = this.transitions[state]?.[symbol];
         
         if(!states) return [];
 
@@ -119,13 +118,7 @@ export class FSM {
     }
 
     transition_states(states, symbol) {
-        const new_states = new Set();
-
-        for(let state of states)
-            for(let new_state of this.transition(state, symbol))
-                new_states.add(new_state);
-        
-        return [...new_states];
+        return [...new Set(states.flatMap(state => this.transition(state, symbol)))];        
     }
 
     toString() {

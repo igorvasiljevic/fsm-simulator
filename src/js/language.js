@@ -16,7 +16,7 @@ export const set_language = language => {
         .then(cache => cache.delete(`${app_root}/localization/${current}.json`))
         .then(() => {
             Data.set('language', language);
-            current = language;
+            document.documentElement.lang = current = language;
             return fetch(`${app_root}/localization/${current}.json`);
         })
         .then(response => response.json())

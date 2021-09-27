@@ -1,4 +1,4 @@
-const version = '2.6';
+const version = '2.7';
 const cache_name = 'fsm-simulator-cache-' + version;
 
 const urls_to_cache = [
@@ -13,6 +13,7 @@ const urls_to_cache = [
     './lessons/2.html',
     './lessons/3.html',
     './lessons/4.html',
+    './lessons/5.html',
 
      /* RESOURCES */
      './res/icon.svg',

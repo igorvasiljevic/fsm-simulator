@@ -37,7 +37,7 @@
 	line-height: 48px;
 }
 
-.highlight {
+.fsm-string .highlight {
 	color: var(--highligh-color);
 	margin: 0 3px;
 	padding: 0 3px;
