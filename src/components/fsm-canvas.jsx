@@ -145,30 +145,37 @@ export class FSMCanvas extends HTMLElement {
 			const symbol = string._get_value()[highlight];
 
 			const transitions = [];
-			const not_current = new Set();
+			for(let from of current_states)
+				if(this.fsm.transitions[from]?.[symbol])
+					for(let to of this.fsm.transitions[from][symbol])
+						transitions.push(canvas.querySelector(`#transition_${from}_${to}`));
+
+
+			const epsilon_transitions = new Set();
 			for(let from of current_states) {
 				if(this.fsm.transitions[from]?.[symbol]) {
-					for(let to of this.fsm.transitions[from][symbol]) {
-						transitions.push(canvas.querySelector(`#transition_${from}_${to}`));
-						if(!current_states.includes(to))
-						not_current.add(to);
-					}
-				}
-			}
 
-			
-			const e_transition = states => {
-				let t = [];
-				for(let from of states) {
-					if(this.fsm.transitions[from]?.[epsilon]) {
-						for(let to of this.fsm.transitions[from][epsilon])
-							t.push(canvas.querySelector(`#transition_${from}_${to}`));
-						t.push(...e_transition(this.fsm.transitions[from][epsilon]));
-					}
+					let e_states = new Set([...this.fsm.transitions[from][symbol]]);
+					let old_size;
+					do {
+						old_size = e_states.size;
+
+						for(let to of e_states) {
+							if(this.fsm.transitions[to]?.[epsilon]) {
+								for(let e_to of this.fsm.transitions[to][epsilon]) {
+									e_states.add(e_to);
+									let t = canvas.querySelector(`#transition_${to}_${e_to}`);
+									if(!transitions.includes(t))
+										epsilon_transitions.add(t);
+								}
+							}
+						}
+
+					} while(old_size !== e_states.size);
+
 				}
-				return t;
 			}
-			const epsilon_transitions = e_transition(not_current);
+			
 
 			Promise
 				.all(transitions.map(t => t._animate()))
@@ -183,7 +190,7 @@ export class FSMCanvas extends HTMLElement {
 					}
 					step_timeout = setTimeout(() => step.bind(this)(e, false), first_step ? 200 : 0);
 				})
-				.catch(err => {});
+				.catch(console.log);
 
 		}
 
