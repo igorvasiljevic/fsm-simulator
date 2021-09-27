@@ -27,7 +27,6 @@ export default class FSMString extends HTMLElement {
 
         element._highlight = index => {
             input.disabled = true;
-            pseudo.classList.remove('hidden');
 
             if(index < pseudo.innerText.length)
                 pseudo.innerHTML =
@@ -52,7 +51,6 @@ export default class FSMString extends HTMLElement {
         element._reset = () => {
             input.disabled = false;
             pseudo.innerHTML = pseudo.innerText;
-            pseudo.classList.add('hidden');
             this.edit?.();
         }
 

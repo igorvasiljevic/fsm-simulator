@@ -37,6 +37,10 @@
 	line-height: 48px;
 }
 
+.fsm-container.fsm-edit .fsm-pseudo-input {
+	display: none;
+}
+
 .fsm-string .highlight {
 	color: var(--highligh-color);
 	margin: 0 3px;
