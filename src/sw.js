@@ -1,4 +1,4 @@
-const version = '2.8';
+const version = '2.9';
 const cache_name = 'fsm-simulator-cache-' + version;
 
 const urls_to_cache = [

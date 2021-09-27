@@ -131,12 +131,16 @@ export class FSMCanvas extends HTMLElement {
 			}
 		}
 
+		let stepping = false;;
 		function step(e, first_step = true) {
 			if(
+				stepping ||
 				(!first_step && !e.target._held) ||
 				highlight >= string._get_value().length
 			)
 				return;
+
+			stepping = true;
 			
 			if(first_step)
 				for(let state of canvas.querySelectorAll('.state.current'))
@@ -181,13 +185,14 @@ export class FSMCanvas extends HTMLElement {
 				.all(transitions.map(t => t._animate()))
 				.then(() => Promise.all([...epsilon_transitions].map(t => t._animate(true))))
 				.then(() => {
-					current_states = this.fsm.transition_states(current_states, symbol); // TODO: Issue is here
+					current_states = this.fsm.transition_states(current_states, symbol);
 					string._highlight(++highlight);
 					highlight_current_states();
 					if(highlight === string._get_value().length) {
 						highlight_accepted_states();
 						controls.at(-1).style = 'transform: rotate(180deg)';
 					}
+					stepping = false;
 					step_timeout = setTimeout(() => step.bind(this)(e, false), first_step ? 200 : 0);
 				})
 				.catch(console.log);
